@@ -1,5 +1,5 @@
 ///
-/// Solid State by HTML5 UP
+/// Fractal by HTML5 UP
 /// html5up.net | @ajlkn
 /// Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 ///
@@ -7,135 +7,203 @@
 /* Header */
 
 	#header {
-		@include vendor('transition', 'background-color #{_duration(transition)} ease-in-out');
-		background-color: transparentize(desaturate(lighten(_palette(bg), 3), 1.5), 0.05);
-		height: 3.5em;
-		left: 0;
-		line-height: 3.5em;
-		padding: 0 1.25em;
-		position: fixed;
-		top: 0;
-		width: 100%;
-		z-index: _misc(z-index-base);
+		@include color(accent1);
+		@include padding(4.5em, 0);
+		@include vendor('align-items', 'center');
+		@include vendor('display', 'flex');
+		@include vendor('justify-content', 'center');
+		background-image: url('images/overlay.png'), url('images/pattern-size1.svg');
+		background-position: top left, center center;
+		background-attachment: fixed, fixed;
+		background-size: auto, cover;
+		height: 100vh;
+		min-height: 35em;
 
 		h1 {
-			@include vendor('transition', (
-				'opacity #{_duration(transition)} ease-in-out',
-				'visibility #{_duration(transition)}'
-			));
-			border-bottom: 0;
-			font-size: 0.8em;
-			margin-bottom: 0;
+			font-size: 3.25em;
+			font-weight: _font(weight-bold);
+			margin-bottom: _size(element-margin) * 0.25;
+		}
+
+		p {
+			font-size: 1.5em;
+			line-height: 1.35em;
+
+			br {
+				display: inline;
+			}
+		}
+
+		.content {
+			@include vendor('transition', ('opacity 0.5s ease', 'transform 1s ease'));
+			@include vendor('transform', 'translateX(0)');
 			opacity: 1;
-			visibility: visible;
+			text-align: right;
+			margin: (_size(element-margin) * -1.75) (_size(element-margin) * 2) 0 0;
 
-			a {
-				border: 0;
+			> :last-child {
+				margin-bottom: 0;
+			}
+
+			.actions {
+				@include vendor('justify-content', 'flex-end');
 			}
 		}
 
-		nav {
-			font-family: _font(family-heading);
-			font-size: 0.8em;
-			font-weight: _font(weight-heading-bold);
-			height: 3em;
-			letter-spacing: _font(kern-heading);
-			line-height: 3em;
-			position: absolute;
-			right: 0.7em;
-			text-transform: uppercase;
-			top: 0.7em;
+		.image {
+			@include vendor('transition', ('opacity 1s ease', 'transform 1s ease'));
+			@include vendor('transform', 'translateY(0)');
+			opacity: 1;
 
-			a {
-				border: 0;
-				display: inline-block;
-				padding: 0 1em;
+			img {
+				@include vendor('transition', 'opacity 0.75s ease');
+				@include vendor('transition-delay', '0.75s');
+				opacity: 1;
+			}
+		}
 
-				&:before {
-					float: right;
-					margin-left: 0.75em;
-				}
+		// Large.
+			@include breakpoint('<=large') {
+				background-image: url('images/overlay.png'), url('images/pattern-size2.svg');
+			}
 
-				&[href="#menu"] {
-					@include icon(false, solid);
-					@include vendor('transition', 'background-color #{_duration(transition)} ease-in-out');
-					border-radius: _size(border-radius);
-					box-shadow: inset 0 0 0 2px _palette(border);
-					padding: 0 1.35em;
+		// Medium.
+			@include breakpoint('<=medium') {
+				height: auto;
+				min-height: 0;
 
-					&:before {
-						content: '\f0c9';
-						line-height: inherit;
-					}
+				.content {
+					margin: (_size(element-margin) * -1) (_size(element-margin) * 2) 0 0;
 
-					&:hover {
-						background-color: _palette(border-bg);
-					}
-
-					&:active {
-						background-color: _palette(border2-bg);
+					.actions {
+						@include vendor('justify-content', 'center');
 					}
 				}
+
+				// Portrait.
+					@include orientation(portrait) {
+						@include padding(6em, 3em);
+						@include vendor('flex-direction', 'column-reverse');
+
+						.content {
+							display: block;
+							width: 100%;
+							text-align: center;
+							margin: 0 0 _size(element-margin) 0;
+						}
+
+						.image {
+							overflow: hidden;
+						}
+					}
+
 			}
-		}
 
-		&.alt {
-			background-color: transparent;
+		// Small.
+			@include breakpoint('<=small') {
+				background-image: url('images/overlay.png'), url('images/pattern-size3.svg');
 
-			h1 {
-				opacity: 0;
-				visibility: hidden;
-			}
-		}
+				h1 {
+					font-size: 2em;
+				}
 
-		@include breakpoint('<=small') {
-			height: 2.75em;
-			line-height: 2.75em;
-
-			nav {
-				top: 0;
-				right: 0;
-				height: inherit;
-				line-height: inherit;
-
-				a {
-					height: inherit;
+				p {
+					font-size: 1em;
 					line-height: inherit;
+				}
 
-					&[href="#menu"] {
-						box-shadow: none;
-						padding: 0 1em;
-						border-radius: 0;
+				// Landscape.
+					@include orientation(landscape) {
+						@include padding(2em, 2em);
 
-						&:hover, &:active {
-							background-color: inherit;
+						.content {
+							margin: 0 _size(element-margin) _size(element-margin) 0;
+						}
+
+						.image {
+							font-size: 0.8em;
+							width: 15em;
+							max-width: 20vw;
+
+							.inner, &:before, &:after {
+								font-size: 0.8em;
+							}
 						}
 					}
-				}
-			}
-		}
 
-		@include breakpoint('<=xsmall') {
-			nav {
-				a {
-					&[href="#menu"] {
-						width: 4em;
-						white-space: nowrap;
-						text-indent: 4em;
-						position: relative;
+				// Portrait.
+					@include orientation(portrait) {
+						@include padding(3em, 1.5em);
 
-						&:before {
-							width: inherit;
-							position: absolute;
-							top: 0;
-							left: 0;
-							text-indent: 0;
-							text-align: right;
-							margin-left: 0;
-							padding-right: 1.25em;
+						.image {
+							font-size: 0.6em;
+							max-width: 60vw;
 						}
 					}
-				}
+
 			}
-		}
+
+		// XSmall.
+			@include breakpoint('<=xsmall') {
+
+				// Landscape.
+					@include orientation(landscape) {
+						@include padding(2em, 1.5em);
+
+						.image {
+							font-size: 0.7em;
+						}
+
+						.actions {
+							font-size: 0.8em;
+						}
+					}
+
+				// Portrait.
+					@include orientation(portrait) {
+						@include padding(2em, 1em);
+					}
+
+			}
+
+		// Mobile.
+			body.is-mobile & {
+				background-attachment: scroll, scroll;
+			}
+
+		// Preload.
+			body.is-preload & {
+				.content {
+					@include vendor('transform', 'translateX(2em)');
+					opacity: 0;
+				}
+
+				.image {
+					@include vendor('transform', 'translateY(4em)');
+					opacity: 0;
+
+					img {
+						opacity: 0;
+					}
+				}
+
+				// Medium.
+					@include breakpoint('<=medium') {
+
+						// Portrait.
+							@include orientation(portrait) {
+								.content {
+									@include vendor('transform', 'none');
+									opacity: 1;
+								}
+
+								.image {
+									@include vendor('transform', 'translateY(2em)');
+								}
+							}
+
+					}
+
+			}
+
 	}
