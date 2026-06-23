@@ -1,0 +1,85 @@
+---
+const groups = [
+  { label: 'Languages', items: ['TypeScript', 'JavaScript', 'Python', 'Ruby', 'C#'] },
+  { label: 'Frontend', items: ['React', 'Redux', 'Astro', 'Tailwind', 'GSAP'] },
+  { label: 'Backend', items: ['Node', 'FastAPI', 'Flask', 'Rails', 'Express'] },
+  { label: 'Data & Infra', items: ['PostgreSQL', 'MongoDB', 'Redis', 'Docker', 'AWS'] },
+  { label: 'AI', items: ['LLM agents', 'Tool use', 'RAG', 'Deterministic pipelines'] },
+];
+---
+
+<section class="section stack" id="stack">
+  <div class="shell">
+    <div class="stack__head">
+      <span class="eyebrow" data-reveal>04 / Stack</span>
+      <h2 class="section-title" data-reveal>Tools on the bench.</h2>
+    </div>
+
+    <div class="stack__grid">
+      {groups.map((g, i) => (
+        <div class="stack__group" data-reveal>
+          <div class="stack__label">
+            <span class="stack__idx">{String(i + 1).padStart(2, '0')}</span>
+            {g.label}
+          </div>
+          <ul class="stack__items">
+            {g.items.map((it) => <li>{it}</li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .stack__head { margin-bottom: 2.6rem; }
+  .stack__grid {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+  .stack__group {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+    padding: 1.6rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .stack__label {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: -0.01em;
+  }
+  .stack__idx {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--signal);
+    font-weight: 400;
+  }
+  .stack__items {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.86rem;
+    color: var(--text-dim);
+  }
+  .stack__items li {
+    transition: color 0.2s ease;
+    cursor: default;
+  }
+  .stack__items li:hover { color: var(--signal); }
+
+  @media (min-width: 760px) {
+    .stack__group {
+      grid-template-columns: 240px 1fr;
+      align-items: baseline;
+      gap: 2rem;
+    }
+  }
+</style>

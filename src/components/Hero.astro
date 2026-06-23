@@ -1,0 +1,204 @@
+---
+const socials = [
+  { label: 'GitHub', href: 'https://github.com/dingtianding' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/deanding/' },
+  { label: 'Email', href: 'mailto:dingtian.ding@gmail.com' },
+];
+---
+
+<section class="hero" id="top">
+  <div class="shell hero__inner">
+    <p class="hero__kicker" data-reveal>
+      <span class="dot"></span> Software Engineer · New York City
+    </p>
+
+    <h1 class="hero__name" data-reveal>
+      Dean<br />Ding
+    </h1>
+
+    <!-- The conceptual hook: a career rendered as a git diff.
+         Removed = the accountant. Added = the engineer. -->
+    <div class="diff" role="img" aria-label="From accountant to engineer">
+      <code class="diff__file" data-reveal>career.diff</code>
+      <div class="diff__line diff__line--del" data-reveal>
+        <span class="diff__sign">-</span>
+        spent years reconciling financial data by hand
+      </div>
+      <div class="diff__line diff__line--add" data-reveal>
+        <span class="diff__sign">+</span>
+        now I build the AI that does it deterministically
+      </div>
+    </div>
+
+    <p class="hero__lede" data-reveal>
+      A CPA-turned-engineer building vertical AI for the work I used to do manually —
+      tools that propose reviewable changes instead of black-box answers.
+    </p>
+
+    <div class="hero__actions" data-reveal>
+      <a class="btn btn--primary" href="#building">See what I'm building</a>
+      <nav class="hero__socials" aria-label="Social links">
+        {socials.map((s) => (
+          <a href={s.href} target="_blank" rel="noopener">{s.label} ↗</a>
+        ))}
+      </nav>
+    </div>
+  </div>
+
+  <div class="hero__scroll" data-reveal aria-hidden="true">
+    <span>scroll</span>
+    <span class="hero__scroll-line"></span>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding-top: 64px;
+  }
+  .hero__inner {
+    width: 100%;
+    display: grid;
+    gap: 1.6rem;
+    padding-block: clamp(3rem, 8vh, 6rem);
+  }
+
+  .hero__kicker {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7em;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--add);
+    box-shadow: 0 0 0 0 rgba(70, 192, 90, 0.5);
+    animation: pulse 2.4s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(70, 192, 90, 0.45); }
+    70% { box-shadow: 0 0 0 9px rgba(70, 192, 90, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(70, 192, 90, 0); }
+  }
+
+  .hero__name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(4.5rem, 2rem + 16vw, 12rem);
+    line-height: 0.86;
+    letter-spacing: -0.03em;
+    margin-block: 0.2rem 0.4rem;
+  }
+
+  .diff {
+    border-left: 2px solid var(--line-strong);
+    padding-left: clamp(1rem, 2vw, 1.6rem);
+    font-family: var(--font-mono);
+    font-size: clamp(0.92rem, 0.85rem + 0.5vw, 1.18rem);
+    display: grid;
+    gap: 0.35rem;
+    max-width: 46ch;
+  }
+  .diff__file {
+    color: var(--text-faint);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+  .diff__line {
+    display: flex;
+    gap: 0.8em;
+    padding: 0.18em 0.5em;
+    border-radius: 5px;
+  }
+  .diff__sign { font-weight: 700; opacity: 0.85; }
+  .diff__line--del {
+    color: var(--del);
+    background: rgba(240, 100, 88, 0.07);
+    text-decoration: line-through;
+    text-decoration-color: rgba(240, 100, 88, 0.4);
+  }
+  .diff__line--add {
+    color: var(--add);
+    background: rgba(70, 192, 90, 0.08);
+  }
+
+  .hero__lede {
+    max-width: 52ch;
+    color: var(--text-dim);
+    font-size: clamp(1.02rem, 0.98rem + 0.3vw, 1.22rem);
+    line-height: 1.55;
+  }
+
+  .hero__actions {
+    display: flex;
+    align-items: center;
+    gap: 1.8rem;
+    flex-wrap: wrap;
+    margin-top: 0.6rem;
+  }
+  .btn {
+    font-family: var(--font-mono);
+    font-size: 0.86rem;
+    padding: 0.85em 1.4em;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    transition: transform 0.18s ease, background 0.2s ease, color 0.2s ease;
+  }
+  .btn--primary {
+    background: var(--signal);
+    color: #0a0a0c;
+    border-color: var(--signal);
+    font-weight: 500;
+  }
+  .btn--primary:hover { transform: translateY(-2px); }
+  .hero__socials {
+    display: flex;
+    gap: 1.3rem;
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    color: var(--text-dim);
+  }
+  .hero__socials a { transition: color 0.2s ease; }
+  .hero__socials a:hover { color: var(--signal); }
+
+  .hero__scroll {
+    position: absolute;
+    bottom: 2rem;
+    right: var(--gutter);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .hero__scroll-line {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(var(--signal), transparent);
+    animation: drop 2s ease-in-out infinite;
+    transform-origin: top;
+  }
+  @keyframes drop {
+    0%, 100% { transform: scaleY(0.4); opacity: 0.4; }
+    50% { transform: scaleY(1); opacity: 1; }
+  }
+
+  @media (max-width: 600px) {
+    .hero__scroll { display: none; }
+  }
+</style>
