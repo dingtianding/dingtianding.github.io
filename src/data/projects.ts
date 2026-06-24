@@ -14,10 +14,10 @@ export const projects: Project[] = [
   {
     name: 'Xelsius',
     blurb:
-      'Cursor for accountants. An agent that reads financial data and proposes deterministic, reviewable diffs — so the human approves a change instead of hunting for it. The tool I wish I had when I did this work by hand.',
-    tech: ['TypeScript', 'LLM agents', 'Deterministic diffs', 'Fintech'],
+      'A side project exploring how an agent could read financial data and propose reviewable, deterministic diffs a person approves — instead of a black box deciding.',
+    tech: ['TypeScript', 'LLM agents', 'Fintech'],
     accent: true,
-    award: 'Building now',
+    award: 'Exploring',
     links: [{ label: 'Repository', href: 'https://github.com/dingtianding/Xelsius' }],
   },
   {
