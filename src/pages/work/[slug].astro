@@ -1,0 +1,387 @@
+---
+import Base from '../../layouts/Base.astro';
+import { projects, type Project } from '../../data/projects';
+
+export function getStaticPaths() {
+  return projects
+    .filter((p) => p.slug && p.detail)
+    .map((p) => ({ params: { slug: p.slug! }, props: { project: p } }));
+}
+
+const { project } = Astro.props as { project: Project };
+const d = project.detail!;
+const repo = project.links.find((l) => /repo/i.test(l.label));
+---
+
+<Base
+  title={`${project.name} — Dean Ding`}
+  description={d.oneLiner}
+>
+  <header class="topbar">
+    <div class="shell topbar__inner">
+      <a class="topbar__brand" href="/">
+        <span class="topbar__mark">DD</span>
+        <span class="topbar__path">dean_ding</span>
+      </a>
+      <a class="topbar__back" href="/#work">← All work</a>
+    </div>
+  </header>
+
+  <main class="case">
+    <!-- Hero -->
+    <section class="section case__hero">
+      <div class="shell">
+        <span class="eyebrow" data-reveal>Case study</span>
+        <h1 class="case__title" data-reveal>{project.name}</h1>
+        <p class="case__lead" data-reveal>{d.oneLiner}</p>
+
+        <div class="case__meta" data-reveal>
+          <span class="case__status"><span class="status-dot"></span>{d.status}</span>
+          <ul class="case__tags">
+            {project.tech.map((t) => <li class="tag">{t}</li>)}
+          </ul>
+        </div>
+
+        <div class="case__links" data-reveal>
+          {repo && (
+            <a href={repo.href} target="_blank" rel="noopener" class="case__cta">View repository ↗</a>
+          )}
+          {project.isPrivate && (
+            <span class="case__private">Private repository — code shared on request</span>
+          )}
+        </div>
+      </div>
+    </section>
+
+    <!-- Problem -->
+    <section class="section case__block">
+      <div class="shell case__grid">
+        <span class="case__num" data-reveal>01</span>
+        <div class="case__col">
+          <h2 class="case__h" data-reveal>The problem</h2>
+          <p class="case__p" data-reveal>{d.problem}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture -->
+    <section class="section case__block case__block--alt">
+      <div class="shell case__grid">
+        <span class="case__num" data-reveal>02</span>
+        <div class="case__col">
+          <h2 class="case__h" data-reveal>Architecture</h2>
+          {d.architecture.map((para) => <p class="case__p" data-reveal>{para}</p>)}
+
+          {d.diagram ? (
+            <figure class="case__diagram" data-reveal>
+              <img src={d.diagram} alt={`${project.name} architecture diagram`} loading="lazy" />
+            </figure>
+          ) : (
+            <div class="placeholder placeholder--wide" data-reveal>
+              <span class="placeholder__tag">architecture diagram</span>
+              <span class="placeholder__hint">drop an image at <code>/images/{project.slug}-architecture.svg</code></span>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+
+    <!-- Stack -->
+    <section class="section case__block">
+      <div class="shell case__grid">
+        <span class="case__num" data-reveal>03</span>
+        <div class="case__col">
+          <h2 class="case__h" data-reveal>Tech stack</h2>
+          <div class="stackgrid" data-reveal>
+            {d.stack.map((g) => (
+              <div class="stackgrid__group">
+                <span class="stackgrid__label">{g.group}</span>
+                <ul class="stackgrid__items">
+                  {g.items.map((it) => <li>{it}</li>)}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Engineering challenges -->
+    <section class="section case__block case__block--alt">
+      <div class="shell case__grid">
+        <span class="case__num" data-reveal>04</span>
+        <div class="case__col">
+          <h2 class="case__h" data-reveal>Key engineering challenges</h2>
+          <div class="challenges">
+            {d.challenges.map((c) => (
+              <article class="challenge" data-reveal>
+                <h3 class="challenge__title">{c.title}</h3>
+                <p class="challenge__body">{c.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screenshots -->
+    <section class="section case__block">
+      <div class="shell case__grid">
+        <span class="case__num" data-reveal>05</span>
+        <div class="case__col">
+          <h2 class="case__h" data-reveal>Screens</h2>
+          {d.screenshots && d.screenshots.length > 0 ? (
+            <div class="shots" data-reveal>
+              {d.screenshots.map((src, i) => (
+                <img class="shots__img" src={src} alt={`${project.name} screenshot ${i + 1}`} loading="lazy" />
+              ))}
+            </div>
+          ) : (
+            <div class="shots" data-reveal>
+              <div class="placeholder placeholder--shot">
+                <span class="placeholder__tag">screenshot</span>
+                <span class="placeholder__hint"><code>/images/{project.slug}-1.png</code></span>
+              </div>
+              <div class="placeholder placeholder--shot">
+                <span class="placeholder__tag">screenshot</span>
+                <span class="placeholder__hint"><code>/images/{project.slug}-2.png</code></span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+
+    <!-- Demo video -->
+    <section class="section case__block case__block--alt">
+      <div class="shell case__grid">
+        <span class="case__num" data-reveal>06</span>
+        <div class="case__col">
+          <h2 class="case__h" data-reveal>Demo</h2>
+          {d.video ? (
+            <div class="video" data-reveal>
+              <iframe
+                src={d.video}
+                title={`${project.name} demo`}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            </div>
+          ) : (
+            <div class="placeholder placeholder--video" data-reveal>
+              <span class="placeholder__tag">▶ demo video</span>
+              <span class="placeholder__hint">paste a YouTube/Loom embed URL into <code>detail.video</code></span>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+
+    <!-- Role -->
+    <section class="section case__block">
+      <div class="shell case__grid">
+        <span class="case__num" data-reveal>07</span>
+        <div class="case__col">
+          <h2 class="case__h" data-reveal>My role</h2>
+          <p class="case__p" data-reveal>{d.role}</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="case__foot">
+      <div class="shell">
+        <a class="case__back" href="/#work">← Back to all work</a>
+      </div>
+    </footer>
+  </main>
+</Base>
+
+<style>
+  /* ---- top bar ---- */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+    background: linear-gradient(to bottom, rgba(10, 10, 12, 0.85), rgba(10, 10, 12, 0.4));
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .topbar__brand { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-size: 0.82rem; }
+  .topbar__mark {
+    display: grid; place-items: center; width: 28px; height: 28px;
+    border: 1px solid var(--line-strong); border-radius: 7px;
+    font-weight: 700; color: var(--signal); letter-spacing: 0.05em;
+  }
+  .topbar__path { color: var(--text-dim); }
+  .topbar__back {
+    font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-dim);
+    transition: color 0.2s ease;
+  }
+  .topbar__back:hover { color: var(--signal); }
+
+  /* ---- hero ---- */
+  .case__hero { padding-block: clamp(3.5rem, 9vh, 6rem) clamp(2rem, 5vh, 3.5rem); }
+  .case__title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(2.4rem, 1.6rem + 4vw, 4.4rem);
+    line-height: 1.0;
+    letter-spacing: -0.025em;
+    margin-top: 1.1rem;
+  }
+  .case__lead {
+    margin-top: 1.1rem;
+    max-width: 60ch;
+    color: var(--text-dim);
+    font-size: clamp(1.05rem, 1rem + 0.5vw, 1.4rem);
+    line-height: 1.5;
+  }
+  .case__meta {
+    margin-top: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+    flex-wrap: wrap;
+  }
+  .case__status {
+    font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-faint);
+    display: inline-flex; align-items: center; gap: 0.5em;
+  }
+  .status-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--signal); box-shadow: 0 0 8px var(--signal);
+    animation: glow 1.8s ease-in-out infinite;
+  }
+  @keyframes glow { 50% { opacity: 0.4; } }
+  .case__tags { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .case__links { margin-top: 1.8rem; display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap; }
+  .case__cta {
+    font-family: var(--font-mono); font-size: 0.84rem; color: var(--text);
+    border-bottom: 1px solid var(--signal); padding-bottom: 2px;
+    transition: color 0.2s ease;
+  }
+  .case__cta:hover { color: var(--signal); }
+  .case__private { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-faint); }
+
+  /* ---- content blocks ---- */
+  .case__block { padding-block: clamp(3rem, 7vh, 5rem); border-top: 1px solid var(--line); }
+  .case__block--alt {
+    background: radial-gradient(80% 120% at 100% 0%, rgba(232, 178, 90, 0.025), transparent 55%);
+  }
+  .case__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.6rem 2rem;
+  }
+  .case__num {
+    font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.1em;
+    color: var(--signal); opacity: 0.7;
+  }
+  .case__h {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem);
+    letter-spacing: -0.015em;
+    margin-bottom: 1.1rem;
+  }
+  .case__p {
+    color: var(--text-dim);
+    font-size: 1.06rem;
+    line-height: 1.65;
+    max-width: 68ch;
+  }
+  .case__p + .case__p { margin-top: 1rem; }
+
+  /* ---- stack grid ---- */
+  .stackgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem;
+  }
+  .stackgrid__group {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    padding: 1.1rem 1.2rem;
+  }
+  .stackgrid__label {
+    font-family: var(--font-mono); font-size: 0.66rem; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--signal);
+  }
+  .stackgrid__items {
+    list-style: none; margin-top: 0.7rem; display: flex; flex-direction: column; gap: 0.4rem;
+    font-size: 0.95rem; color: var(--text-dim);
+  }
+  .stackgrid__items li::before { content: '· '; color: var(--signal); }
+
+  /* ---- challenges ---- */
+  .challenges { display: grid; gap: 1rem; }
+  .challenge {
+    border: 1px solid var(--line); border-left: 2px solid var(--signal);
+    border-radius: var(--radius); background: var(--bg-card);
+    padding: 1.2rem 1.3rem;
+  }
+  .challenge__title {
+    font-family: var(--font-display); font-weight: 600; font-size: 1.12rem;
+    margin-bottom: 0.5rem;
+  }
+  .challenge__body { color: var(--text-dim); font-size: 0.98rem; line-height: 1.6; max-width: 68ch; }
+
+  /* ---- screenshots / video / diagram ---- */
+  .shots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  .shots__img {
+    width: 100%; border: 1px solid var(--line); border-radius: var(--radius);
+  }
+  .case__diagram { margin-top: 1.4rem; }
+  .case__diagram img { width: 100%; border: 1px solid var(--line); border-radius: var(--radius); }
+  .video {
+    position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius);
+    overflow: hidden; border: 1px solid var(--line);
+  }
+  .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+  /* ---- placeholders ---- */
+  .placeholder {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.5rem; text-align: center;
+    border: 1px dashed var(--line-strong); border-radius: var(--radius);
+    background:
+      repeating-linear-gradient(45deg, transparent, transparent 11px, rgba(255,255,255,0.015) 11px, rgba(255,255,255,0.015) 22px);
+    color: var(--text-faint);
+    padding: 1.4rem;
+  }
+  .placeholder--wide { min-height: 200px; margin-top: 1.4rem; }
+  .placeholder--shot { min-height: 180px; }
+  .placeholder--video { aspect-ratio: 16 / 9; }
+  .placeholder__tag {
+    font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text-dim);
+  }
+  .placeholder__hint { font-family: var(--font-mono); font-size: 0.72rem; }
+  .placeholder__hint code {
+    color: var(--signal); background: rgba(232, 178, 90, 0.08);
+    padding: 0.1em 0.4em; border-radius: 5px;
+  }
+
+  /* ---- footer ---- */
+  .case__foot { padding-block: clamp(2.5rem, 6vh, 4rem); border-top: 1px solid var(--line); }
+  .case__back {
+    font-family: var(--font-mono); font-size: 0.86rem; color: var(--text-dim);
+    transition: color 0.2s ease;
+  }
+  .case__back:hover { color: var(--signal); }
+
+  @media (min-width: 760px) {
+    .case__grid { grid-template-columns: 3.5rem 1fr; }
+  }
+</style>
