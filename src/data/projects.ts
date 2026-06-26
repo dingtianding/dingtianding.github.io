@@ -138,12 +138,12 @@ export const projects: Project[] = [
     name: 'DCB Research',
     slug: 'dcb-research',
     blurb:
-      'A research platform over SEC filings, XBRL company facts, and federal/state tax sources: ingest, normalize into Postgres, then search, diff filings, and compare companies on revenue, margin, debt, liquidity, and risk-text changes. The source-data backbone the DCB Knowledge Base distills from.',
+      'A research platform over SEC filings, XBRL company facts, and federal/state tax sources: ingest, normalize into Postgres, then search, diff filings, and compare companies on revenue, margin, debt, liquidity, and risk-text changes. The source-data backbone DCB Public distills from.',
     tech: ['Python', 'FastAPI', 'XBRL', 'PostgreSQL', 'React'],
     award: 'Building',
     links: [],
     detail: {
-      oneLiner: 'A source-data backbone over SEC filings + tax sources — queryable analytics, filing diffs, and the corpus the DCB Knowledge Base distills from.',
+      oneLiner: 'A source-data backbone over SEC filings + tax sources — queryable analytics, filing diffs, and the corpus DCB Public distills from.',
       status: 'Scaffold · building',
       problem:
         "Public companies' numbers live in SEC filings, but they are buried in EDGAR and XBRL. Comparing companies, or spotting what actually changed between two filings — in the financials or the risk text — is slow, manual work.",
@@ -170,8 +170,8 @@ export const projects: Project[] = [
     },
   },
   {
-    name: 'DCB Knowledge Base',
-    slug: 'dcb-knowledge-base',
+    name: 'DCB Public',
+    slug: 'dcb-public',
     blurb:
       'A money & investing knowledge base with an AI advisor: browse vetted, sourced explainers for free; ask an advisor that answers grounded in the corpus with citations. Educational, not personalized advice.',
     tech: ['FastAPI', 'RAG', 'Claude', 'Next.js', 'PostgreSQL'],
