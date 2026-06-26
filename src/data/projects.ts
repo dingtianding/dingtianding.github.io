@@ -54,8 +54,8 @@ export const projects: Project[] = [
 
   // ---- Vertical AI for finance & accounting (the DCB suite) ----
   {
-    name: 'CPA Copilot',
-    slug: 'cpa-copilot',
+    name: 'DCB Copilot',
+    slug: 'dcb-copilot',
     blurb:
       'A screen-aware desktop overlay for CPAs: hit a hotkey, it reads whatever accounting software is on screen, and answers in context — no copy-paste, no leaving your tools.',
     tech: ['Rust', 'Tauri', 'React', 'Claude vision', 'On-device RAG'],
@@ -95,39 +95,43 @@ export const projects: Project[] = [
     },
   },
   {
-    name: 'CPA Practice',
-    slug: 'cpa-practice',
+    name: 'DCB Practice',
+    slug: 'dcb-practice',
     blurb:
-      'A full-stack practice-management platform for CPA and tax firms — clients, engagements, tasks, documents, and communications in one system of record, with a PII-gated ingest pipeline.',
-    tech: ['FastAPI', 'PostgreSQL', 'Next.js', 'Docker'],
+      'An AI-native accounting firm: agents run the repetitive tax and accounting work end to end while humans review and approve — built on a practice-management platform that is the system of record, with a PII-gated ingest pipeline.',
+    tech: ['Agentic AI', 'FastAPI', 'PostgreSQL', 'Next.js'],
     award: 'Private · building',
     isPrivate: true,
     links: [],
     detail: {
-      oneLiner: 'The CPA firm as software: one system of record, with agents kept in the loop.',
+      oneLiner: 'Not software a firm uses — the firm itself, delivered as software: agents do the work, humans approve.',
       status: 'Private · building',
       problem:
-        'CPA firms run on spreadsheets, email threads, and shared drives. Client, engagement, task, and document state is scattered with no single source of truth — and no safe path to automate the repetitive work without leaking client PII.',
+        'The spend on professional services dwarfs the spend on software, and accounting, tax, and audit are among the most outsourced of all — which makes them the strongest candidates to be replaced, not just improved. The opportunity is not another tool that helps a CPA work faster; it is to deliver the service itself. But you cannot let agents touch real client work without a system of record, an audit trail, and a hard guarantee that sensitive data is handled correctly.',
       architecture: [
-        'A FastAPI + SQLAlchemy + PostgreSQL backend is the single source of truth: JWT email/password auth, and CRUD for clients, engagements, tasks, documents, and communications, with a dashboard summary on top.',
-        'A work-session ingest endpoint accepts structured records and rejects unredacted PII (SSN/EIN) with a 422 before anything is written — the gate that lets automation feed the system safely. A Next.js (App Router) front-end consumes the API; Docker Compose runs local Postgres; pytest runs in CI on GitHub Actions.',
+        "The substrate is a FastAPI + SQLAlchemy + PostgreSQL platform that is the firm's single source of truth: JWT auth, and clients, engagements, tasks, documents, and communications, with a dashboard summary. This is what makes agent work reviewable — every action lands against a real record a human can audit and approve.",
+        'On top of it, an agentic layer does the repetitive accounting work and feeds results back through a work-session ingest endpoint that rejects unredacted PII (SSN/EIN) with a 422 before anything is written — so automation can never persist sensitive data. A Next.js (App Router) front-end is the human review surface; Docker Compose runs local Postgres; pytest runs in CI.',
       ],
       stack: [
         { group: 'Backend', items: ['Python', 'FastAPI', 'SQLAlchemy', 'PostgreSQL', 'Pydantic', 'JWT'] },
-        { group: 'Frontend', items: ['Next.js (App Router)', 'React', 'TypeScript', 'Tailwind'] },
-        { group: 'Infra / quality', items: ['Docker Compose', 'pytest', 'GitHub Actions'] },
+        { group: 'AI', items: ['LLM agents', 'tool use', 'human-in-the-loop review'] },
+        { group: 'Frontend / infra', items: ['Next.js (App Router)', 'React', 'TypeScript', 'Docker', 'pytest', 'GitHub Actions'] },
       ],
       challenges: [
+        {
+          title: 'Agents that touch real work, safely',
+          body: 'Letting agents run accounting tasks end to end requires every action to be reviewable and reversible — landed against a system of record a human approves, not a black box that just emits an answer.',
+        },
         {
           title: 'PII-gated ingest',
           body: 'Unredacted SSN/EIN in an ingested work session is rejected with a 422 at the boundary, so the automated path can never persist sensitive data — covered by integration tests against an in-memory SQLite override so CI needs no Postgres.',
         },
         {
           title: 'A multi-entity domain model',
-          body: 'Clients, engagements, tasks, documents, and communications relate in ways that mirror how a real firm tracks work — modeled to support a dashboard summary and to extend to professional services beyond CPA/tax over time.',
+          body: 'Clients, engagements, tasks, documents, and communications relate the way a real firm tracks work — the coherent picture an agent needs to operate over, rather than scattered files.',
         },
       ],
-      role: 'Sole engineer — auth, the data model and API, the ingest pipeline and its test suite, and the web UI.',
+      role: 'Sole engineer — the platform (auth, data model, API), the PII-gated ingest pipeline and its test suite, and the agentic layer and review UI.',
     },
   },
   {
@@ -199,6 +203,48 @@ export const projects: Project[] = [
         },
       ],
       role: 'Sole engineer — corpus model, the RAG advisor, the entitlement link, and the marketing/KB front-end.',
+    },
+  },
+
+  {
+    name: 'Open Claw Life Coach',
+    slug: 'open-claw-life-coach',
+    blurb:
+      'A personal operating system: an agent that continuously accumulates context across goals, career, projects, health, finance, and journal — with layered memory, a decision log, and an automatic weekly review — so it understands not just what you did, but why.',
+    tech: ['LLM agents', 'Memory', 'Markdown', 'Personal infra'],
+    award: 'Personal · building',
+    isPrivate: true,
+    links: [],
+    detail: {
+      oneLiner: 'A personal operating system — an agent that accumulates the context of your life and reasons over it.',
+      status: 'Personal · building',
+      problem:
+        "Chatbots forget. A genuinely useful personal agent needs durable, structured context — goals, career, health, finances, projects, and the reasoning behind decisions — collected automatically rather than re-typed every session. The hard part isn't the model; it's the context system around it.",
+      architecture: [
+        'Context is organized as a Life OS — version-controlled Markdown across Goals, Career, Projects, Health, Finance, Relationships, Journal, Knowledge, and Preferences. Plain files keep the user in control and make the system easy to evolve without locking into a particular database or note app.',
+        "Memory works in three layers: short-term (today's tasks, the current sprint, live conversations), medium-term (this week's goals, active projects, recruiters in flight), and long-term (career history, résumé, coding style, health trends, interview stories). A weekly review rolls short-term context into long-term, updates goals, and archives completed work.",
+        'A decision log records every important decision with its reasoning, the alternatives considered, and a review date — so over a year the agent understands why choices were made, not just what happened. Context collection is automated through a prioritized set of integrations (GitHub activity, Calendar, Gmail, a job-application tracker, fitness data, daily journal) layered in over time.',
+      ],
+      stack: [
+        { group: 'Core', items: ['LLM agent', 'tool use', 'version-controlled Markdown'] },
+        { group: 'Memory', items: ['short / medium / long-term tiers', 'decision log', 'weekly review'] },
+        { group: 'Integrations (roadmap)', items: ['GitHub', 'Google Calendar', 'Gmail', 'fitness data', 'job tracker'] },
+      ],
+      challenges: [
+        {
+          title: 'Automating context collection',
+          body: 'The value is proportional to how little you have to type. Pulling context from GitHub, calendar, email, workouts, and notes — while keeping the user in control of it — is the core engineering problem.',
+        },
+        {
+          title: 'Layered memory that stays useful',
+          body: "Promoting the right short-term context into long-term memory (and archiving the rest) on a weekly cadence, so the agent's working set stays relevant instead of bloating.",
+        },
+        {
+          title: 'A decision log with reasoning',
+          body: 'Recording not just what was decided but why — with alternatives and a review date — so the system can reflect on past reasoning, not just past events.',
+        },
+      ],
+      role: 'Sole designer and engineer — the Life OS schema, the memory tiers, the decision log, and the integration pipeline.',
     },
   },
 
