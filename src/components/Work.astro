@@ -37,13 +37,10 @@ const items = projects.filter((p) => p.name !== 'Xelsius');
               {p.tech.map((t) => <li>{t}</li>)}
             </ul>
             <div class="card__links">
-              {p.slug && p.detail && (
-                <a class="card__case" href={`/work/${p.slug}`}>Case study →</a>
-              )}
               {p.links.map((l) => (
                 <a href={l.href} target="_blank" rel="noopener">{l.label} ↗</a>
               ))}
-              {p.links.length === 0 && !p.detail && p.isPrivate && (
+              {p.links.length === 0 && p.isPrivate && (
                 <span class="card__private">Private repository</span>
               )}
             </div>
@@ -172,8 +169,6 @@ const items = projects.filter((p) => p.name !== 'Xelsius');
     transition: color 0.2s ease;
   }
   .card__links a:hover { color: var(--signal); }
-  .card__case { color: var(--signal) !important; }
-  .card__case:hover { opacity: 0.75; }
   .card__private {
     font-family: var(--font-mono);
     font-size: 0.78rem;
