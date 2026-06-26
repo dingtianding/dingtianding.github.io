@@ -2,10 +2,14 @@
 import Base from '../../layouts/Base.astro';
 import { projects, type Project } from '../../data/projects';
 
+// Case-study pages are DISABLED — returning no routes means none are built,
+// so /work/<slug> 404s. The template and the per-product `detail` content in
+// projects.ts are kept intact; re-enable by restoring the filter below.
 export function getStaticPaths() {
-  return projects
-    .filter((p) => p.slug && p.detail)
-    .map((p) => ({ params: { slug: p.slug! }, props: { project: p } }));
+  return [];
+  // return projects
+  //   .filter((p) => p.slug && p.detail)
+  //   .map((p) => ({ params: { slug: p.slug! }, props: { project: p } }));
 }
 
 const { project } = Astro.props as { project: Project };
