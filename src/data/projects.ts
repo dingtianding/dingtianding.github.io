@@ -135,16 +135,16 @@ export const projects: Project[] = [
     },
   },
   {
-    name: 'FilingLens',
-    slug: 'filinglens',
+    name: 'DCB Research',
+    slug: 'dcb-research',
     blurb:
-      'SEC/EDGAR filing analytics: ingest submissions and XBRL company facts, normalize them into Postgres, then diff filings and compare companies on revenue, margin, debt, liquidity, and risk-text changes.',
+      'A research platform over SEC filings, XBRL company facts, and federal/state tax sources: ingest, normalize into Postgres, then search, diff filings, and compare companies on revenue, margin, debt, liquidity, and risk-text changes. The source-data backbone the DCB Knowledge Base distills from.',
     tech: ['Python', 'FastAPI', 'XBRL', 'PostgreSQL', 'React'],
-    award: 'Public · early',
+    award: 'Building',
     links: [],
     detail: {
-      oneLiner: 'Turning EDGAR + XBRL into queryable analytics: filing diffs and company comparison.',
-      status: 'Public · scaffold stage',
+      oneLiner: 'A source-data backbone over SEC filings + tax sources — queryable analytics, filing diffs, and the corpus the DCB Knowledge Base distills from.',
+      status: 'Scaffold · building',
       problem:
         "Public companies' numbers live in SEC filings, but they are buried in EDGAR and XBRL. Comparing companies, or spotting what actually changed between two filings — in the financials or the risk text — is slow, manual work.",
       architecture: [
