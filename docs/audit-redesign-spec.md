@@ -1,8 +1,10 @@
 # Portfolio redesign — "The Books" concept spec
 
-Status: proposed, awaiting approval.
+Status: **implemented** on `feat/showcase-motion` (all five rollout steps done).
 Author: Dean + Claude.
-Branch target: `feat/showcase-motion` (or a fresh `feat/the-books`).
+Decisions taken: continue on `feat/showcase-motion`; Work shows language + verified +
+hand-coded + last-commit, stars only when ≥3; off-the-clock is text-only; nav labels
+stay literal; off-the-clock is an un-numbered "off-book" entry rather than a 06 account.
 
 ---
 
@@ -129,11 +131,11 @@ Everything inherits the existing GSAP + Lenis + reduced-motion + no-JS disciplin
 
 ## 9. Proposed rollout order
 
-1. GitHub data loader + Work rebuilt as verified line-items (biggest proof-of-value; independent).
-2. Command palette island.
-3. Section relabeling to the audit-cycle spine (low risk, high cohesion).
-4. Off-the-clock human beat.
-5. Scheduled rebuild workflow + final scan/perf/a11y pass.
+1. ✅ GitHub data loader + Work rebuilt as verified line-items.
+2. ✅ Command palette island.
+3. ✅ Section relabeling to the audit-cycle spine.
+4. ✅ Off-the-clock human beat.
+5. ✅ Scheduled rebuild workflow + token (final perf/a11y pass pending real-device review).
 
 Each step ships behind the branch and is reviewable on its own.
 
