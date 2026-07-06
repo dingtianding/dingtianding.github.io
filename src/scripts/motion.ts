@@ -126,7 +126,7 @@ if (reduceMotion) {
     gsap.set(cards, { opacity: 0, y: 44 });
     ScrollTrigger.batch(cards, {
       start: 'top 90%',
-      onEnter: (els) =>
+      onEnter: (els) => {
         gsap.to(els, {
           opacity: 1,
           y: 0,
@@ -134,7 +134,22 @@ if (reduceMotion) {
           stagger: 0.1,
           ease: 'power3.out',
           overwrite: true,
-        }),
+        });
+        // "verified ✓" stamps in after its card settles.
+        const stamps = els
+          .map((e) => e.querySelector<HTMLElement>('.led--ok'))
+          .filter((s): s is HTMLElement => s !== null);
+        if (stamps.length) {
+          gsap.from(stamps, {
+            scale: 0.5,
+            opacity: 0,
+            duration: 0.5,
+            delay: 0.35,
+            stagger: 0.1,
+            ease: 'back.out(2.2)',
+          });
+        }
+      },
     });
   }
 

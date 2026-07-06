@@ -1,8 +1,17 @@
 ---
 import { projects } from '../data/projects';
+import { repoForLinks, fetchRepoStats, relativeTime } from '../data/github';
 
 // Xelsius is showcased in the "Building" section; the rest live here.
 const items = projects.filter((p) => p.name !== 'Xelsius');
+
+// Pull live GitHub figures at build time and merge them in by repo,
+// so each project reads as a posted, verified ledger entry.
+const repoByName = new Map(items.map((p) => [p.name, repoForLinks(p.links)] as const));
+const stats = await fetchRepoStats(
+  [...repoByName.values()].filter((r): r is string => r !== null),
+);
+const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByName.get(p.name)!] : undefined }));
 ---
 
 <section class="section work" id="work">
@@ -13,7 +22,7 @@ const items = projects.filter((p) => p.name !== 'Xelsius');
     </div>
 
     <div class="work__grid">
-      {items.map((p) => (
+      {rows.map(({ p, st }) => (
         <article class="card" data-reveal>
           {p.image && (
             <div class="card__media">
@@ -36,14 +45,32 @@ const items = projects.filter((p) => p.name !== 'Xelsius');
             <ul class="card__tech">
               {p.tech.map((t) => <li>{t}</li>)}
             </ul>
-            <div class="card__links">
-              {p.links.map((l) => (
-                <a href={l.href} target="_blank" rel="noopener">{l.label} ↗</a>
-              ))}
-              {p.links.length === 0 && p.isPrivate && (
-                <span class="card__private">Private repository</span>
-              )}
-            </div>
+
+            {/* Live, build-time GitHub figures rendered as an audited
+                ledger line — verified = links to a real public repo. */}
+            {(st || p.isPrivate) && (
+              <div class="card__ledger" aria-label="Repository facts">
+                {st?.language && (
+                  <span class="led"><span class="led__k">lang</span> {st.language}</span>
+                )}
+                {st && st.stars >= 3 && (
+                  <span class="led"><span class="led__k">★</span> {st.stars}</span>
+                )}
+                {st?.pushedAt && (
+                  <span class="led"><span class="led__k">last</span> {relativeTime(st.pushedAt)}</span>
+                )}
+                {st && <span class="led led--ok">verified ✓</span>}
+                {!st && p.isPrivate && <span class="led led--muted">private · on file</span>}
+              </div>
+            )}
+
+            {p.links.length > 0 && (
+              <div class="card__links">
+                {p.links.map((l) => (
+                  <a href={l.href} target="_blank" rel="noopener">{l.label} ↗</a>
+                ))}
+              </div>
+            )}
           </div>
         </article>
       ))}
@@ -156,6 +183,27 @@ const items = projects.filter((p) => p.name !== 'Xelsius');
     color: var(--text-faint);
   }
   .card__tech li::before { content: '· '; color: var(--signal); }
+  /* Audited ledger strip — live GitHub figures as line-items. */
+  .card__ledger {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.9rem;
+    padding-top: 0.65rem;
+    border-top: 1px dashed var(--line);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-dim);
+  }
+  .led { display: inline-flex; align-items: center; gap: 0.4em; white-space: nowrap; }
+  .led__k { color: var(--text-faint); }
+  .led--ok {
+    margin-left: auto;
+    color: var(--add);
+    transform-origin: center;
+  }
+  .led--muted { margin-left: auto; color: var(--text-faint); font-style: italic; }
+
   .card__links {
     display: flex;
     gap: 1.2rem;
@@ -163,6 +211,11 @@ const items = projects.filter((p) => p.name !== 'Xelsius');
     border-top: 1px solid var(--line);
     font-family: var(--font-mono);
     font-size: 0.8rem;
+  }
+  /* When a ledger strip is present, avoid a double rule. */
+  .card__ledger + .card__links {
+    border-top: none;
+    padding-top: 0.7rem;
   }
   .card__links a {
     color: var(--text-dim);
