@@ -44,6 +44,9 @@ if (reduceMotion) {
 
   // ---- Lenis smooth scroll, driven by GSAP's ticker ----
   const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
+  // Exposed so the command palette can pause scroll while open and
+  // route section jumps through the same smooth glide.
+  (window as any).__lenis = lenis;
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((time) => lenis.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);

@@ -1,0 +1,98 @@
+---
+// The human beat. Deliberately "off-book" — outside the numbered
+// accounts — so the audit-system metaphor pauses to be a person.
+const entries = [
+  { k: 'Iron', v: 'progressive overload' },
+  { k: 'Choreo', v: "reps until it's clean" },
+  { k: 'Cadence', v: 'most mornings' },
+];
+---
+
+<section class="section offclock" id="offclock">
+  <div class="shell offclock__grid">
+    <div class="offclock__copy">
+      <span class="eyebrow eyebrow--off" data-reveal>off-book · non-billable</span>
+      <h2 class="section-title" data-reveal>Non-billable hours.</h2>
+      <p class="offclock__body" data-reveal>
+        Entries that don't reconcile to revenue — and don't need to. Away from the
+        keyboard it's heavy compound lifts and K-pop choreography: two deterministic
+        systems I get to debug with my body instead of a compiler.
+      </p>
+    </div>
+
+    <aside class="offclock__ledger" data-reveal aria-label="Off-book entries">
+      {entries.map((row) => (
+        <div class="ledger-row">
+          <span class="ledger-row__k">{row.k}</span>
+          <span class="ledger-row__dots"></span>
+          <span class="ledger-row__v">{row.v}</span>
+        </div>
+      ))}
+      <div class="offclock__stamp">∅ does not affect the bottom line</div>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .offclock {
+    border-top: 1px solid var(--line);
+    background: radial-gradient(70% 120% at 0% 0%, rgba(70, 192, 90, 0.03), transparent 55%);
+  }
+  .offclock__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+  /* The off-book eyebrow is green (add), not gold — it is not a
+     numbered account, it is an entry that never touches revenue. */
+  .eyebrow--off { color: var(--add); }
+  .eyebrow--off::before { background: var(--add); }
+
+  .offclock__body {
+    margin-top: 1.2rem;
+    max-width: 52ch;
+    color: var(--text-dim);
+    font-size: 1.08rem;
+    line-height: 1.6;
+  }
+
+  .offclock__ledger {
+    display: grid;
+    gap: 0.9rem;
+    align-content: start;
+    padding: 1.6rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-elev);
+  }
+  .offclock__stamp {
+    margin-top: 0.4rem;
+    padding-top: 0.9rem;
+    border-top: 1px dashed var(--line);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--add);
+    opacity: 0.75;
+  }
+
+  /* Ledger rows (mirrors the About aside; scoped styles don't cross). */
+  .ledger-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+  }
+  .ledger-row__k { color: var(--text-faint); white-space: nowrap; }
+  .ledger-row__dots {
+    border-bottom: 1px dotted var(--line-strong);
+    transform: translateY(-0.25em);
+  }
+  .ledger-row__v { color: var(--add); white-space: nowrap; }
+
+  @media (min-width: 880px) {
+    .offclock__grid { grid-template-columns: 1.6fr 1fr; }
+  }
+</style>
