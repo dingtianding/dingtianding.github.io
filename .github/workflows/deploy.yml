@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Weekly rebuild so the build-time GitHub figures in the Work
+  # section stay current without a manual push.
+  schedule:
+    - cron: '0 6 * * 1' # Mondays, 06:00 UTC
 
 permissions:
   contents: read
@@ -26,6 +30,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+        env:
+          # Higher GitHub API rate limit for the build-time repo fetch.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

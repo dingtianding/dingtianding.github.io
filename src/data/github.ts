@@ -44,8 +44,11 @@ export async function fetchRepoStats(slugs: string[]): Promise<Record<string, Re
     'User-Agent': 'dingtianding-portfolio-build',
   };
   // Optional: bumps the rate limit from 60→5000/hr inside CI. Never
-  // shipped to the client — this file only runs at build time.
-  const token = import.meta.env.GITHUB_TOKEN;
+  // shipped to the client — this file only runs at build time. Read
+  // from both Astro's env and process.env so the Actions-provided
+  // token is picked up regardless of how it is injected.
+  const token =
+    import.meta.env.GITHUB_TOKEN || (globalThis as any).process?.env?.GITHUB_TOKEN;
   if (token) headers.Authorization = `Bearer ${token}`;
 
   const out: Record<string, RepoStats> = {};
