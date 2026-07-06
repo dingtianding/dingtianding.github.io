@@ -21,7 +21,7 @@ const links = [
         </a>
       ))}
     </nav>
-    <a class="nav__cta" href="/resume.pdf" target="_blank" rel="noopener">Résumé ↗</a>
+    <a class="nav__cta" href="/resume.pdf" target="_blank" rel="noopener" data-magnetic>Résumé ↗</a>
   </div>
 </header>
 
@@ -75,6 +75,20 @@ const links = [
     position: relative;
   }
   .nav__links a:hover { color: var(--text); }
+  .nav__links a.is-active { color: var(--text); }
+  .nav__links a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    height: 1px;
+    width: 100%;
+    background: var(--signal);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .nav__links a.is-active::after { transform: scaleX(1); }
   .nav__num {
     font-family: var(--font-mono);
     font-size: 0.62rem;
