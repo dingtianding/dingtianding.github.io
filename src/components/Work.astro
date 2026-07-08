@@ -19,6 +19,9 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
     <div class="work__head">
       <span class="eyebrow" data-reveal>03 / Work — posted &amp; verified</span>
       <h2 class="section-title" data-reveal>Things I've shipped.</h2>
+      <p class="work__more" data-reveal>
+        The DCB projects are one system — <a href="/dcb-system">see how they fit together →</a>
+      </p>
     </div>
 
     <div class="work__grid">
@@ -80,6 +83,19 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
 
 <style>
   .work__head { margin-bottom: 2.6rem; }
+  .work__more {
+    margin-top: 0.9rem;
+    font-family: var(--font-mono);
+    font-size: 0.86rem;
+    color: var(--text-dim);
+  }
+  .work__more a {
+    color: var(--text);
+    border-bottom: 1px solid var(--signal);
+    padding-bottom: 1px;
+    transition: color 0.2s ease;
+  }
+  .work__more a:hover { color: var(--signal); }
   .work__grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));

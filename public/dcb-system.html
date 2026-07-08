@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DCB — System Design</title>
+</head>
+<body>
+<style>
+  :root {
+    --canvas: #fbfbf8; --panel: #ffffff; --ink: #1b1b1f; --muted: #6b6b73;
+    --grid: rgba(20, 20, 30, 0.06); --edge: rgba(20, 20, 30, 0.14);
+    --yellow-s: #e8890c; --yellow-f: #fff3bf; --blue-s: #1971c2; --blue-f: #d3ebff;
+    --green-s: #2f9e44; --green-f: #d6f9dd; --green-zone: rgba(47, 158, 68, 0.06);
+    --violet-s: #6741d9; --violet-f: #e7ddff; --grey-s: #5a6069; --grey-f: #eef0f2;
+    --pink-s: #d83a3a; --pink-f: #ffe3e3;
+    --hand: "Comic Sans MS", "Chalkboard SE", "Bradley Hand", "Segoe Print", ui-rounded, cursive;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --canvas: #14151a; --panel: #1a1c22; --ink: #e7e7ec; --muted: #9a9aa6;
+      --grid: rgba(255, 255, 255, 0.06); --edge: rgba(255, 255, 255, 0.16);
+      --yellow-s: #ffd43b; --yellow-f: rgba(255,212,59,.14); --blue-s: #74c0fc; --blue-f: rgba(116,192,252,.15);
+      --green-s: #69db7c; --green-f: rgba(105,219,124,.15); --green-zone: rgba(105,219,124,.05);
+      --violet-s: #b197fc; --violet-f: rgba(177,151,252,.17); --grey-s: #aeb4bd; --grey-f: rgba(174,180,189,.10);
+      --pink-s: #ff8787; --pink-f: rgba(255,135,135,.15);
+    }
+  }
+  :root[data-theme="light"] {
+    --canvas: #fbfbf8; --panel: #ffffff; --ink: #1b1b1f; --muted: #6b6b73;
+    --grid: rgba(20,20,30,.06); --edge: rgba(20,20,30,.14);
+    --yellow-s: #e8890c; --yellow-f: #fff3bf; --blue-s: #1971c2; --blue-f: #d3ebff;
+    --green-s: #2f9e44; --green-f: #d6f9dd; --green-zone: rgba(47,158,68,.06);
+    --violet-s: #6741d9; --violet-f: #e7ddff; --grey-s: #5a6069; --grey-f: #eef0f2;
+    --pink-s: #d83a3a; --pink-f: #ffe3e3;
+  }
+  :root[data-theme="dark"] {
+    --canvas: #14151a; --panel: #1a1c22; --ink: #e7e7ec; --muted: #9a9aa6;
+    --grid: rgba(255,255,255,.06); --edge: rgba(255,255,255,.16);
+    --yellow-s: #ffd43b; --yellow-f: rgba(255,212,59,.14); --blue-s: #74c0fc; --blue-f: rgba(116,192,252,.15);
+    --green-s: #69db7c; --green-f: rgba(105,219,124,.15); --green-zone: rgba(105,219,124,.05);
+    --violet-s: #b197fc; --violet-f: rgba(177,151,252,.17); --grey-s: #aeb4bd; --grey-f: rgba(174,180,189,.10);
+    --pink-s: #ff8787; --pink-f: rgba(255,135,135,.15);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1500px; margin: 0 auto; padding: 28px clamp(16px,4vw,40px) 56px; }
+  header { margin-bottom: 18px; }
+  h1 { font-family: var(--hand); font-weight: 700; font-size: clamp(1.7rem,1.2rem + 2vw,2.6rem); margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+  .sub { color: var(--muted); font-size: 0.98rem; margin-top: 6px; max-width: 70ch; line-height: 1.5; }
+  .sub b { color: var(--ink); font-weight: 600; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 16px; font-size: 0.82rem; color: var(--muted); align-items: center; }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .swatch { width: 15px; height: 15px; border-radius: 4px; border: 2px solid; }
+  .ln { width: 26px; height: 0; border-top: 2.5px solid var(--edge); }
+  .ln.dash { border-top-style: dashed; }
+  .db-glyph { font-family: var(--hand); color: var(--ink); }
+  .lg-h { color: var(--ink); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.02em; margin-right: 2px; }
+  .ic { width: 21px; height: 16px; flex: none; }
+  .stage-scroll { overflow-x: auto; margin-top: 22px; padding-bottom: 6px; }
+  .stage { min-width: 1160px; background: radial-gradient(var(--grid) 1.4px, transparent 1.4px); background-size: 26px 26px; background-position: -1px -1px; border: 2px solid var(--edge); border-radius: 16px; padding: 8px; }
+  svg.diagram { width: 100%; height: auto; display: block; }
+
+  .t-title { font-family: var(--hand); font-weight: 700; font-size: 20px; }
+  .t-eyebrow { font-family: var(--hand); font-size: 13px; }
+  .t-desc { font-family: var(--sans); font-size: 12px; fill: var(--ink); }
+  .t-stack { font-family: var(--sans); font-size: 10.5px; fill: var(--muted); }
+  .t-note { font-family: var(--hand); font-size: 11.5px; fill: var(--muted); }
+  .t-db { font-family: var(--sans); font-size: 10px; fill: var(--muted); }
+  .t-src-title { font-family: var(--hand); font-weight: 700; font-size: 15px; fill: var(--ink); }
+  .t-src-sub { font-family: var(--sans); font-size: 10.5px; fill: var(--muted); }
+  .t-user { font-family: var(--hand); font-size: 14px; fill: var(--ink); }
+  .t-zone { font-family: var(--hand); font-weight: 700; font-size: 17px; fill: var(--green-s); }
+  .t-zone-sub { font-family: var(--sans); font-size: 11px; fill: var(--muted); }
+  .t-node { font-family: var(--hand); font-weight: 700; font-size: 15px; fill: var(--ink); }
+  .t-nodesub { font-family: var(--sans); font-size: 11px; fill: var(--muted); }
+  .t-arrow { font-family: var(--sans); font-size: 10.5px; fill: var(--ink); }
+  .badge { font-family: var(--sans); font-size: 10px; fill: var(--ink); }
+  .pill { fill: var(--panel); stroke: var(--edge); stroke-width: 1.4; }
+  .stage { opacity: 0; transform: translateY(10px); animation: rise 0.5s ease-out 0.05s forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .stage { animation: none; opacity: 1; transform: none; } }
+  footer { margin-top: 22px; color: var(--muted); font-size: 0.82rem; line-height: 1.6; max-width: 96ch; }
+  footer b { color: var(--ink); font-weight: 600; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>DCB — how the suite fits together</h1>
+    <p class="sub">
+      One thesis, four products: <b>AI-native services for accounting &amp; finance</b> — agents do the work, humans approve.
+      <b>Research</b> grounds the knowledge, <b>Copilot</b> observes the work, and the firm's knowledge base
+      <b>learns continuously</b> from both. Each product owns its own database; they integrate by API and entitlement,
+      never a shared DB.
+    </p>
+    <div class="legend">
+      <b class="lg-h">Node types</b>
+      <span><svg class="ic" viewBox="0 0 24 16"><rect x="1.5" y="1.5" width="21" height="13" rx="4" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.6"/></svg>App / service</span>
+      <span><svg class="ic" viewBox="0 0 28 16"><rect x="1.5" y="1.5" width="25" height="13" rx="6.5" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="1.6"/></svg>👤 User</span>
+      <span><svg class="ic" viewBox="0 0 22 18"><ellipse cx="11" cy="4.5" rx="8.5" ry="3" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.5"/><path d="M2.5 4.5 v9 a8.5 3 0 0 0 17 0 v-9" fill="none" stroke="var(--ink)" stroke-width="1.5"/></svg>Database</span>
+      <span><svg class="ic" viewBox="0 0 24 16"><rect x="1.5" y="1.5" width="21" height="13" rx="4" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="1.6"/></svg>External source / service</span>
+    </div>
+    <div class="legend">
+      <b class="lg-h">Products</b>
+      <span><i class="swatch" style="border-color:var(--yellow-s); background:var(--yellow-f)"></i>Research</span>
+      <span><i class="swatch" style="border-color:var(--blue-s); background:var(--blue-f)"></i>Public</span>
+      <span><i class="swatch" style="border-color:var(--green-s); background:var(--green-f)"></i>Practice</span>
+      <span><i class="swatch" style="border-color:var(--violet-s); background:var(--violet-f)"></i>Copilot</span>
+    </div>
+    <div class="legend">
+      <b class="lg-h">Flows</b>
+      <span><i class="ln"></i>data / request</span>
+      <span><i class="ln dash"></i>entitlement · planned · learn ↻</span>
+    </div>
+  </header>
+
+  <div class="stage-scroll">
+    <div class="stage">
+      <svg class="diagram" viewBox="0 0 1440 1050" role="img"
+           aria-label="Detailed system diagram of the DCB suite showing Research grounding a continuously-learned firm knowledge base, Copilot feeding observed work context, and Practice's agents and human review.">
+        <defs>
+          <filter id="rough" x="-4%" y="-4%" width="108%" height="108%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.011 0.013" numOctaves="2" seed="6" result="n"/>
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--ink)"/></marker>
+          <marker id="arrowMuted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/></marker>
+          <marker id="arrowGreen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--green-s)"/></marker>
+        </defs>
+
+        <!-- ===== ROUGHENED SHAPES ===== -->
+        <g filter="url(#rough)" fill="none">
+          <!-- Practice zone container (drawn first, behind) -->
+          <rect x="352" y="516" width="716" height="474" rx="20" fill="var(--green-zone)" stroke="var(--green-s)" stroke-width="2.6"/>
+
+          <!-- sources -->
+          <rect x="40" y="208" width="158" height="62" rx="12" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.4"/>
+          <rect x="40" y="300" width="158" height="62" rx="12" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.4"/>
+          <!-- screen input -->
+          <rect x="60" y="544" width="168" height="50" rx="12" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.4"/>
+
+          <!-- research + public -->
+          <rect x="248" y="150" width="262" height="214" rx="16" fill="var(--yellow-f)" stroke="var(--yellow-s)" stroke-width="2.8"/>
+          <rect x="606" y="150" width="298" height="214" rx="16" fill="var(--blue-f)" stroke="var(--blue-s)" stroke-width="2.8"/>
+          <!-- copilot -->
+          <rect x="60" y="612" width="232" height="214" rx="16" fill="var(--violet-f)" stroke="var(--violet-s)" stroke-width="2.8"/>
+
+          <!-- shared services -->
+          <rect x="1010" y="170" width="300" height="94" rx="14" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.4"/>
+          <rect x="1010" y="300" width="300" height="58" rx="12" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.4"/>
+          <!-- bank (external data source) -->
+          <rect x="1100" y="610" width="222" height="72" rx="12" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.4"/>
+
+          <!-- practice inner nodes -->
+          <rect x="392" y="636" width="186" height="84" rx="13" fill="var(--green-f)" stroke="var(--green-s)" stroke-width="2.4"/>
+          <rect x="392" y="772" width="186" height="72" rx="22" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="2.4"/>
+          <rect x="636" y="626" width="238" height="182" rx="14" fill="var(--green-f)" stroke="var(--green-s)" stroke-width="3.4"/>
+
+          <!-- user chips -->
+          <rect x="612" y="40" width="192" height="48" rx="14" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="2.2"/>
+          <rect x="852" y="40" width="226" height="48" rx="14" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="2.2"/>
+          <rect x="150" y="952" width="232" height="50" rx="14" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="2.2"/>
+
+          <!-- Claude badges -->
+          <rect x="428" y="160" width="80" height="25" rx="9" fill="var(--panel)" stroke="var(--yellow-s)" stroke-width="1.7"/>
+          <rect x="820" y="160" width="80" height="25" rx="9" fill="var(--panel)" stroke="var(--blue-s)" stroke-width="1.7"/>
+          <rect x="200" y="622" width="80" height="25" rx="9" fill="var(--panel)" stroke="var(--violet-s)" stroke-width="1.7"/>
+
+          <!-- DB cylinders -->
+          <g fill="var(--yellow-f)" stroke="var(--yellow-s)" stroke-width="2.2"><ellipse cx="452" cy="322" rx="50" ry="8.5"/><path d="M402 322 v20 a50 8.5 0 0 0 100 0 v-20"/></g>
+          <g fill="var(--blue-f)" stroke="var(--blue-s)" stroke-width="2.2"><ellipse cx="834" cy="322" rx="56" ry="8.5"/><path d="M778 322 v20 a56 8.5 0 0 0 112 0 v-20"/></g>
+          <g fill="var(--green-f)" stroke="var(--green-s)" stroke-width="2.4"><ellipse cx="755" cy="756" rx="46" ry="8"/><path d="M709 756 v22 a46 8 0 0 0 92 0 v-22"/></g>
+          <g fill="var(--green-f)" stroke="var(--green-s)" stroke-width="2.2"><ellipse cx="972" cy="712" rx="52" ry="8.5"/><path d="M920 712 v22 a52 8.5 0 0 0 104 0 v-22"/></g>
+
+          <!-- ===== connectors ===== -->
+          <!-- sources -> research -->
+          <path d="M198 239 C 220 239 228 246 246 250" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+          <path d="M198 331 C 220 331 228 280 246 268" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+          <!-- research -> public (distilled, planned) -->
+          <path d="M510 244 C 545 244 570 244 604 244" stroke="var(--ink)" stroke-width="2.4" stroke-dasharray="7 7" stroke-linecap="round" marker-end="url(#arrow)"/>
+          <!-- research -> firm KB (how a task should be performed) -->
+          <path d="M470 364 C 540 440 600 540 662 622" stroke="var(--yellow-s)" stroke-width="2.8" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
+          <!-- public -> stripe -->
+          <path d="M904 316 C 940 326 958 336 1008 340" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+          <!-- practice -> public (entitlement) -->
+          <path d="M816 516 C 816 460 816 410 816 366" stroke="var(--muted)" stroke-width="2.4" stroke-dasharray="7 7" stroke-linecap="round" marker-end="url(#arrowMuted)"/>
+          <!-- screen -> copilot -->
+          <path d="M144 594 C 150 600 150 606 150 610" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+          <!-- copilot -> agents (work context) -->
+          <path d="M292 706 C 330 706 356 684 390 678" stroke="var(--violet-s)" stroke-width="2.8" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
+          <!-- firm KB -> agents (retrieve how-to) -->
+          <path d="M636 690 C 612 690 598 694 580 696" stroke="var(--green-s)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
+          <!-- agents -> human review -->
+          <path d="M486 720 C 486 740 486 754 486 770" stroke="var(--green-s)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
+          <!-- human review -> system of record -->
+          <path d="M578 800 C 720 792 860 760 918 726" stroke="var(--green-s)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
+          <!-- outcomes -> firm KB (continuous learning loop) -->
+          <path d="M560 786 C 640 792 706 792 748 812" stroke="var(--green-s)" stroke-width="2.4" stroke-dasharray="6 6" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
+          <!-- general public -> public -->
+          <path d="M706 88 C 706 108 710 128 716 148" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+          <!-- firm clients -> public (comped) -->
+          <path d="M952 88 C 912 110 878 128 856 148" stroke="var(--muted)" stroke-width="2.2" stroke-dasharray="6 7" stroke-linecap="round" marker-end="url(#arrowMuted)"/>
+          <!-- CPAs -> copilot & human review -->
+          <path d="M240 952 C 210 900 190 860 176 828" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+          <path d="M366 958 C 420 920 448 878 470 846" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+          <!-- bank -> practice (payments reconciliation) -->
+          <path d="M1100 650 C 1072 664 1050 686 1028 706" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+        </g>
+
+        <!-- ===== CRISP TEXT ===== -->
+        <g>
+          <!-- sources -->
+          <text class="t-src-title" x="56" y="235">SEC EDGAR</text><text class="t-src-sub" x="56" y="254">filings · XBRL facts</text>
+          <text class="t-src-title" x="56" y="327">Federal &amp; state</text><text class="t-src-sub" x="56" y="346">tax sources</text>
+          <text class="t-src-title" x="76" y="568" font-size="13">🖥 your screen</text><text class="t-src-sub" x="76" y="585">tax sw · Excel · PDFs</text>
+
+          <!-- research -->
+          <text class="t-title" x="270" y="190" fill="var(--yellow-s)">DCB Research</text>
+          <text class="t-eyebrow" x="270" y="209" fill="var(--muted)">data backbone · knowledge source</text>
+          <text class="t-desc" x="270" y="234">Ingests SEC filings + tax sources,</text>
+          <text class="t-desc" x="270" y="251">grounds them, and serves as the</text>
+          <text class="t-desc" x="270" y="268">knowledge source for the whole suite.</text>
+          <text class="t-stack" x="270" y="294">FastAPI · Postgres · Claude/OpenAI (BYOK)</text>
+          <text class="badge" x="468" y="177" text-anchor="middle">🤖 Claude</text>
+          <text class="t-db" x="452" y="362" text-anchor="middle">its corpus</text>
+
+          <!-- public -->
+          <text class="t-title" x="628" y="190" fill="var(--blue-s)">DCB Public</text>
+          <text class="t-eyebrow" x="628" y="209" fill="var(--muted)">consumer front door</text>
+          <text class="t-desc" x="628" y="234">Vetted, cited money &amp; investing KB</text>
+          <text class="t-desc" x="628" y="251">plus a grounded AI advisor.</text>
+          <text class="t-desc" x="628" y="268">Educational, not advice.</text>
+          <text class="t-stack" x="628" y="294">Next.js · FastAPI · Postgres · Claude · Stripe</text>
+          <text class="badge" x="860" y="177" text-anchor="middle">🤖 Claude</text>
+          <text class="t-db" x="834" y="362" text-anchor="middle">Public KB · published, cited</text>
+
+          <!-- copilot -->
+          <text class="t-title" x="82" y="652" fill="var(--violet-s)">DCB Copilot</text>
+          <text class="t-eyebrow" x="82" y="670" fill="var(--muted)">the screen assistant</text>
+          <text class="t-desc" x="82" y="694">Watches the work being performed —</text>
+          <text class="t-desc" x="82" y="711">reads on-screen tax sw / Excel / PDFs.</text>
+          <text class="t-stack" x="82" y="736">Rust · Tauri · React · Claude vision</text>
+          <text class="t-note" x="82" y="762">on-device · BYOK · no server DB</text>
+          <text class="t-note" x="82" y="792">▤ local activity buffer</text>
+          <text class="badge" x="240" y="639" text-anchor="middle">🤖 Claude</text>
+
+          <!-- shared services -->
+          <text class="t-src-title" x="1030" y="204" font-size="16.5">Anthropic · Claude</text>
+          <text class="t-src-sub" x="1030" y="226">external LLM · bring-your-own-key</text>
+          <text class="t-src-sub" x="1030" y="248">used by Research · Public · Copilot</text>
+          <text class="t-src-title" x="1030" y="330" font-size="15">Stripe</text><text class="t-src-sub" x="1030" y="348">subscriptions (Public)</text>
+          <text class="t-src-title" x="1120" y="640" font-size="14">🏦 Bank</text><text class="t-src-sub" x="1120" y="658">firm account · Plaid</text>
+
+          <!-- practice zone -->
+          <text class="t-zone" x="376" y="552">DCB Practice — the AI-native firm</text>
+          <text class="t-zone-sub" x="376" y="571">the firm, delivered as software · owns its own data</text>
+          <!-- agents -->
+          <text class="t-node" x="410" y="668">Agents</text>
+          <text class="t-nodesub" x="410" y="688">run the repetitive</text>
+          <text class="t-nodesub" x="410" y="704">tax &amp; accounting work</text>
+          <!-- human review -->
+          <text class="t-node" x="410" y="802">👤 Humans</text>
+          <text class="t-nodesub" x="410" y="822">review &amp; approve</text>
+          <!-- firm KB -->
+          <text class="t-node" x="656" y="658" font-size="16">📚 Firm knowledge base</text>
+          <text class="t-nodesub" x="656" y="680">How a task should be performed —</text>
+          <text class="t-nodesub" x="656" y="696">procedural, grounded, and</text>
+          <text class="t-nodesub" x="656" y="712">continuously learned.</text>
+          <text class="t-db" x="755" y="792" text-anchor="middle">vector KB</text>
+          <!-- system of record -->
+          <text class="t-db" x="972" y="748" text-anchor="middle">Postgres · system of record</text>
+          <text class="t-db" x="972" y="762" text-anchor="middle" font-size="9">clients · engagements · tasks</text>
+
+          <!-- users -->
+          <text class="t-user" x="708" y="70" text-anchor="middle">👥 general public</text>
+          <text class="t-user" x="965" y="70" text-anchor="middle">👤 firm clients (comped)</text>
+          <text class="t-user" x="266" y="982" text-anchor="middle">👤 CPAs &amp; firm staff</text>
+
+          <!-- arrow labels -->
+          <g transform="translate(557,232)"><rect class="pill" x="-80" y="-28" width="160" height="32" rx="9"/><text class="t-arrow" x="0" y="-14" text-anchor="middle">distilled cited entries</text><text class="t-arrow" x="0" y="-2" text-anchor="middle" fill="var(--muted)">publish API · planned</text></g>
+          <g transform="translate(500,470)"><rect class="pill" x="-118" y="-16" width="236" height="34" rx="9"/><text class="t-arrow" x="0" y="-2" text-anchor="middle">how a task should be performed</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)">grounded in SEC + tax</text></g>
+          <g transform="translate(330,690)"><rect class="pill" x="-70" y="-26" width="140" height="32" rx="9"/><text class="t-arrow" x="0" y="-13" text-anchor="middle">work context</text><text class="t-arrow" x="0" y="-1" text-anchor="middle" fill="var(--muted)">redacted events · via API</text></g>
+          <g transform="translate(605,678)"><rect class="pill" x="-46" y="-11" width="92" height="21" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">retrieve how-to</text></g>
+          <g transform="translate(636,832)"><rect class="pill" x="-64" y="-11" width="128" height="21" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--green-s)">↻ learn (continuous)</text></g>
+          <g transform="translate(486,752)"><rect class="pill" x="-46" y="-10" width="92" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">proposed work</text></g>
+          <g transform="translate(770,748)"><rect class="pill" x="-30" y="-10" width="60" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">recorded</text></g>
+          <g transform="translate(834,452)"><rect class="pill" x="-96" y="-16" width="192" height="34" rx="9"/><text class="t-arrow" x="0" y="-2" text-anchor="middle">entitlement / comp codes</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)">outbound only — no shared DB</text></g>
+          <g transform="translate(150,602)"><rect class="pill" x="-24" y="-11" width="48" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">reads</text></g>
+          <g transform="translate(905,120)"><rect class="pill" x="-30" y="-10" width="60" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--muted)">comped</text></g>
+          <g transform="translate(1058,676)"><rect class="pill" x="-66" y="-11" width="132" height="30" rx="9"/><text class="t-arrow" x="0" y="-1" text-anchor="middle">match to invoices</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)">you confirm</text></g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <footer>
+    <b>The loop:</b> <b>Research</b> ingests SEC + tax sources and does two things — distills cited entries into
+    <b>Public</b>'s consumer KB, and feeds <b>Practice</b>'s <b>firm knowledge base</b> with grounded
+    <i>how a task should be performed</i>. <b>Copilot</b> watches the CPA work and sends redacted <b>work-context
+    events</b> up to Practice via its API. Inside Practice, the <b>agents retrieve how-to</b> from the firm KB, do the
+    work, <b>humans review &amp; approve</b>, outcomes are <b>recorded</b> — and the approved outcomes flow back to
+    <b>continuously learn</b> the firm KB. Two distinct knowledge bases: Public's is <b>published &amp; cited</b> for
+    consumers; the firm's is <b>internal &amp; procedural</b>, improving with every job. Every product still owns its own
+    store; integration is API + entitlement, never a shared DB. <b>Where the data lives:</b> the firm KB and system of
+    record are Practice's; the consumer KB is Public's; Research keeps its raw corpus. Copilot has no server DB — only a
+    local buffer. Practice also reads the firm's <b>bank</b> transactions (Plaid) so the agents can match payments to
+    open invoices for you to confirm.
+  </footer>
+</div>
+
+</body>
+</html>
