@@ -42,16 +42,6 @@ export interface Project {
 // Ordered by how I'd want a recruiter or founder to read them:
 // current work first, then the strongest builds.
 export const projects: Project[] = [
-  {
-    name: 'Xelsius',
-    blurb:
-      'A side project exploring how an agent could read financial data and propose reviewable, deterministic diffs a person approves — instead of a black box deciding.',
-    tech: ['TypeScript', 'LLM agents', 'Fintech'],
-    accent: true,
-    award: 'Exploring',
-    links: [{ label: 'Repository', href: 'https://github.com/dingtianding/Xelsius' }],
-  },
-
   // ---- Vertical AI for finance & accounting (the DCB suite) ----
   {
     name: 'DCB Copilot',
@@ -249,6 +239,14 @@ export const projects: Project[] = [
   },
 
   // ---- Earlier builds ----
+  {
+    name: 'Xelsius',
+    blurb:
+      'An earlier exploration of agent-proposed, reviewable diffs on financial data — the "Cursor for accountants" idea that grew into the DCB suite.',
+    tech: ['TypeScript', 'Python', 'LLM agents'],
+    award: 'Earlier build',
+    links: [{ label: 'Repository', href: 'https://github.com/dingtianding/Xelsius' }],
+  },
   {
     name: 'Aurora',
     blurb:
