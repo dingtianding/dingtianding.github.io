@@ -217,7 +217,7 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
     justify-content: space-between;
     height: 64px;
   }
-  .topbar__brand { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-size: 0.82rem; }
+  .topbar__brand { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-size: var(--fs-xs); }
   .topbar__mark {
     display: grid; place-items: center; width: 28px; height: 28px;
     border: 1px solid var(--line-strong); border-radius: 7px;
@@ -225,7 +225,7 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
   }
   .topbar__path { color: var(--text-dim); }
   .topbar__back {
-    font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-dim);
+    font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text-dim);
     transition: color 0.2s ease;
   }
   .topbar__back:hover { color: var(--signal); }
@@ -235,8 +235,8 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
   .case__title {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: clamp(2.4rem, 1.6rem + 4vw, 4.4rem);
-    line-height: 1.0;
+    font-size: var(--fs-3xl);
+    line-height: var(--lh-tight);
     letter-spacing: -0.025em;
     margin-top: 1.1rem;
   }
@@ -244,8 +244,8 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
     margin-top: 1.1rem;
     max-width: 60ch;
     color: var(--text-dim);
-    font-size: clamp(1.05rem, 1rem + 0.5vw, 1.4rem);
-    line-height: 1.5;
+    font-size: var(--fs-lg);
+    line-height: var(--lh-snug);
   }
   .case__meta {
     margin-top: 1.8rem;
@@ -255,7 +255,7 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
     flex-wrap: wrap;
   }
   .case__status {
-    font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-faint);
+    font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-faint);
     display: inline-flex; align-items: center; gap: 0.5em;
   }
   .status-dot {
@@ -267,12 +267,12 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
   .case__tags { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .case__links { margin-top: 1.8rem; display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap; }
   .case__cta {
-    font-family: var(--font-mono); font-size: 0.84rem; color: var(--text);
+    font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text);
     border-bottom: 1px solid var(--signal); padding-bottom: 2px;
     transition: color 0.2s ease;
   }
   .case__cta:hover { color: var(--signal); }
-  .case__private { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-faint); }
+  .case__private { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-faint); }
 
   /* ---- content blocks ---- */
   .case__block { padding-block: clamp(3rem, 7vh, 5rem); border-top: 1px solid var(--line); }
@@ -285,18 +285,18 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
     gap: 0.6rem 2rem;
   }
   .case__num {
-    font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.1em;
-    color: var(--signal); opacity: 0.7;
+    font-family: var(--font-mono); font-size: var(--fs-xs); letter-spacing: 0.1em;
+    color: var(--signal); opacity: 0.8;
   }
   .case__h {
     font-family: var(--font-display); font-weight: 600;
-    font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem);
+    font-size: var(--fs-xl);
     letter-spacing: -0.015em;
     margin-bottom: 1.1rem;
   }
   .case__p {
     color: var(--text-dim);
-    font-size: 1.06rem;
+    font-size: var(--fs-md);
     line-height: 1.65;
     max-width: 68ch;
   }
@@ -315,12 +315,12 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
     padding: 1.1rem 1.2rem;
   }
   .stackgrid__label {
-    font-family: var(--font-mono); font-size: 0.66rem; text-transform: uppercase;
+    font-family: var(--font-mono); font-size: var(--fs-2xs); text-transform: uppercase;
     letter-spacing: 0.1em; color: var(--signal);
   }
   .stackgrid__items {
     list-style: none; margin-top: 0.7rem; display: flex; flex-direction: column; gap: 0.4rem;
-    font-size: 0.95rem; color: var(--text-dim);
+    font-size: var(--fs-sm); color: var(--text-dim);
   }
   .stackgrid__items li::before { content: '· '; color: var(--signal); }
 
@@ -332,10 +332,10 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
     padding: 1.2rem 1.3rem;
   }
   .challenge__title {
-    font-family: var(--font-display); font-weight: 600; font-size: 1.12rem;
+    font-family: var(--font-display); font-weight: 600; font-size: var(--fs-lg);
     margin-bottom: 0.5rem;
   }
-  .challenge__body { color: var(--text-dim); font-size: 0.98rem; line-height: 1.6; max-width: 68ch; }
+  .challenge__body { color: var(--text-dim); font-size: var(--fs-sm); line-height: var(--lh-normal); max-width: 68ch; }
 
   /* ---- screenshots / video / diagram ---- */
   .shots {
@@ -368,10 +368,10 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
   .placeholder--shot { min-height: 180px; }
   .placeholder--video { aspect-ratio: 16 / 9; }
   .placeholder__tag {
-    font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em;
+    font-family: var(--font-mono); font-size: var(--fs-xs); letter-spacing: 0.06em;
     text-transform: uppercase; color: var(--text-dim);
   }
-  .placeholder__hint { font-family: var(--font-mono); font-size: 0.72rem; }
+  .placeholder__hint { font-family: var(--font-mono); font-size: var(--fs-xs); }
   .placeholder__hint code {
     color: var(--signal); background: rgba(232, 178, 90, 0.08);
     padding: 0.1em 0.4em; border-radius: 5px;
@@ -380,7 +380,7 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
   /* ---- footer ---- */
   .case__foot { padding-block: clamp(2.5rem, 6vh, 4rem); border-top: 1px solid var(--line); }
   .case__back {
-    font-family: var(--font-mono); font-size: 0.86rem; color: var(--text-dim);
+    font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text-dim);
     transition: color 0.2s ease;
   }
   .case__back:hover { color: var(--signal); }

@@ -87,7 +87,7 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
   .work__more {
     margin-top: 0.9rem;
     font-family: var(--font-mono);
-    font-size: 0.86rem;
+    font-size: var(--fs-sm);
     color: var(--text-dim);
   }
   .work__more a {
@@ -99,7 +99,8 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
   .work__more a:hover { color: var(--signal); }
   .work__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    /* min() guards against overflow when the viewport is narrower than 320px */
+    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
     gap: 1.4rem;
   }
 
@@ -152,7 +153,7 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
   .card__title {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 1.35rem;
+    font-size: var(--fs-lg);
     letter-spacing: -0.01em;
   }
   .card__badges {
@@ -164,7 +165,7 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
   }
   .card__handcoded {
     font-family: var(--font-mono);
-    font-size: 0.62rem;
+    font-size: var(--fs-2xs);
     letter-spacing: 0.04em;
     color: var(--add);
     border: 1px solid rgba(70, 192, 90, 0.3);
@@ -175,7 +176,7 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
   }
   .card__award {
     font-family: var(--font-mono);
-    font-size: 0.64rem;
+    font-size: var(--fs-2xs);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--signal);
@@ -186,8 +187,8 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
   }
   .card__blurb {
     color: var(--text-dim);
-    font-size: 0.95rem;
-    line-height: 1.55;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-snug);
     flex: 1;
   }
   .card__tech {
@@ -196,7 +197,7 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
     flex-wrap: wrap;
     gap: 0.4rem 0.9rem;
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: var(--fs-2xs);
     color: var(--text-faint);
   }
   .card__tech li::before { content: '· '; color: var(--signal); }
@@ -209,7 +210,7 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
     padding-top: 0.65rem;
     border-top: 1px dashed var(--line);
     font-family: var(--font-mono);
-    font-size: 0.68rem;
+    font-size: var(--fs-2xs);
     color: var(--text-dim);
   }
   .led { display: inline-flex; align-items: center; gap: 0.4em; white-space: nowrap; }
@@ -227,7 +228,7 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
     padding-top: 0.4rem;
     border-top: 1px solid var(--line);
     font-family: var(--font-mono);
-    font-size: 0.8rem;
+    font-size: var(--fs-sm);
   }
   /* When a ledger strip is present, avoid a double rule. */
   .card__ledger + .card__links {
@@ -241,7 +242,7 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
   .card__links a:hover { color: var(--signal); }
   .card__private {
     font-family: var(--font-mono);
-    font-size: 0.78rem;
+    font-size: var(--fs-xs);
     color: var(--text-faint);
   }
 </style>

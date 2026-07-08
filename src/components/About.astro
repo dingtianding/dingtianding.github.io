@@ -69,7 +69,8 @@ const ledger = [
     gap: 1.2rem;
     max-width: 62ch;
     color: var(--text-dim);
-    font-size: 1.08rem;
+    font-size: var(--fs-md);
+    line-height: var(--lh-normal);
   }
   .about__body strong { color: var(--text); font-weight: 600; }
 
@@ -97,7 +98,7 @@ const ledger = [
   }
   .portrait__role {
     font-family: var(--font-mono);
-    font-size: 0.76rem;
+    font-size: var(--fs-2xs);
     color: var(--text-faint);
   }
 
@@ -116,7 +117,7 @@ const ledger = [
     align-items: baseline;
     gap: 0.5rem;
     font-family: var(--font-mono);
-    font-size: 0.82rem;
+    font-size: var(--fs-xs);
   }
   .ledger-row__k { color: var(--text-faint); white-space: nowrap; }
   .ledger-row__dots {
@@ -125,7 +126,7 @@ const ledger = [
   }
   .ledger-row__v { color: var(--signal); white-space: nowrap; }
 
-  @media (min-width: 880px) {
+  @media (min-width: 900px) {
     .about__grid {
       grid-template-columns: 1.7fr 1fr;
       grid-template-areas:
