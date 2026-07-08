@@ -2,8 +2,9 @@
 import { projects } from '../data/projects';
 import { repoForLinks, fetchRepoStats, relativeTime } from '../data/github';
 
-// Xelsius is showcased in the "Building" section; the rest live here.
-const items = projects.filter((p) => p.name !== 'Xelsius');
+// The DCB suite is featured in the "Building" section; every project — including
+// the earlier Xelsius build — gets a card here.
+const items = projects;
 
 // Pull live GitHub figures at build time and merge them in by repo,
 // so each project reads as a posted, verified ledger entry.

@@ -7,25 +7,32 @@
 
     <div class="building__grid">
       <div class="building__copy">
-        <h2 class="section-title" data-reveal>Xelsius</h2>
-        <p class="building__tagline" data-reveal>A side project in AI for accounting.</p>
+        <h2 class="section-title" data-reveal>DCB</h2>
+        <p class="building__tagline" data-reveal>An AI-native, full-stack agentic accounting firm.</p>
         <p class="building__body" data-reveal>
-          I'm exploring how an agent could read financial data and propose
-          <strong>reviewable, deterministic diffs</strong> — changes a person approves rather
-          than a black box decides. Early days, but it's the kind of tool I wish I'd had when
-          I did this work by hand.
+          Not software that helps accountants work faster — <strong>the firm itself, delivered as
+          software</strong>: agents run the repetitive tax &amp; accounting work end to end, humans
+          review and approve, and every answer is grounded in authoritative sources with every change
+          reviewable.
         </p>
+
+        <ul class="building__parts" data-reveal>
+          <li><strong>DCB Practice</strong> — the operations: agents do the work, humans approve; the firm's system of record.</li>
+          <li><strong>DCB Copilot</strong> — a screen-aware desktop overlay that reads your accounting software and answers in context.</li>
+          <li><strong>DCB Research</strong> — grounds it all in SEC filings and federal &amp; state tax sources.</li>
+          <li><strong>DCB Public</strong> — a citation-backed money &amp; investing knowledge base + AI advisor.</li>
+        </ul>
+
         <div class="building__tags" data-reveal>
-          <span class="tag">TypeScript</span>
-          <span class="tag">LLM agents</span>
-          <span class="tag">Deterministic diffs</span>
-          <span class="tag">Fintech</span>
+          <span class="tag">Agentic AI</span>
+          <span class="tag">FastAPI</span>
+          <span class="tag">Next.js</span>
+          <span class="tag">Rust · Tauri</span>
+          <span class="tag">PostgreSQL</span>
         </div>
         <div class="building__links" data-reveal>
-          <a href="https://github.com/dingtianding/Xelsius" target="_blank" rel="noopener" class="building__link">
-            View repository ↗
-          </a>
-          <span class="building__status"><span class="status-dot"></span>Personal project · early</span>
+          <a href="/dcb-system" class="building__link">See the system design →</a>
+          <span class="building__status"><span class="status-dot"></span>Building · active</span>
         </div>
       </div>
 
@@ -78,6 +85,19 @@
     font-size: 1.08rem;
   }
   .building__body strong { color: var(--text); font-weight: 600; }
+  .building__parts {
+    list-style: none;
+    margin-top: 1.2rem;
+    display: grid;
+    gap: 0.6rem;
+    max-width: 56ch;
+    color: var(--text-dim);
+    font-size: 0.98rem;
+    line-height: 1.5;
+  }
+  .building__parts li { position: relative; padding-left: 1.1rem; }
+  .building__parts li::before { content: '·'; position: absolute; left: 0; color: var(--signal); }
+  .building__parts strong { color: var(--text); font-weight: 600; }
   .building__tags {
     display: flex;
     flex-wrap: wrap;
