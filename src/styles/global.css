@@ -18,10 +18,13 @@
   --line: rgba(255, 255, 255, 0.09);
   --line-strong: rgba(255, 255, 255, 0.16);
 
-  /* ink */
-  --text: #ededeb;
-  --text-dim: #9a9a96;
-  --text-faint: #62625e;
+  /* ink — contrast-tuned on the #0a0a0c ground, warm-biased neutrals.
+     text ~16:1 · dim ~9:1 · faint ~5.8:1 — all clear the WCAG AA floor
+     (the old --text-faint was ~2.9:1, the main "hard to read"). */
+  --text: #f1f0ec;
+  --text-dim: #b2b1aa;
+  --text-faint: #8c8c85;
+  --text-mute: #6b6b65; /* decorative only (dot-leaders, disabled) — not for reading */
 
   /* accents */
   --signal: #e8b25a;      /* warm gold — primary accent */
@@ -38,6 +41,27 @@
   --maxw: 1180px;
   --gutter: clamp(1.25rem, 5vw, 4rem);
   --radius: 14px;
+
+  /* ---- Fluid type scale ----
+     Each step is clamp(min, preferred, max). Floors are chosen so nothing
+     drops below ~0.8rem on a phone; the old design bottomed out at 0.62rem. */
+  --fs-2xs:  clamp(0.78rem, 0.75rem + 0.16vw, 0.86rem); /* micro labels, codes */
+  --fs-xs:   clamp(0.84rem, 0.80rem + 0.20vw, 0.94rem); /* mono labels, tags, eyebrows */
+  --fs-sm:   clamp(0.92rem, 0.88rem + 0.22vw, 1.02rem); /* small body, buttons, nav */
+  --fs-md:   clamp(1rem,    0.95rem + 0.30vw, 1.15rem); /* body copy */
+  --fs-lg:   clamp(1.1rem,  1.00rem + 0.55vw, 1.40rem); /* leads, sub-heads */
+  --fs-xl:   clamp(1.35rem, 1.15rem + 1.00vw, 1.90rem); /* small display */
+  --fs-2xl:  clamp(2.1rem,  1.50rem + 3.00vw, 3.40rem); /* section titles */
+  --fs-3xl:  clamp(2.4rem,  1.60rem + 4.00vw, 4.60rem); /* contact display */
+  --fs-hero: clamp(4rem,    2.00rem + 15.0vw, 11.0rem); /* hero name */
+
+  /* line-heights */
+  --lh-tight:  1.14;
+  --lh-snug:   1.4;
+  --lh-normal: 1.62;
+
+  /* ---- Breakpoints (reference; @media can't read custom properties) ----
+     sm 560px · md 760px · lg 1024px · xl 1280px — the queries below use these. */
 }
 
 *,
@@ -67,8 +91,8 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: clamp(1rem, 0.95rem + 0.2vw, 1.08rem);
-  line-height: 1.6;
+  font-size: var(--fs-md);
+  line-height: var(--lh-normal);
   letter-spacing: 0.002em;
   overflow-x: hidden;
   /* graph-paper grid + soft top vignette = atmosphere, not a flat fill */
@@ -123,8 +147,8 @@ img {
 /* section index label, e.g. "01 / about" */
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.22em;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--signal);
   display: inline-flex;
@@ -142,8 +166,8 @@ img {
 .section-title {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(2rem, 1.4rem + 3vw, 3.4rem);
-  line-height: 1.02;
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-tight);
   letter-spacing: -0.02em;
   margin-top: 1.1rem;
 }
@@ -151,7 +175,7 @@ img {
 /* mono tag chips */
 .tag {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--fs-xs);
   letter-spacing: 0.04em;
   color: var(--text-dim);
   border: 1px solid var(--line);

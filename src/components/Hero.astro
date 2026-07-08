@@ -74,7 +74,7 @@ const socials = [
 
   .hero__kicker {
     font-family: var(--font-mono);
-    font-size: 0.82rem;
+    font-size: var(--fs-xs);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--text-dim);
@@ -99,7 +99,7 @@ const socials = [
   .hero__name {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: clamp(4.5rem, 2rem + 16vw, 12rem);
+    font-size: var(--fs-hero);
     line-height: 0.86;
     letter-spacing: -0.03em;
     margin-block: 0.2rem 0.4rem;
@@ -116,7 +116,7 @@ const socials = [
   }
   .diff__file {
     color: var(--text-faint);
-    font-size: 0.72rem;
+    font-size: var(--fs-xs);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-bottom: 0.3rem;
@@ -170,7 +170,7 @@ const socials = [
   /* Final resolution beat: the change is approved. */
   .diff__approve {
     font-family: var(--font-mono);
-    font-size: 0.74rem;
+    font-size: var(--fs-xs);
     letter-spacing: 0.02em;
     color: var(--signal);
     margin-top: 0.5rem;
@@ -197,8 +197,8 @@ const socials = [
   .hero__lede {
     max-width: 52ch;
     color: var(--text-dim);
-    font-size: clamp(1.02rem, 0.98rem + 0.3vw, 1.22rem);
-    line-height: 1.55;
+    font-size: var(--fs-lg);
+    line-height: var(--lh-snug);
   }
 
   .hero__actions {
@@ -210,7 +210,7 @@ const socials = [
   }
   .btn {
     font-family: var(--font-mono);
-    font-size: 0.86rem;
+    font-size: var(--fs-sm);
     padding: 0.85em 1.4em;
     border-radius: 999px;
     border: 1px solid var(--line-strong);
@@ -227,7 +227,7 @@ const socials = [
     display: flex;
     gap: 1.3rem;
     font-family: var(--font-mono);
-    font-size: 0.84rem;
+    font-size: var(--fs-sm);
     color: var(--text-dim);
   }
   .hero__socials a { transition: color 0.2s ease; }
@@ -242,7 +242,7 @@ const socials = [
     align-items: center;
     gap: 0.6rem;
     font-family: var(--font-mono);
-    font-size: 0.64rem;
+    font-size: var(--fs-2xs);
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--text-faint);
@@ -259,7 +259,7 @@ const socials = [
     50% { transform: scaleY(1); opacity: 1; }
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 560px) {
     .hero__scroll { display: none; }
   }
 </style>

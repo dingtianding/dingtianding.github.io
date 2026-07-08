@@ -53,8 +53,8 @@ const entries = [
     margin-top: 1.2rem;
     max-width: 52ch;
     color: var(--text-dim);
-    font-size: 1.08rem;
-    line-height: 1.6;
+    font-size: var(--fs-md);
+    line-height: var(--lh-normal);
   }
 
   .offclock__ledger {
@@ -71,9 +71,9 @@ const entries = [
     padding-top: 0.9rem;
     border-top: 1px dashed var(--line);
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: var(--fs-2xs);
     color: var(--add);
-    opacity: 0.75;
+    opacity: 0.85;
   }
 
   /* Ledger rows (mirrors the About aside; scoped styles don't cross). */
@@ -83,7 +83,7 @@ const entries = [
     align-items: baseline;
     gap: 0.5rem;
     font-family: var(--font-mono);
-    font-size: 0.82rem;
+    font-size: var(--fs-xs);
   }
   .ledger-row__k { color: var(--text-faint); white-space: nowrap; }
   .ledger-row__dots {
@@ -92,7 +92,7 @@ const entries = [
   }
   .ledger-row__v { color: var(--add); white-space: nowrap; }
 
-  @media (min-width: 880px) {
+  @media (min-width: 900px) {
     .offclock__grid { grid-template-columns: 1.6fr 1fr; }
   }
 </style>
