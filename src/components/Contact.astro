@@ -10,7 +10,7 @@ const channels = [
 
 <section class="section contact" id="contact">
   <div class="shell">
-    <span class="eyebrow" data-reveal>05 / Contact</span>
+    <span class="eyebrow" data-reveal>05 / Contact — close the books</span>
     <h2 class="contact__title" data-reveal>
       Building something at the<br />
       <span class="contact__accent">intersection of finance & AI?</span>
@@ -34,7 +34,7 @@ const channels = [
 
 <footer class="footer">
   <div class="shell footer__inner">
-    <span>© <span id="year">2026</span> Dean Ding</span>
+    <span>© <span id="year">2026</span> Dean Ding · <span class="footer__signed">reconciled ✓</span></span>
     <span class="footer__built">Built with Astro · GSAP · Lenis</span>
     <a href="#top">Back to top ↑</a>
   </div>
@@ -118,6 +118,7 @@ const channels = [
   }
   .footer__inner a { transition: color 0.2s ease; }
   .footer__inner a:hover { color: var(--signal); }
+  .footer__signed { color: var(--add); }
 
   @media (max-width: 560px) {
     .channel { grid-template-columns: 1fr auto; }

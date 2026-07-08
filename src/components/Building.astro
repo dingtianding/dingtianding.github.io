@@ -3,7 +3,7 @@
 
 <section class="section building" id="building">
   <div class="shell">
-    <span class="eyebrow" data-reveal>02 / Currently exploring</span>
+    <span class="eyebrow" data-reveal>02 / Building — work in progress</span>
 
     <div class="building__grid">
       <div class="building__copy">
@@ -29,20 +29,22 @@
         </div>
       </div>
 
-      <!-- Stylized product mock: a diff the agent might propose -->
-      <div class="terminal" data-reveal aria-hidden="true">
+      <!-- Stylized product mock: a diff the agent might propose.
+           Lines reveal line-by-line as the section scrolls
+           through view (see motion.ts). -->
+      <div class="terminal" data-terminal aria-hidden="true">
         <div class="terminal__bar">
           <span class="terminal__dots"><i></i><i></i><i></i></span>
           <span class="terminal__title">reconciliation.diff</span>
         </div>
-        <pre class="terminal__body"><code><span class="c-dim">@@ ledger/Q3 · 1,204 rows scanned @@</span>
-<span class="c-dim">  acct 4100  Revenue</span>
-<span class="c-del">- 1010  Cash            $48,200.00   <span class="c-note">unmatched</span></span>
-<span class="c-add">+ 1010  Cash            $48,200.00   <span class="c-note">→ INV-3471</span></span>
-<span class="c-dim">  acct 5200  COGS</span>
-<span class="c-del">- 2000  AP              $ 9,118.40   <span class="c-note">dup</span></span>
-<span class="c-add">+ 2000  AP              $ 9,118.40   <span class="c-note">merged 2</span></span>
-<span class="c-sig">  ▸ 3 changes · 0 unbalanced · approve?</span></code></pre>
+        <pre class="terminal__body"><code><span class="t-line c-dim">@@ ledger/Q3 · 1,204 rows scanned @@</span>
+<span class="t-line c-dim">  acct 4100  Revenue</span>
+<span class="t-line c-del">- 1010  Cash            $48,200.00   <span class="c-note">unmatched</span></span>
+<span class="t-line c-add">+ 1010  Cash            $48,200.00   <span class="c-note">→ INV-3471</span></span>
+<span class="t-line c-dim">  acct 5200  COGS</span>
+<span class="t-line c-del">- 2000  AP              $ 9,118.40   <span class="c-note">dup</span></span>
+<span class="t-line c-add">+ 2000  AP              $ 9,118.40   <span class="c-note">merged 2</span></span>
+<span class="t-line c-sig">  ▸ 3 changes · 0 unbalanced · <span class="t-approve">approve?</span></span></code></pre>
       </div>
     </div>
   </div>
@@ -146,6 +148,22 @@
   .c-add { color: var(--add); display: block; }
   .c-sig { color: var(--signal); display: block; margin-top: 0.4rem; }
   .c-note { color: var(--text-faint); font-style: italic; }
+
+  /* "approve?" lights up once the whole diff has resolved. */
+  .t-approve {
+    border-radius: 4px;
+    padding: 0.05em 0.35em;
+    transition: background 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
+  }
+  .terminal.is-resolved .t-approve {
+    background: var(--signal);
+    color: #0a0a0c;
+    box-shadow: 0 0 18px -2px rgba(232, 178, 90, 0.55);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .t-line { opacity: 1 !important; }
+  }
 
   @media (min-width: 900px) {
     .building__grid { grid-template-columns: 1fr 1fr; }

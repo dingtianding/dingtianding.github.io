@@ -1,0 +1,81 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="DCB — System Design · Dean Ding"
+  description="How the four DCB products — Research, Public, Practice, and Copilot — fit together as one AI-native accounting firm."
+>
+  <header class="topbar">
+    <div class="shell topbar__inner">
+      <a class="topbar__brand" href="/">
+        <span class="topbar__mark">DD</span>
+        <span class="topbar__path">dean_ding</span>
+      </a>
+      <a class="topbar__back" href="/#work">← Work</a>
+    </div>
+  </header>
+
+  <main class="sys">
+    <div class="shell">
+      <span class="eyebrow">DCB · system design</span>
+      <h1 class="sys__title">How the suite fits together</h1>
+      <p class="sys__lede">
+        Four products, one AI-native accounting firm: <strong>Research</strong> grounds the knowledge in
+        authoritative sources, <strong>Public</strong> is the citation-backed front door, <strong>Practice</strong>
+        runs the work with agents and human review, and <strong>Copilot</strong> is the practitioner's cockpit —
+        each owning its own data, integrating by API and entitlement.
+      </p>
+    </div>
+
+    <div class="sys__frame">
+      <iframe src="/dcb-system.html" title="DCB system-design diagram" loading="lazy"></iframe>
+    </div>
+
+    <div class="shell sys__foot">
+      <a class="sys__open" href="/dcb-system.html" target="_blank" rel="noopener">Open the full diagram ↗</a>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(10px);
+    background: linear-gradient(to bottom, rgba(10, 10, 12, 0.85), rgba(10, 10, 12, 0.4));
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar__inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .topbar__brand { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-size: 0.82rem; }
+  .topbar__mark {
+    display: grid; place-items: center; width: 28px; height: 28px;
+    border: 1px solid var(--line-strong); border-radius: 7px;
+    font-weight: 700; color: var(--signal); letter-spacing: 0.05em;
+  }
+  .topbar__path { color: var(--text-dim); }
+  .topbar__back { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-dim); transition: color 0.2s ease; }
+  .topbar__back:hover { color: var(--signal); }
+
+  .sys { padding-block: clamp(2.5rem, 6vh, 4rem) 3rem; }
+  .sys__title {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: clamp(2rem, 1.4rem + 3vw, 3.4rem); line-height: 1.02;
+    letter-spacing: -0.02em; margin-top: 1.1rem;
+  }
+  .sys__lede { margin-top: 1.1rem; max-width: 62ch; color: var(--text-dim); font-size: 1.08rem; line-height: 1.55; }
+  .sys__lede strong { color: var(--text); font-weight: 600; }
+
+  .sys__frame {
+    margin: 2rem auto 0; width: min(1340px, 96vw); height: 82vh; min-height: 560px;
+    border: 1px solid var(--line-strong); border-radius: var(--radius); overflow: hidden;
+    background: #14151a; box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.8);
+  }
+  .sys__frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+  .sys__foot { margin-top: 1.4rem; }
+  .sys__open {
+    font-family: var(--font-mono); font-size: 0.84rem; color: var(--text);
+    border-bottom: 1px solid var(--signal); padding-bottom: 2px; transition: color 0.2s ease;
+  }
+  .sys__open:hover { color: var(--signal); }
+</style>

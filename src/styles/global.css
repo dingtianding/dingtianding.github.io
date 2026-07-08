@@ -167,6 +167,12 @@ html:not(.is-ready) [data-reveal] {
   opacity: 0;
 }
 
+/* Per-character wrappers for split-text headline reveals. */
+.char {
+  display: inline-block;
+  will-change: transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   [data-reveal] { opacity: 1 !important; transform: none !important; }

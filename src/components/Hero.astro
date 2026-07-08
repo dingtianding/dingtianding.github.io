@@ -17,16 +17,22 @@ const socials = [
     </h1>
 
     <!-- The conceptual hook: a career rendered as a git diff.
-         Removed = the accountant. Added = the engineer. -->
-    <div class="diff" role="img" aria-label="From accountant to engineer">
+         Removed = the accountant. Added = the engineer.
+         The real text lives in the markup (no-JS / reduced-motion
+         see it instantly); motion.ts re-types it on load. -->
+    <div class="diff" role="img" aria-label="From accountant to engineer" data-diff>
       <code class="diff__file" data-reveal>career.diff</code>
-      <div class="diff__line diff__line--del" data-reveal>
+      <div class="diff__line diff__line--del">
         <span class="diff__sign">-</span>
-        spent years reconciling financial data by hand
+        <span class="diff__text">spent years reconciling financial data by hand</span>
       </div>
-      <div class="diff__line diff__line--add" data-reveal>
+      <div class="diff__line diff__line--add">
         <span class="diff__sign">+</span>
-        now I build the AI that does it deterministically
+        <span class="diff__text">now I build the AI that does it deterministically</span>
+        <span class="diff__caret" aria-hidden="true"></span>
+      </div>
+      <div class="diff__approve" aria-hidden="true">
+        <span class="diff__approve-check">✓</span> 1 change · 0 unbalanced · approved
       </div>
     </div>
 
@@ -36,7 +42,7 @@ const socials = [
     </p>
 
     <div class="hero__actions" data-reveal>
-      <a class="btn btn--primary" href="#building">See what I'm building</a>
+      <a class="btn btn--primary" href="#building" data-magnetic>See what I'm building</a>
       <nav class="hero__socials" aria-label="Social links">
         {socials.map((s) => (
           <a href={s.href} target="_blank" rel="noopener">{s.label} ↗</a>
@@ -125,12 +131,67 @@ const socials = [
   .diff__line--del {
     color: var(--del);
     background: rgba(240, 100, 88, 0.07);
-    text-decoration: line-through;
-    text-decoration-color: rgba(240, 100, 88, 0.4);
+  }
+  /* Strike-through drawn as a scalable line so it can animate in
+     as the accountant line is "removed". */
+  .diff__line--del .diff__text {
+    position: relative;
+  }
+  .diff__line--del .diff__text::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    background: rgba(240, 100, 88, 0.55);
+    transform: scaleX(var(--strike, 1));
+    transform-origin: left center;
   }
   .diff__line--add {
     color: var(--add);
     background: rgba(70, 192, 90, 0.08);
+    align-items: center;
+  }
+
+  /* Blinking write-cursor at the end of the added line. */
+  .diff__caret {
+    display: inline-block;
+    width: 0.6em;
+    height: 1.1em;
+    margin-left: 0.1em;
+    background: var(--add);
+    opacity: 0;
+    transform: translateY(0.1em);
+  }
+  .diff__caret.is-blinking { animation: caret-blink 1s steps(2) infinite; }
+  @keyframes caret-blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+
+  /* Final resolution beat: the change is approved. */
+  .diff__approve {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.02em;
+    color: var(--signal);
+    margin-top: 0.5rem;
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  .diff__approve-check {
+    display: inline-grid;
+    place-items: center;
+    width: 1.25em;
+    height: 1.25em;
+    border-radius: 50%;
+    background: rgba(70, 192, 90, 0.15);
+    color: var(--add);
+    font-size: 0.8em;
+    margin-right: 0.3em;
+  }
+  /* Reduced-motion / no-JS: show the resolved state, no caret. */
+  @media (prefers-reduced-motion: reduce) {
+    .diff__approve { opacity: 1; transform: none; }
+    .diff__caret { display: none; }
   }
 
   .hero__lede {

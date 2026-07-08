@@ -21,7 +21,17 @@ const links = [
         </a>
       ))}
     </nav>
-    <a class="nav__cta" href="/resume.pdf" target="_blank" rel="noopener">Résumé ↗</a>
+    <div class="nav__end">
+      <button
+        class="nav__cmdk"
+        type="button"
+        aria-label="Open command palette (Command-K)"
+        onclick="window.dispatchEvent(new CustomEvent('cmdk:open'))"
+      >
+        <span class="nav__cmdk-glyph">⌘</span>K
+      </button>
+      <a class="nav__cta" href="/resume.pdf" target="_blank" rel="noopener" data-magnetic>Résumé ↗</a>
+    </div>
   </div>
 </header>
 
@@ -75,6 +85,20 @@ const links = [
     position: relative;
   }
   .nav__links a:hover { color: var(--text); }
+  .nav__links a.is-active { color: var(--text); }
+  .nav__links a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    height: 1px;
+    width: 100%;
+    background: var(--signal);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .nav__links a.is-active::after { transform: scaleX(1); }
   .nav__num {
     font-family: var(--font-mono);
     font-size: 0.62rem;
@@ -82,6 +106,24 @@ const links = [
     margin-right: 0.4em;
     opacity: 0.7;
   }
+
+  .nav__end { display: flex; align-items: center; gap: 0.8rem; }
+  .nav__cmdk {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15em;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 0.35em 0.6em;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .nav__cmdk:hover { border-color: var(--line-strong); color: var(--text); }
+  .nav__cmdk-glyph { font-size: 0.9em; }
 
   .nav__cta {
     font-family: var(--font-mono);
@@ -93,6 +135,10 @@ const links = [
     transition: border-color 0.2s ease, color 0.2s ease;
   }
   .nav__cta:hover { border-color: var(--signal); color: var(--signal); }
+
+  @media (max-width: 480px) {
+    .nav__cmdk { display: none; }
+  }
 
   @media (max-width: 760px) {
     .nav__links { display: none; }
