@@ -99,6 +99,7 @@ export const projects: Project[] = [
     detail: {
       oneLiner: 'Not software a firm uses — the firm itself, delivered as software: agents do the work, humans approve.',
       status: 'Private · building',
+      systemUrl: '/dcb-practice-system.html',
       problem:
         'The spend on professional services dwarfs the spend on software, and accounting, tax, and audit are among the most outsourced of all — which makes them the strongest candidates to be replaced, not just improved. The opportunity is not another tool that helps a CPA work faster; it is to deliver the service itself. But you cannot let agents touch real client work without a system of record, an audit trail, and a hard guarantee that sensitive data is handled correctly.',
       architecture: [

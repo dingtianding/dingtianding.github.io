@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DCB Practice — System Design</title>
+</head>
+<body>
+<style>
+  :root {
+    --canvas: #fbfbf8; --panel: #ffffff; --ink: #1b1b1f; --muted: #6b6b73;
+    --grid: rgba(20,20,30,.06); --edge: rgba(20,20,30,.14);
+    --green-s: #2f9e44; --green-f: #d6f9dd; --green-zone: rgba(47,158,68,.06);
+    --violet-s: #6741d9; --violet-f: #efe9ff; --grey-s: #5a6069; --grey-f: #eef0f2;
+    --pink-s: #d83a3a; --pink-f: #ffe3e3; --blue-s: #1971c2; --blue-f: #d3ebff;
+    --hand: "Comic Sans MS","Chalkboard SE","Bradley Hand","Segoe Print",ui-rounded,cursive;
+    --sans: ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --canvas: #14151a; --panel: #1a1c22; --ink: #e7e7ec; --muted: #9a9aa6;
+      --grid: rgba(255,255,255,.06); --edge: rgba(255,255,255,.16);
+      --green-s: #69db7c; --green-f: rgba(105,219,124,.15); --green-zone: rgba(105,219,124,.05);
+      --violet-s: #b197fc; --violet-f: rgba(177,151,252,.16); --grey-s: #aeb4bd; --grey-f: rgba(174,180,189,.10);
+      --pink-s: #ff8787; --pink-f: rgba(255,135,135,.15); --blue-s: #74c0fc; --blue-f: rgba(116,192,252,.15);
+    }
+  }
+  :root[data-theme="light"] {
+    --canvas: #fbfbf8; --panel: #ffffff; --ink: #1b1b1f; --muted: #6b6b73;
+    --grid: rgba(20,20,30,.06); --edge: rgba(20,20,30,.14);
+    --green-s: #2f9e44; --green-f: #d6f9dd; --green-zone: rgba(47,158,68,.06);
+    --violet-s: #6741d9; --violet-f: #efe9ff; --grey-s: #5a6069; --grey-f: #eef0f2;
+    --pink-s: #d83a3a; --pink-f: #ffe3e3; --blue-s: #1971c2; --blue-f: #d3ebff;
+  }
+  :root[data-theme="dark"] {
+    --canvas: #14151a; --panel: #1a1c22; --ink: #e7e7ec; --muted: #9a9aa6;
+    --grid: rgba(255,255,255,.06); --edge: rgba(255,255,255,.16);
+    --green-s: #69db7c; --green-f: rgba(105,219,124,.15); --green-zone: rgba(105,219,124,.05);
+    --violet-s: #b197fc; --violet-f: rgba(177,151,252,.16); --grey-s: #aeb4bd; --grey-f: rgba(174,180,189,.10);
+    --pink-s: #ff8787; --pink-f: rgba(255,135,135,.15); --blue-s: #74c0fc; --blue-f: rgba(116,192,252,.15);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1340px; margin: 0 auto; padding: 28px clamp(16px,4vw,40px) 56px; }
+  h1 { font-family: var(--hand); font-weight: 700; font-size: clamp(1.6rem,1.2rem+2vw,2.5rem); margin: 0; letter-spacing: -.01em; }
+  .sub { color: var(--muted); font-size: .98rem; margin-top: 6px; max-width: 78ch; line-height: 1.5; }
+  .sub b { color: var(--ink); font-weight: 600; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; font-size: .82rem; color: var(--muted); align-items: center; }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .lg-h { color: var(--ink); font-weight: 700; font-size: .78rem; margin-right: 2px; }
+  .ic { width: 22px; height: 15px; flex: none; }
+  .stage-scroll { overflow-x: auto; margin-top: 20px; padding-bottom: 6px; }
+  .stage { min-width: 1100px; background: radial-gradient(var(--grid) 1.4px, transparent 1.4px); background-size: 26px 26px; background-position: -1px -1px; border: 2px solid var(--edge); border-radius: 16px; padding: 8px; }
+  svg.diagram { width: 100%; height: auto; display: block; }
+
+  .t-title { font-family: var(--hand); font-weight: 700; font-size: 16px; }
+  .t-eyebrow { font-family: var(--hand); font-size: 12px; }
+  .t-desc { font-family: var(--sans); font-size: 11.5px; fill: var(--ink); }
+  .t-db { font-family: var(--sans); font-size: 10px; fill: var(--muted); }
+  .t-note { font-family: var(--hand); font-size: 11.5px; fill: var(--muted); }
+  .t-user { font-family: var(--hand); font-size: 14px; fill: var(--ink); }
+  .t-zone { font-family: var(--hand); font-weight: 700; font-size: 16px; fill: var(--green-s); }
+  .t-zone-sub { font-family: var(--sans); font-size: 11px; fill: var(--muted); }
+  .t-arrow { font-family: var(--sans); font-size: 10.5px; fill: var(--ink); }
+  .badge { font-family: var(--sans); font-size: 10px; fill: var(--ink); }
+  .pill { fill: var(--panel); stroke: var(--edge); stroke-width: 1.4; }
+  .stage { opacity: 0; transform: translateY(10px); animation: rise .5s ease-out .05s forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .stage { animation: none; opacity: 1; transform: none; } }
+  footer { margin-top: 20px; color: var(--muted); font-size: .82rem; line-height: 1.6; max-width: 100ch; }
+  footer b { color: var(--ink); font-weight: 600; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>DCB Practice — system design</h1>
+    <p class="sub">
+      Not software a firm uses — <b>the firm itself, delivered as software</b>. Agents run the repetitive tax &amp;
+      accounting work end to end; humans review and approve. A <b>PII-gated ingest</b> and a Postgres
+      <b>system of record</b> make every action auditable, and the firm knowledge base <b>learns from every job</b>.
+    </p>
+    <div class="legend">
+      <b class="lg-h">Legend</b>
+      <span><svg class="ic" viewBox="0 0 24 15"><rect x="1.5" y="1.5" width="21" height="12" rx="3.5" fill="var(--green-f)" stroke="var(--green-s)" stroke-width="1.7"/></svg>Practice service</span>
+      <span><svg class="ic" viewBox="0 0 22 17"><ellipse cx="11" cy="4" rx="8.5" ry="2.8" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.5"/><path d="M2.5 4 v9 a8.5 2.8 0 0 0 17 0 v-9" fill="none" stroke="var(--ink)" stroke-width="1.5"/></svg>Database</span>
+      <span><svg class="ic" viewBox="0 0 26 15"><rect x="1.5" y="1.5" width="23" height="12" rx="6" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="1.7"/></svg>👤 Human</span>
+      <span><svg class="ic" viewBox="0 0 24 15"><rect x="1.5" y="1.5" width="21" height="12" rx="3.5" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="1.7"/></svg>External</span>
+      <span><i style="display:inline-block;width:26px;border-top:2.5px solid var(--edge)"></i>data / request</span>
+      <span><i style="display:inline-block;width:26px;border-top:2.5px dashed var(--edge)"></i>learn ↻ · planned</span>
+    </div>
+  </header>
+
+  <div class="stage-scroll">
+    <div class="stage">
+      <svg class="diagram" viewBox="0 0 1320 900" role="img"
+        aria-label="DCB Practice system design: agents run tax and accounting work using Claude and knowledge retrieved from a firm knowledge base; their output passes a PII-gated ingest, humans review and approve via a Next.js surface, approved work is recorded to a Postgres system of record, and approved outcomes continuously learn the knowledge base. Bank transactions are matched to invoices, and DCB Copilot feeds work-context events.">
+        <defs>
+          <filter id="rough" x="-4%" y="-4%" width="108%" height="108%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.011 0.013" numOctaves="2" seed="7" result="n"/>
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+          <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--ink)"/></marker>
+          <marker id="arG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--green-s)"/></marker>
+          <marker id="arM" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/></marker>
+        </defs>
+
+        <!-- ===== roughened shapes ===== -->
+        <g filter="url(#rough)" fill="none">
+          <!-- practice platform zone -->
+          <rect x="130" y="150" width="892" height="700" rx="20" fill="var(--green-zone)" stroke="var(--green-s)" stroke-width="2.6"/>
+
+          <!-- user -->
+          <rect x="52" y="66" width="206" height="50" rx="16" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="2.2"/>
+
+          <!-- firm KB (top center) -->
+          <rect x="392" y="196" width="290" height="120" rx="14" fill="var(--green-f)" stroke="var(--green-s)" stroke-width="2.8"/>
+
+          <!-- Next.js review surface (left) -->
+          <rect x="176" y="372" width="230" height="132" rx="14" fill="var(--green-f)" stroke="var(--green-s)" stroke-width="2.6"/>
+          <!-- humans (below Next.js) -->
+          <rect x="176" y="560" width="230" height="82" rx="24" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="2.4"/>
+
+          <!-- PII-gated ingest (center) -->
+          <rect x="470" y="392" width="204" height="98" rx="13" fill="var(--green-f)" stroke="var(--green-s)" stroke-width="2.6"/>
+
+          <!-- agents (right) -->
+          <rect x="742" y="372" width="230" height="132" rx="14" fill="var(--green-f)" stroke="var(--green-s)" stroke-width="3.2"/>
+          <rect x="880" y="382" width="82" height="24" rx="9" fill="var(--panel)" stroke="var(--green-s)" stroke-width="1.6"/>
+
+          <!-- system of record (postgres) -->
+          <g fill="var(--green-f)" stroke="var(--green-s)" stroke-width="2.4"><ellipse cx="560" cy="646" rx="66" ry="10"/><path d="M494 646 v34 a66 10 0 0 0 132 0 v-34"/></g>
+
+          <!-- externals -->
+          <rect x="1086" y="206" width="196" height="92" rx="14" fill="var(--violet-f)" stroke="var(--violet-s)" stroke-width="2.4"/>
+          <rect x="1086" y="360" width="196" height="92" rx="14" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.6"/>
+          <rect x="1086" y="516" width="196" height="88" rx="14" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.6"/>
+
+          <!-- ===== connectors ===== -->
+          <!-- CPAs -> Next.js -->
+          <path d="M150 116 C 150 250 200 330 250 370" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#ar)"/>
+          <!-- Claude -> agents -->
+          <path d="M1086 402 C 1040 418 1010 428 974 436" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#ar)"/>
+          <!-- Copilot -> PII ingest -->
+          <path d="M1086 258 C 900 300 760 350 676 400" stroke="var(--violet-s)" stroke-width="2.4" stroke-dasharray="7 7" stroke-linecap="round" marker-end="url(#arM)"/>
+          <!-- firm KB -> agents (retrieve how-to) -->
+          <path d="M682 288 C 740 320 800 344 828 370" stroke="var(--green-s)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arG)"/>
+          <!-- agents -> PII ingest (proposed work) -->
+          <path d="M742 444 C 720 444 700 442 676 441" stroke="var(--green-s)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arG)"/>
+          <!-- PII ingest -> system of record (write, gated) -->
+          <path d="M566 490 C 566 540 564 570 562 600" stroke="var(--green-s)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arG)"/>
+          <!-- system of record -> Next.js (surface for review) -->
+          <path d="M496 636 C 400 610 320 560 300 506" stroke="var(--green-s)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arG)"/>
+          <!-- humans -> system of record (approve, recorded) -->
+          <path d="M406 604 C 452 618 480 626 500 634" stroke="var(--green-s)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arG)"/>
+          <!-- Next.js <-> humans (review) -->
+          <path d="M291 504 C 291 524 291 540 291 558" stroke="var(--green-s)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arG)"/>
+          <!-- system of record -> firm KB (learn loop) -->
+          <path d="M524 618 C 438 556 430 440 448 318" stroke="var(--green-s)" stroke-width="2.4" stroke-dasharray="6 6" stroke-linecap="round" marker-end="url(#arG)"/>
+          <!-- bank -> system of record (reconcile) -->
+          <path d="M1086 566 C 900 620 720 656 628 652" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#ar)"/>
+        </g>
+
+        <!-- ===== crisp text ===== -->
+        <g>
+          <!-- user -->
+          <text class="t-user" x="155" y="97" text-anchor="middle">👤 CPAs &amp; firm staff</text>
+
+          <!-- zone -->
+          <text class="t-zone" x="150" y="182">DCB Practice — the AI-native firm platform</text>
+          <text class="t-zone-sub" x="150" y="200">FastAPI · SQLAlchemy · Postgres · JWT — the firm's system of record</text>
+
+          <!-- firm KB -->
+          <text class="t-title" x="410" y="228" fill="var(--green-s)">📚 Firm knowledge base</text>
+          <text class="t-desc" x="410" y="250">How a task should be performed —</text>
+          <text class="t-desc" x="410" y="267">procedural, grounded, and</text>
+          <text class="t-desc" x="410" y="284">continuously learned from every job.</text>
+          <text class="t-db" x="410" y="304">vector store</text>
+
+          <!-- Next.js review -->
+          <text class="t-title" x="196" y="404" fill="var(--green-s)">Next.js review</text>
+          <text class="t-eyebrow" x="196" y="421" fill="var(--muted)">App Router · the human surface</text>
+          <text class="t-desc" x="196" y="445">Where staff see agent work,</text>
+          <text class="t-desc" x="196" y="462">edit, and approve or reject.</text>
+          <text class="t-desc" x="196" y="486">React · TypeScript · Tailwind</text>
+
+          <!-- humans -->
+          <text class="t-user" x="291" y="596" text-anchor="middle">👤 Humans</text>
+          <text class="t-db" x="291" y="616" text-anchor="middle" font-size="11">review · approve · reject</text>
+
+          <!-- PII ingest -->
+          <text class="t-title" x="486" y="422" font-size="14" fill="var(--green-s)">🔒 PII-gated ingest</text>
+          <text class="t-desc" x="486" y="444">work-session endpoint —</text>
+          <text class="t-desc" x="486" y="461">rejects unredacted</text>
+          <text class="t-desc" x="486" y="478">SSN / EIN → 422</text>
+
+          <!-- agents -->
+          <text class="t-title" x="760" y="404" fill="var(--green-s)">Agents</text>
+          <text class="t-desc" x="760" y="428">Run the repetitive tax &amp;</text>
+          <text class="t-desc" x="760" y="445">accounting work end to end —</text>
+          <text class="t-desc" x="760" y="462">tool use, human-in-the-loop.</text>
+          <text class="t-desc" x="760" y="486">LLM agents · tool use</text>
+          <text class="badge" x="921" y="399" text-anchor="middle">🤖 Claude</text>
+
+          <!-- system of record -->
+          <text class="t-title" x="560" y="642" text-anchor="middle" font-size="13" fill="var(--green-s)">Postgres</text>
+          <text class="t-db" x="560" y="662" text-anchor="middle">system of record</text>
+          <text class="t-db" x="560" y="700" text-anchor="middle">clients · engagements · tasks · docs · comms</text>
+
+          <!-- externals -->
+          <text class="t-title" x="1104" y="238" font-size="15" fill="var(--violet-s)">DCB Copilot</text>
+          <text class="t-db" x="1104" y="258">work-context events</text>
+          <text class="t-db" x="1104" y="274">redacted · via API</text>
+          <text class="t-title" x="1104" y="392" font-size="15" fill="var(--grey-s)">🤖 Anthropic</text>
+          <text class="t-db" x="1104" y="412">Claude · agent LLM</text>
+          <text class="t-db" x="1104" y="428">bring-your-own-key</text>
+          <text class="t-title" x="1104" y="548" font-size="15" fill="var(--grey-s)">🏦 Bank</text>
+          <text class="t-db" x="1104" y="568">transactions · Plaid</text>
+
+          <!-- arrow labels -->
+          <g transform="translate(196,300)"><rect class="pill" x="-42" y="-10" width="84" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">opens</text></g>
+          <g transform="translate(770,344)"><rect class="pill" x="-52" y="-10" width="104" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">retrieve how-to</text></g>
+          <g transform="translate(708,428)"><rect class="pill" x="-52" y="-10" width="104" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">proposed work</text></g>
+          <g transform="translate(566,548)"><rect class="pill" x="-58" y="-10" width="116" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">write · PII-gated</text></g>
+          <g transform="translate(372,556)"><rect class="pill" x="-58" y="-10" width="116" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">surface for review</text></g>
+          <g transform="translate(458,632)"><rect class="pill" x="-64" y="-10" width="128" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">approve → recorded</text></g>
+          <g transform="translate(408,346)"><rect class="pill" x="-70" y="-10" width="140" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--green-s)">↻ learn (continuous)</text></g>
+          <g transform="translate(820,632)"><rect class="pill" x="-96" y="-16" width="192" height="34" rx="9"/><text class="t-arrow" x="0" y="-2" text-anchor="middle">match payments ↔ invoices</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)">you confirm</text></g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <footer>
+    <b>The loop:</b> <b>Agents</b> retrieve <i>how a task should be performed</i> from the <b>firm knowledge base</b>, do
+    the repetitive tax &amp; accounting work using Claude, and hand their output to a <b>PII-gated ingest</b> that rejects
+    unredacted SSN/EIN with a 422 before anything is written. Staff <b>review and approve</b> in the <b>Next.js surface</b>;
+    approved work is <b>recorded</b> to the Postgres <b>system of record</b>, and approved outcomes flow back to
+    <b>continuously learn</b> the knowledge base. <b>DCB Copilot</b> feeds redacted work-context events through the same
+    gate, and the firm's <b>bank</b> transactions (Plaid) are matched to open invoices for a human to confirm. Automation
+    that touches real client work — but every action lands against a record a person can audit.
+  </footer>
+</div>
+</body>
+</html>
