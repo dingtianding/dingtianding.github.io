@@ -2,19 +2,23 @@
 import Base from '../../layouts/Base.astro';
 import { projects, type Project } from '../../data/projects';
 
-// Case-study pages are DISABLED — returning no routes means none are built,
-// so /work/<slug> 404s. The template and the per-product `detail` content in
-// projects.ts are kept intact; re-enable by restoring the filter below.
+// One case-study page per project that has both a slug and rich `detail`.
 export function getStaticPaths() {
-  return [];
-  // return projects
-  //   .filter((p) => p.slug && p.detail)
-  //   .map((p) => ({ params: { slug: p.slug! }, props: { project: p } }));
+  return projects
+    .filter((p) => p.slug && p.detail)
+    .map((p) => ({ params: { slug: p.slug! }, props: { project: p } }));
 }
 
 const { project } = Astro.props as { project: Project };
 const d = project.detail!;
 const repo = project.links.find((l) => /repo/i.test(l.label));
+
+// Only asset sections with real content render — no dev-facing placeholders.
+// Number the sections that actually appear so there are no gaps.
+const sections = ['problem', 'architecture', 'stack', 'challenges', 'role'];
+if (d.screenshots?.length) sections.push('screens');
+if (d.video) sections.push('demo');
+const n = (key: string) => String(sections.indexOf(key) + 1).padStart(2, '0');
 ---
 
 <Base
@@ -60,7 +64,7 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
     <!-- Problem -->
     <section class="section case__block">
       <div class="shell case__grid">
-        <span class="case__num" data-reveal>01</span>
+        <span class="case__num" data-reveal>{n('problem')}</span>
         <div class="case__col">
           <h2 class="case__h" data-reveal>The problem</h2>
           <p class="case__p" data-reveal>{d.problem}</p>
@@ -71,20 +75,14 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
     <!-- Architecture -->
     <section class="section case__block case__block--alt">
       <div class="shell case__grid">
-        <span class="case__num" data-reveal>02</span>
+        <span class="case__num" data-reveal>{n('architecture')}</span>
         <div class="case__col">
           <h2 class="case__h" data-reveal>Architecture</h2>
           {d.architecture.map((para) => <p class="case__p" data-reveal>{para}</p>)}
-
-          {d.diagram ? (
+          {d.diagram && (
             <figure class="case__diagram" data-reveal>
               <img src={d.diagram} alt={`${project.name} architecture diagram`} loading="lazy" />
             </figure>
-          ) : (
-            <div class="placeholder placeholder--wide" data-reveal>
-              <span class="placeholder__tag">architecture diagram</span>
-              <span class="placeholder__hint">drop an image at <code>/images/{project.slug}-architecture.svg</code></span>
-            </div>
           )}
         </div>
       </div>
@@ -93,7 +91,7 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
     <!-- Stack -->
     <section class="section case__block">
       <div class="shell case__grid">
-        <span class="case__num" data-reveal>03</span>
+        <span class="case__num" data-reveal>{n('stack')}</span>
         <div class="case__col">
           <h2 class="case__h" data-reveal>Tech stack</h2>
           <div class="stackgrid" data-reveal>
@@ -113,7 +111,7 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
     <!-- Engineering challenges -->
     <section class="section case__block case__block--alt">
       <div class="shell case__grid">
-        <span class="case__num" data-reveal>04</span>
+        <span class="case__num" data-reveal>{n('challenges')}</span>
         <div class="case__col">
           <h2 class="case__h" data-reveal>Key engineering challenges</h2>
           <div class="challenges">
@@ -128,41 +126,39 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
       </div>
     </section>
 
-    <!-- Screenshots -->
+    <!-- Role -->
     <section class="section case__block">
       <div class="shell case__grid">
-        <span class="case__num" data-reveal>05</span>
+        <span class="case__num" data-reveal>{n('role')}</span>
         <div class="case__col">
-          <h2 class="case__h" data-reveal>Screens</h2>
-          {d.screenshots && d.screenshots.length > 0 ? (
+          <h2 class="case__h" data-reveal>My role</h2>
+          <p class="case__p" data-reveal>{d.role}</p>
+        </div>
+      </div>
+    </section>
+
+    {d.screenshots && d.screenshots.length > 0 && (
+      <section class="section case__block case__block--alt">
+        <div class="shell case__grid">
+          <span class="case__num" data-reveal>{n('screens')}</span>
+          <div class="case__col">
+            <h2 class="case__h" data-reveal>Screens</h2>
             <div class="shots" data-reveal>
               {d.screenshots.map((src, i) => (
                 <img class="shots__img" src={src} alt={`${project.name} screenshot ${i + 1}`} loading="lazy" />
               ))}
             </div>
-          ) : (
-            <div class="shots" data-reveal>
-              <div class="placeholder placeholder--shot">
-                <span class="placeholder__tag">screenshot</span>
-                <span class="placeholder__hint"><code>/images/{project.slug}-1.png</code></span>
-              </div>
-              <div class="placeholder placeholder--shot">
-                <span class="placeholder__tag">screenshot</span>
-                <span class="placeholder__hint"><code>/images/{project.slug}-2.png</code></span>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    )}
 
-    <!-- Demo video -->
-    <section class="section case__block case__block--alt">
-      <div class="shell case__grid">
-        <span class="case__num" data-reveal>06</span>
-        <div class="case__col">
-          <h2 class="case__h" data-reveal>Demo</h2>
-          {d.video ? (
+    {d.video && (
+      <section class="section case__block">
+        <div class="shell case__grid">
+          <span class="case__num" data-reveal>{n('demo')}</span>
+          <div class="case__col">
+            <h2 class="case__h" data-reveal>Demo</h2>
             <div class="video" data-reveal>
               <iframe
                 src={d.video}
@@ -172,26 +168,10 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
                 allowfullscreen
               ></iframe>
             </div>
-          ) : (
-            <div class="placeholder placeholder--video" data-reveal>
-              <span class="placeholder__tag">▶ demo video</span>
-              <span class="placeholder__hint">paste a YouTube/Loom embed URL into <code>detail.video</code></span>
-            </div>
-          )}
+          </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Role -->
-    <section class="section case__block">
-      <div class="shell case__grid">
-        <span class="case__num" data-reveal>07</span>
-        <div class="case__col">
-          <h2 class="case__h" data-reveal>My role</h2>
-          <p class="case__p" data-reveal>{d.role}</p>
-        </div>
-      </div>
-    </section>
+      </section>
+    )}
 
     <footer class="case__foot">
       <div class="shell">
@@ -200,6 +180,14 @@ const repo = project.links.find((l) => /repo/i.test(l.label));
     </footer>
   </main>
 </Base>
+
+<script>
+  // This case-study page doesn't load the homepage motion bundle, so nothing
+  // adds `is-ready` to release the anti-flash rule that hides [data-reveal].
+  // Add it so the content shows. (The scroll choreography is a homepage-only
+  // flourish; on these content pages, visibility is what matters.)
+  document.documentElement.classList.add('is-ready');
+</script>
 
 <style>
   /* ---- top bar ---- */

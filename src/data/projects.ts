@@ -133,17 +133,19 @@ export const projects: Project[] = [
     award: 'Building',
     links: [],
     detail: {
-      oneLiner: 'A source-data backbone over SEC filings + tax sources — queryable analytics, filing diffs, and the corpus DCB Public distills from.',
-      status: 'Scaffold · building',
+      oneLiner: 'A research backbone over SEC filings + tax sources: normalized analytics plus hybrid retrieval and grounded, cited answers — the corpus DCB Public distills from.',
+      status: 'Building',
       problem:
-        "Public companies' numbers live in SEC filings, but they are buried in EDGAR and XBRL. Comparing companies, or spotting what actually changed between two filings — in the financials or the risk text — is slow, manual work.",
+        "Public companies' numbers live in SEC filings, but they are buried in EDGAR and XBRL. Comparing companies, spotting what actually changed between two filings — in the financials or the risk text — or getting a grounded answer you can trust is slow, manual work.",
       architecture: [
         'A practical SEC data pipeline: ingest SEC submissions and XBRL company facts for a controlled universe of tickers, store raw JSON and documents in object storage, then normalize filing metadata and financial facts into PostgreSQL.',
-        'A FastAPI backend serves analytics — revenue, margin, debt, liquidity, risk-text changes, and filing summaries — to a React dashboard. The build is at scaffold stage: API and dashboard shells plus a storage abstraction are in place; the next step is ingestion for a small ticker universe, then normalized tables and trend endpoints.',
+        'A FastAPI backend serves analytics — revenue, margin, debt, liquidity, risk-text changes, and filing summaries — to a React dashboard, alongside a retrieval layer for question-answering over the corpus.',
+        'Retrieval is hybrid: semantic embeddings and BM25 keyword search over filing sections, fused with reciprocal-rank fusion, feed a grounded answer that cites the specific sections it used. A dependency-free hashing embedder keeps retrieval runnable with no API key. And quality is measured, not assumed — an eval harness scores retrieval (hit@k against a gold set, offline) and generation (answer groundedness via an LLM judge), and runs in CI.',
       ],
       stack: [
         { group: 'Pipeline', items: ['Python', 'SEC EDGAR', 'XBRL', 'object storage'] },
-        { group: 'Backend', items: ['FastAPI', 'PostgreSQL'] },
+        { group: 'Backend', items: ['FastAPI', 'PostgreSQL', 'SQLAlchemy'] },
+        { group: 'Retrieval & evals', items: ['hybrid search (semantic + BM25 · RRF)', 'grounded citations', 'eval harness (hit@k · LLM-judge)'] },
         { group: 'Frontend', items: ['React', 'TypeScript'] },
       ],
       challenges: [
@@ -152,11 +154,15 @@ export const projects: Project[] = [
           body: 'Company facts arrive as sprawling, inconsistently-tagged XBRL taxonomies; turning them into clean, comparable financial facts is the core of the pipeline.',
         },
         {
+          title: 'Measured retrieval quality',
+          body: 'Hybrid retrieval (semantic + BM25, fused with reciprocal-rank fusion) grounds answers in specific filing sections; an eval harness scores retrieval hit@k and answer groundedness so regressions are caught, not shipped.',
+        },
+        {
           title: 'Filing diffing',
           body: 'Detecting meaningful change between filings — both in the structured financials and in narrative risk text — rather than surfacing noise.',
         },
       ],
-      role: 'Sole engineer — pipeline, normalization schema, API, and dashboard.',
+      role: 'Sole engineer — the ingestion pipeline, normalization schema, API and dashboard, the hybrid-retrieval layer, and the eval harness.',
     },
   },
   {
