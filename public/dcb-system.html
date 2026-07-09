@@ -51,6 +51,15 @@
   h1 { font-family: var(--hand); font-weight: 700; font-size: clamp(1.7rem,1.2rem + 2vw,2.6rem); margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
   .sub { color: var(--muted); font-size: 0.98rem; margin-top: 6px; max-width: 74ch; line-height: 1.5; }
   .sub b { color: var(--ink); font-weight: 600; }
+  .why { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 44px; margin-top: 16px; max-width: 118ch; }
+  .why h3 { font-family: var(--hand); font-weight: 700; font-size: 1rem; color: var(--ink); margin: 0 0 5px; }
+  .why ul { margin: 0; padding-left: 15px; }
+  .why li { color: var(--muted); font-size: 0.85rem; line-height: 1.45; margin-bottom: 3px; }
+  .why li b { color: var(--ink); font-weight: 600; }
+  .why .pn { font-weight: 700; }
+  .why .p-blue { color: var(--blue-s); } .why .p-green { color: var(--green-s); }
+  .why .p-violet { color: var(--violet-s); } .why .p-yellow { color: var(--yellow-s); }
+  @media (max-width: 760px) { .why { grid-template-columns: 1fr; } }
   .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 16px; font-size: 0.82rem; color: var(--muted); align-items: center; }
   .legend span { display: inline-flex; align-items: center; gap: 7px; }
   .swatch { width: 15px; height: 15px; border-radius: 4px; border: 2px solid; }
@@ -68,7 +77,7 @@
   .t-desc { font-family: var(--sans); font-size: 12px; fill: var(--ink); }
   .t-stack { font-family: var(--sans); font-size: 10.5px; fill: var(--muted); }
   .t-why { font-family: var(--hand); font-size: 12.5px; }
-  .t-whyb { font-family: var(--sans); font-size: 11px; }
+  .t-whyb { font-family: var(--sans); font-size: 11px; fill: var(--ink); }
   .t-note { font-family: var(--hand); font-size: 11.5px; fill: var(--muted); }
   .t-db { font-family: var(--sans); font-size: 10px; fill: var(--muted); }
   .t-src-title { font-family: var(--hand); font-weight: 700; font-size: 15px; fill: var(--ink); }
@@ -92,11 +101,30 @@
   <header>
     <h1>DCB — how the suite fits together</h1>
     <p class="sub">
-      One thesis, four products: <b>AI-native services for accounting &amp; finance</b> — agents do the work, humans approve.
-      <b>Research</b> grounds the knowledge and funnels it into the other three; <b>Copilot</b> observes the work; the firm's
-      knowledge base <b>learns continuously</b>. Each product owns its own database — they integrate by API and entitlement,
-      never a shared DB. Each box notes <b>why it exists</b>.
+      One thesis, four products — <b>AI-native services for accounting &amp; finance</b>: agents do the work, humans approve.
+      Each product owns its own database; integration is API + entitlement, never a shared DB.
     </p>
+    <div class="why">
+      <div>
+        <h3>💡 Why the suite exists</h3>
+        <ul>
+          <li><span class="pn p-blue">Public</span> — general AI answers finance questions confidently wrong; the real answer sits on IRS / SEC / state sites, so it gives vetted, <i>cited</i> answers instead.</li>
+          <li><span class="pn p-green">Practice</span> — tax work is competitive &amp; commoditised and a firm's roles split cleanly into agents, so it delivers the service itself, not another tool.</li>
+          <li><span class="pn p-violet">Copilot</span> — you can't ship a Cursor-style sidebar inside every legacy accounting app, so it's screen-aware and spans them all.</li>
+          <li><span class="pn p-yellow">Research</span> — the backbone that funnels correct, grounded information into the other three.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>↻ The loop</h3>
+        <ul>
+          <li><b>Research</b> distills cited entries into Public and feeds Practice's firm KB with grounded <i>how a task should be performed</i>.</li>
+          <li><b>Copilot</b> sends redacted <b>work-context events</b> to Practice via its API.</li>
+          <li>Inside Practice, agents <b>retrieve how-to</b>, do the work, <b>humans review &amp; approve</b>, outcomes are <b>recorded</b>.</li>
+          <li>Approved outcomes flow back to <b>continuously learn</b> the firm KB.</li>
+          <li>Practice reads the firm's <b>bank</b> transactions (Plaid) to match payments to open invoices for you to confirm.</li>
+        </ul>
+      </div>
+    </div>
     <div class="legend">
       <b class="lg-h">Node types</b>
       <span><svg class="ic" viewBox="0 0 24 16"><rect x="1.5" y="1.5" width="21" height="13" rx="4" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.6"/></svg>App / service</span>
@@ -121,7 +149,7 @@
 
   <div class="stage-scroll">
     <div class="stage">
-      <svg class="diagram" viewBox="0 0 1560 1240" role="img"
+      <svg class="diagram" viewBox="0 0 1560 1080" role="img"
            aria-label="Detailed system diagram of the DCB suite: Research grounds a continuously-learned firm knowledge base and funnels correct information to Public, Copilot, and Practice; Copilot feeds observed work context; Practice runs agents with human review. Each product notes why it is built.">
         <defs>
           <filter id="rough" x="-4%" y="-4%" width="108%" height="108%">
@@ -136,7 +164,7 @@
         <!-- ===== ROUGHENED SHAPES ===== -->
         <g filter="url(#rough)" fill="none">
           <!-- Practice zone container (drawn first, behind) -->
-          <rect x="400" y="516" width="800" height="664" rx="20" fill="var(--green-zone)" stroke="var(--green-s)" stroke-width="2.6"/>
+          <rect x="400" y="516" width="800" height="396" rx="20" fill="var(--green-zone)" stroke="var(--green-s)" stroke-width="2.6"/>
 
           <!-- sources -->
           <rect x="40" y="220" width="182" height="62" rx="12" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.4"/>
@@ -164,7 +192,7 @@
           <!-- user chips -->
           <rect x="650" y="40" width="196" height="50" rx="14" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="2.2"/>
           <rect x="900" y="40" width="238" height="50" rx="14" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="2.2"/>
-          <rect x="180" y="1150" width="252" height="52" rx="14" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="2.2"/>
+          <rect x="180" y="1000" width="252" height="52" rx="14" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="2.2"/>
 
           <!-- Claude badges -->
           <rect x="480" y="160" width="82" height="25" rx="9" fill="var(--panel)" stroke="var(--yellow-s)" stroke-width="1.7"/>
@@ -206,8 +234,8 @@
           <!-- firm clients -> public (comped) -->
           <path d="M1004 90 C 972 116 942 134 920 150" stroke="var(--muted)" stroke-width="2.2" stroke-dasharray="6 7" stroke-linecap="round" marker-end="url(#arrowMuted)"/>
           <!-- CPAs -> copilot & practice -->
-          <path d="M244 1150 C 222 1064 210 996 206 956" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
-          <path d="M362 1156 C 432 1078 454 992 470 880" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+          <path d="M240 1000 C 220 984 210 970 206 956" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+          <path d="M366 1000 C 418 958 452 916 470 880" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
           <!-- bank -> practice (payments reconciliation) -->
           <path d="M1250 724 C 1200 728 1150 728 1110 726" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
         </g>
@@ -291,7 +319,7 @@
           <!-- users -->
           <text class="t-user" x="748" y="70" text-anchor="middle">👥 general public</text>
           <text class="t-user" x="1019" y="70" text-anchor="middle">👤 firm clients (comped)</text>
-          <text class="t-user" x="306" y="1182" text-anchor="middle">👤 CPAs &amp; firm staff</text>
+          <text class="t-user" x="306" y="1032" text-anchor="middle">👤 CPAs &amp; firm staff</text>
 
           <!-- arrow labels -->
           <g transform="translate(663,224)"><rect class="pill" x="-74" y="-16" width="148" height="34" rx="9"/><text class="t-arrow" x="0" y="-2" text-anchor="middle">distilled cited entries</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)">publish API · planned</text></g>
@@ -311,17 +339,7 @@
   </div>
 
   <footer>
-    <b>Why the suite exists:</b> general AI answers finance questions confidently wrong — the authoritative answer sits on
-    IRS / SEC / state sites — so <b>Public</b> gives vetted, <i>cited</i> answers instead. Tax work is competitive and
-    commoditised and a firm's roles split cleanly into agents, so <b>Practice</b> delivers the service itself, not another
-    tool. You can't ship a Cursor-style sidebar inside every legacy accounting app, so <b>Copilot</b> is screen-aware and
-    spans them all. And <b>Research</b> is the backbone that funnels correct, grounded information into the other three.
-    <b>The loop:</b> Research distills cited entries into Public and feeds Practice's <b>firm knowledge base</b> with grounded
-    <i>how a task should be performed</i>. Copilot sends redacted <b>work-context events</b> to Practice via its API. Inside
-    Practice, agents <b>retrieve how-to</b>, do the work, <b>humans review &amp; approve</b>, outcomes are <b>recorded</b> —
-    and approved outcomes flow back to <b>continuously learn</b> the firm KB. Every product owns its own store; integration
-    is API + entitlement, never a shared DB. Practice also reads the firm's <b>bank</b> transactions (Plaid) to match payments
-    to open invoices for you to confirm.
+    <b>Two knowledge bases:</b> Public's is published &amp; cited for consumers; the firm's is internal &amp; procedural, improving with every job.
   </footer>
 </div>
 
