@@ -76,6 +76,9 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
                 {p.slug && p.detail && (
                   <a class="card__case" href={`/work/${p.slug}`}>Case study →</a>
                 )}
+                {p.detail?.systemUrl && (
+                  <a class="card__sys" href={p.detail.systemUrl} target="_blank" rel="noopener">System design ↗</a>
+                )}
                 {p.links.map((l) => (
                   <a href={l.href} target="_blank" rel="noopener">{l.label} ↗</a>
                 ))}
