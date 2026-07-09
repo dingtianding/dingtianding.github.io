@@ -13,7 +13,7 @@ const { project } = Astro.props as { project: Project };
 const d = project.detail!;
 const repo = project.links.find((l) => /repo/i.test(l.label));
 
-// Only asset sections with real content render — no dev-facing placeholders.
+// Only asset sections with real content render, no dev-facing placeholders.
 // Number the sections that actually appear so there are no gaps.
 const sections = ['problem', 'architecture', 'stack', 'challenges', 'role'];
 if (d.screenshots?.length) sections.push('screens');
@@ -22,7 +22,7 @@ const n = (key: string) => String(sections.indexOf(key) + 1).padStart(2, '0');
 ---
 
 <Base
-  title={`${project.name} — Dean Ding`}
+  title={`${project.name}, Dean Ding`}
   description={d.oneLiner}
 >
   <header class="topbar">
@@ -55,7 +55,7 @@ const n = (key: string) => String(sections.indexOf(key) + 1).padStart(2, '0');
             <a href={repo.href} target="_blank" rel="noopener" class="case__cta">View repository ↗</a>
           )}
           {project.isPrivate && (
-            <span class="case__private">Private repository — code shared on request</span>
+            <span class="case__private">Private repository, code shared on request</span>
           )}
         </div>
       </div>

@@ -1,5 +1,5 @@
 /* ============================================================
-   Hero diff — the signature moment.
+   Hero diff, the signature moment.
    The accountant line types itself out, gets struck through
    ("removed"), then the engineer line writes in with a live
    caret, as if an agent proposed a reviewable change and a
@@ -29,7 +29,7 @@ export function initHeroDiff(): gsap.core.Timeline | null {
   gsap.set(diff, { '--strike': 0 });
   gsap.set(approve, { opacity: 0, y: 4 });
 
-  // Char-by-char typer via an animated counter — no extra GSAP plugin.
+  // Char-by-char typer via an animated counter, no extra GSAP plugin.
   const type = (el: HTMLElement, text: string, dur: number) => {
     const state = { n: 0 };
     return gsap.to(state, {
@@ -47,7 +47,7 @@ export function initHeroDiff(): gsap.core.Timeline | null {
   // 1. Type the accountant line.
   tl.add(type(delText, delFull, Math.max(0.6, delFull.length * 0.02)));
 
-  // 2. Strike it through — the change is "removed".
+  // 2. Strike it through, the change is "removed".
   tl.to(diff, { '--strike': 1, duration: 0.4, ease: 'power2.inOut' }, '+=0.3');
   tl.to(delLine, { opacity: 0.5, duration: 0.35 }, '<0.05');
 

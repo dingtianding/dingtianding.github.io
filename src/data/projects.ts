@@ -10,7 +10,7 @@ export interface Challenge {
 
 // Rich case-study content for a project. When present, the project gets a
 // dedicated /work/<slug> page and a "Case study" link on its card.
-// Asset fields (diagram, screenshots, video) are optional — pages render a
+// Asset fields (diagram, screenshots, video) are optional, pages render a
 // labelled placeholder until the real asset is dropped into /public/images.
 export interface ProjectDetail {
   oneLiner: string;
@@ -34,7 +34,7 @@ export interface Project {
   image?: string;
   accent?: boolean; // featured / larger card
   award?: string;
-  isPrivate?: boolean; // private repo — no public code link
+  isPrivate?: boolean; // private repo, no public code link
   handCoded?: boolean; // genuinely hand-written, not AI-generated
   demo?: string; // internal path to a live, interactive demo (e.g. "/ask")
   links: { label: string; href: string }[];
@@ -49,7 +49,7 @@ export const projects: Project[] = [
     name: 'DCB Copilot',
     slug: 'dcb-copilot',
     blurb:
-      'A screen-aware desktop overlay for CPAs: hit a hotkey, it reads whatever accounting software is on screen, and answers in context — no copy-paste, no leaving your tools.',
+      'A screen-aware desktop overlay for CPAs: hit a hotkey, it reads whatever accounting software is on screen, and answers in context, no copy-paste, no leaving your tools.',
     tech: ['Rust', 'Tauri', 'React', 'Claude vision', 'On-device RAG'],
     award: 'Private · building',
     isPrivate: true,
@@ -59,16 +59,16 @@ export const projects: Project[] = [
       status: 'Private · in daily use',
       systemUrl: '/dcb-copilot-system.html',
       problem:
-        'CPAs live inside legacy desktop software — tax prep tools, Excel workpapers, QuickBooks, financial PDFs. Most AI tooling assumes you will copy-paste into a chat tab, which is a non-starter mid-workpaper for a non-technical finance professional. The screen is the context that AI tools throw away.',
+        'CPAs live inside legacy desktop software, tax prep tools, Excel workpapers, QuickBooks, financial PDFs. Most AI tooling assumes you will copy-paste into a chat tab, which is a non-starter mid-workpaper for a non-technical finance professional. The screen is the context that AI tools throw away.',
       architecture: [
-        'A frameless, always-on-top desktop overlay built on Tauri 2 — a Rust core with a React/TypeScript webview UI. A global hotkey captures an in-memory screenshot plus the frontmost application, and sends it straight from the machine to Claude (vision) with a CPA/tax system prompt. The answer streams back into the overlay.',
-        'Firm documents are searchable on-device: a local RAG pipeline embeds Markdown/PDF/text with BGE-base, stores a JSON vector index in the app data directory, and reranks candidates with a bge-reranker cross-encoder before injecting cited context. No server sits in the LLM loop — the user brings their own Anthropic key.',
-        'A separate decorated Settings window (opened from the dock) manages the API key, model tier, opacity, customizable hotkeys, and the knowledge base — kept out of the floating overlay so the assistant stays minimal.',
+        'A frameless, always-on-top desktop overlay built on Tauri 2, a Rust core with a React/TypeScript webview UI. A global hotkey captures an in-memory screenshot plus the frontmost application, and sends it straight from the machine to Claude (vision) with a CPA/tax system prompt. The answer streams back into the overlay.',
+        'Firm documents are searchable on-device: a local RAG pipeline embeds Markdown/PDF/text with BGE-base, stores a JSON vector index in the app data directory, and reranks candidates with a bge-reranker cross-encoder before injecting cited context. No server sits in the LLM loop, the user brings their own Anthropic key.',
+        'A separate decorated Settings window (opened from the dock) manages the API key, model tier, opacity, customizable hotkeys, and the knowledge base, kept out of the floating overlay so the assistant stays minimal.',
       ],
       stack: [
         { group: 'Desktop core', items: ['Rust', 'Tauri 2', 'global-shortcut', 'active-win'] },
         { group: 'UI', items: ['React', 'TypeScript', 'Vite'] },
-        { group: 'AI / retrieval', items: ['Anthropic Claude (vision)', 'fastembed — BGE-base', 'bge-reranker', 'pdf-extract'] },
+        { group: 'AI / retrieval', items: ['Anthropic Claude (vision)', 'fastembed, BGE-base', 'bge-reranker', 'pdf-extract'] },
       ],
       challenges: [
         {
@@ -77,34 +77,34 @@ export const projects: Project[] = [
         },
         {
           title: 'On-device retrieval without a server',
-          body: 'Embeddings, a JSON vector index, and a cross-encoder reranker all run locally so firm documents never leave the machine — while keeping the multi-gigabyte model cache out of version control.',
+          body: 'Embeddings, a JSON vector index, and a cross-encoder reranker all run locally so firm documents never leave the machine, while keeping the multi-gigabyte model cache out of version control.',
         },
         {
           title: 'Confidentiality-first capture',
           body: 'Screenshots are captured in memory and never written to disk; taxpayer PII (SSN/EIN) is redacted in responses; and because it is bring-your-own-key, requests go straight to Anthropic with no backend of ours in the loop.',
         },
       ],
-      role: 'Sole engineer and product owner — Rust backend, React overlay, the on-device RAG pipeline, and the multi-window UX.',
+      role: 'Sole engineer and product owner, Rust backend, React overlay, the on-device RAG pipeline, and the multi-window UX.',
     },
   },
   {
     name: 'DCB Practice',
     slug: 'dcb-practice',
     blurb:
-      'An AI-native accounting firm: agents run the repetitive tax and accounting work end to end while humans review and approve — built on a practice-management platform that is the system of record, with a PII-gated ingest pipeline.',
+      'An AI-native accounting firm: agents run the repetitive tax and accounting work end to end while humans review and approve, built on a practice-management platform that is the system of record, with a PII-gated ingest pipeline.',
     tech: ['Agentic AI', 'FastAPI', 'PostgreSQL', 'Next.js'],
     award: 'Private · building',
     isPrivate: true,
     links: [],
     detail: {
-      oneLiner: 'Not software a firm uses — the firm itself, delivered as software: agents do the work, humans approve.',
+      oneLiner: 'Not software a firm uses, the firm itself, delivered as software: agents do the work, humans approve.',
       status: 'Private · building',
       systemUrl: '/dcb-practice-system.html',
       problem:
-        'The spend on professional services dwarfs the spend on software, and accounting, tax, and audit are among the most outsourced of all — which makes them the strongest candidates to be replaced, not just improved. The opportunity is not another tool that helps a CPA work faster; it is to deliver the service itself. But you cannot let agents touch real client work without a system of record, an audit trail, and a hard guarantee that sensitive data is handled correctly.',
+        'The spend on professional services dwarfs the spend on software, and accounting, tax, and audit are among the most outsourced of all, which makes them the strongest candidates to be replaced, not just improved. The opportunity is not another tool that helps a CPA work faster; it is to deliver the service itself. But you cannot let agents touch real client work without a system of record, an audit trail, and a hard guarantee that sensitive data is handled correctly.',
       architecture: [
-        "The substrate is a FastAPI + SQLAlchemy + PostgreSQL platform that is the firm's single source of truth: JWT auth, and clients, engagements, tasks, documents, and communications, with a dashboard summary. This is what makes agent work reviewable — every action lands against a real record a human can audit and approve.",
-        'On top of it, an agentic layer does the repetitive accounting work and feeds results back through a work-session ingest endpoint that rejects unredacted PII (SSN/EIN) with a 422 before anything is written — so automation can never persist sensitive data. A Next.js (App Router) front-end is the human review surface; Docker Compose runs local Postgres; pytest runs in CI.',
+        "The substrate is a FastAPI + SQLAlchemy + PostgreSQL platform that is the firm's single source of truth: JWT auth, and clients, engagements, tasks, documents, and communications, with a dashboard summary. This is what makes agent work reviewable, every action lands against a real record a human can audit and approve.",
+        'On top of it, an agentic layer does the repetitive accounting work and feeds results back through a work-session ingest endpoint that rejects unredacted PII (SSN/EIN) with a 422 before anything is written, so automation can never persist sensitive data. A Next.js (App Router) front-end is the human review surface; Docker Compose runs local Postgres; pytest runs in CI.',
       ],
       stack: [
         { group: 'Backend', items: ['Python', 'FastAPI', 'SQLAlchemy', 'PostgreSQL', 'Pydantic', 'JWT'] },
@@ -114,18 +114,18 @@ export const projects: Project[] = [
       challenges: [
         {
           title: 'Agents that touch real work, safely',
-          body: 'Letting agents run accounting tasks end to end requires every action to be reviewable and reversible — landed against a system of record a human approves, not a black box that just emits an answer.',
+          body: 'Letting agents run accounting tasks end to end requires every action to be reviewable and reversible, landed against a system of record a human approves, not a black box that just emits an answer.',
         },
         {
           title: 'PII-gated ingest',
-          body: 'Unredacted SSN/EIN in an ingested work session is rejected with a 422 at the boundary, so the automated path can never persist sensitive data — covered by integration tests against an in-memory SQLite override so CI needs no Postgres.',
+          body: 'Unredacted SSN/EIN in an ingested work session is rejected with a 422 at the boundary, so the automated path can never persist sensitive data, covered by integration tests against an in-memory SQLite override so CI needs no Postgres.',
         },
         {
           title: 'A multi-entity domain model',
-          body: 'Clients, engagements, tasks, documents, and communications relate the way a real firm tracks work — the coherent picture an agent needs to operate over, rather than scattered files.',
+          body: 'Clients, engagements, tasks, documents, and communications relate the way a real firm tracks work, the coherent picture an agent needs to operate over, rather than scattered files.',
         },
       ],
-      role: 'Sole engineer — the platform (auth, data model, API), the PII-gated ingest pipeline and its test suite, and the agentic layer and review UI.',
+      role: 'Sole engineer, the platform (auth, data model, API), the PII-gated ingest pipeline and its test suite, and the agentic layer and review UI.',
     },
   },
   {
@@ -137,15 +137,15 @@ export const projects: Project[] = [
     award: 'Building',
     links: [],
     detail: {
-      oneLiner: 'A research backbone over SEC filings + tax sources: normalized analytics plus hybrid retrieval and grounded, cited answers — the corpus DCB Public distills from.',
+      oneLiner: 'A research backbone over SEC filings + tax sources: normalized analytics plus hybrid retrieval and grounded, cited answers, the corpus DCB Public distills from.',
       status: 'Building',
       systemUrl: '/dcb-research-system.html',
       problem:
-        "Public companies' numbers live in SEC filings, but they are buried in EDGAR and XBRL. Comparing companies, spotting what actually changed between two filings — in the financials or the risk text — or getting a grounded answer you can trust is slow, manual work.",
+        "Public companies' numbers live in SEC filings, but they are buried in EDGAR and XBRL. Comparing companies, spotting what actually changed between two filings, in the financials or the risk text, or getting a grounded answer you can trust is slow, manual work.",
       architecture: [
         'A practical SEC data pipeline: ingest SEC submissions and XBRL company facts for a controlled universe of tickers, store raw JSON and documents in object storage, then normalize filing metadata and financial facts into PostgreSQL.',
-        'A FastAPI backend serves analytics — revenue, margin, debt, liquidity, risk-text changes, and filing summaries — to a React dashboard, alongside a retrieval layer for question-answering over the corpus.',
-        'Retrieval is hybrid: semantic embeddings and BM25 keyword search over filing sections, fused with reciprocal-rank fusion, feed a grounded answer that cites the specific sections it used. A dependency-free hashing embedder keeps retrieval runnable with no API key. And quality is measured, not assumed — an eval harness scores retrieval (hit@k against a gold set, offline) and generation (answer groundedness via an LLM judge), and runs in CI.',
+        'A FastAPI backend serves analytics, revenue, margin, debt, liquidity, risk-text changes, and filing summaries, to a React dashboard, alongside a retrieval layer for question-answering over the corpus.',
+        'Retrieval is hybrid: semantic embeddings and BM25 keyword search over filing sections, fused with reciprocal-rank fusion, feed a grounded answer that cites the specific sections it used. A dependency-free hashing embedder keeps retrieval runnable with no API key. And quality is measured, not assumed, an eval harness scores retrieval (hit@k against a gold set, offline) and generation (answer groundedness via an LLM judge), and runs in CI.',
       ],
       stack: [
         { group: 'Pipeline', items: ['Python', 'SEC EDGAR', 'XBRL', 'object storage'] },
@@ -164,10 +164,10 @@ export const projects: Project[] = [
         },
         {
           title: 'Filing diffing',
-          body: 'Detecting meaningful change between filings — both in the structured financials and in narrative risk text — rather than surfacing noise.',
+          body: 'Detecting meaningful change between filings, both in the structured financials and in narrative risk text, rather than surfacing noise.',
         },
       ],
-      role: 'Sole engineer — the ingestion pipeline, normalization schema, API and dashboard, the hybrid-retrieval layer, and the eval harness.',
+      role: 'Sole engineer, the ingestion pipeline, normalization schema, API and dashboard, the hybrid-retrieval layer, and the eval harness.',
     },
   },
   {
@@ -185,9 +185,9 @@ export const projects: Project[] = [
       status: 'Private · building',
       systemUrl: '/dcb-public-system.html',
       problem:
-        'Personal-finance information online is either shallow SEO filler or paywalled and ungrounded. People want vetted, sourced explainers — and an AI advisor that answers from that corpus with citations, with a clear line between education and personalized advice.',
+        'Personal-finance information online is either shallow SEO filler or paywalled and ungrounded. People want vetted, sourced explainers, and an AI advisor that answers from that corpus with citations, with a clear line between education and personalized advice.',
       architecture: [
-        'A FastAPI + SQLAlchemy + PostgreSQL backend holds a corpus of vetted explainers. A Claude-backed RAG advisor answers grounded in that corpus and returns citations — free for partner-firm clients, a subscriber feature otherwise.',
+        'A FastAPI + SQLAlchemy + PostgreSQL backend holds a corpus of vetted explainers. A Claude-backed RAG advisor answers grounded in that corpus and returns citations, free for partner-firm clients, a subscriber feature otherwise.',
         'A Next.js (App Router, React 19, Tailwind v4) front-end is the marketing home leading into the knowledge base. It is a separate product from CPA Practice with no shared database; the only link is outbound entitlement/auth from the firm tool.',
       ],
       stack: [
@@ -202,10 +202,10 @@ export const projects: Project[] = [
         },
         {
           title: 'Education, not advice',
-          body: 'Keeping the product clearly on the educational-information side of the line — and modeling entitlement across two products without a shared database.',
+          body: 'Keeping the product clearly on the educational-information side of the line, and modeling entitlement across two products without a shared database.',
         },
       ],
-      role: 'Sole engineer — corpus model, the RAG advisor, the entitlement link, and the marketing/KB front-end.',
+      role: 'Sole engineer, corpus model, the RAG advisor, the entitlement link, and the marketing/KB front-end.',
     },
   },
 
@@ -213,20 +213,20 @@ export const projects: Project[] = [
     name: 'Open Claw Life Coach',
     slug: 'open-claw-life-coach',
     blurb:
-      'A personal operating system: an agent that continuously accumulates context across goals, career, projects, health, finance, and journal — with layered memory, a decision log, and an automatic weekly review — so it understands not just what you did, but why.',
+      'A personal operating system: an agent that continuously accumulates context across goals, career, projects, health, finance, and journal, with layered memory, a decision log, and an automatic weekly review, so it understands not just what you did, but why.',
     tech: ['LLM agents', 'Memory', 'Markdown', 'Personal infra'],
     award: 'Personal · building',
     isPrivate: true,
     links: [],
     detail: {
-      oneLiner: 'A personal operating system — an agent that accumulates the context of your life and reasons over it.',
+      oneLiner: 'A personal operating system, an agent that accumulates the context of your life and reasons over it.',
       status: 'Personal · building',
       problem:
-        "Chatbots forget. A genuinely useful personal agent needs durable, structured context — goals, career, health, finances, projects, and the reasoning behind decisions — collected automatically rather than re-typed every session. The hard part isn't the model; it's the context system around it.",
+        "Chatbots forget. A genuinely useful personal agent needs durable, structured context, goals, career, health, finances, projects, and the reasoning behind decisions, collected automatically rather than re-typed every session. The hard part isn't the model; it's the context system around it.",
       architecture: [
-        'Context is organized as a Life OS — version-controlled Markdown across Goals, Career, Projects, Health, Finance, Relationships, Journal, Knowledge, and Preferences. Plain files keep the user in control and make the system easy to evolve without locking into a particular database or note app.',
+        'Context is organized as a Life OS, version-controlled Markdown across Goals, Career, Projects, Health, Finance, Relationships, Journal, Knowledge, and Preferences. Plain files keep the user in control and make the system easy to evolve without locking into a particular database or note app.',
         "Memory works in three layers: short-term (today's tasks, the current sprint, live conversations), medium-term (this week's goals, active projects, recruiters in flight), and long-term (career history, résumé, coding style, health trends, interview stories). A weekly review rolls short-term context into long-term, updates goals, and archives completed work.",
-        'A decision log records every important decision with its reasoning, the alternatives considered, and a review date — so over a year the agent understands why choices were made, not just what happened. Context collection is automated through a prioritized set of integrations (GitHub activity, Calendar, Gmail, a job-application tracker, fitness data, daily journal) layered in over time.',
+        'A decision log records every important decision with its reasoning, the alternatives considered, and a review date, so over a year the agent understands why choices were made, not just what happened. Context collection is automated through a prioritized set of integrations (GitHub activity, Calendar, Gmail, a job-application tracker, fitness data, daily journal) layered in over time.',
       ],
       stack: [
         { group: 'Core', items: ['LLM agent', 'tool use', 'version-controlled Markdown'] },
@@ -236,7 +236,7 @@ export const projects: Project[] = [
       challenges: [
         {
           title: 'Automating context collection',
-          body: 'The value is proportional to how little you have to type. Pulling context from GitHub, calendar, email, workouts, and notes — while keeping the user in control of it — is the core engineering problem.',
+          body: 'The value is proportional to how little you have to type. Pulling context from GitHub, calendar, email, workouts, and notes, while keeping the user in control of it, is the core engineering problem.',
         },
         {
           title: 'Layered memory that stays useful',
@@ -244,10 +244,10 @@ export const projects: Project[] = [
         },
         {
           title: 'A decision log with reasoning',
-          body: 'Recording not just what was decided but why — with alternatives and a review date — so the system can reflect on past reasoning, not just past events.',
+          body: 'Recording not just what was decided but why, with alternatives and a review date, so the system can reflect on past reasoning, not just past events.',
         },
       ],
-      role: 'Sole designer and engineer — the Life OS schema, the memory tiers, the decision log, and the integration pipeline.',
+      role: 'Sole designer and engineer, the Life OS schema, the memory tiers, the decision log, and the integration pipeline.',
     },
   },
 
@@ -255,7 +255,7 @@ export const projects: Project[] = [
   {
     name: 'Xelsius',
     blurb:
-      'An earlier exploration of agent-proposed, reviewable diffs on financial data — the "Cursor for accountants" idea that grew into the DCB suite.',
+      'An earlier exploration of agent-proposed, reviewable diffs on financial data, the "Cursor for accountants" idea that grew into the DCB suite.',
     tech: ['TypeScript', 'Python', 'LLM agents'],
     award: 'Earlier build',
     links: [{ label: 'Repository', href: 'https://github.com/dingtianding/Xelsius' }],

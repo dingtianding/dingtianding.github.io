@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DCB Public — System Design</title>
+<title>DCB Public: System Design</title>
 </head>
 <body>
 <style>
@@ -72,10 +72,10 @@
 
 <div class="wrap">
   <header>
-    <h1>DCB Public — system design</h1>
+    <h1>DCB Public: system design</h1>
     <p class="sub">
       The <b>consumer front door</b>: a vetted money &amp; investing knowledge base with a
-      <b>citation-grounded AI advisor</b>. It answers only from a vetted corpus and shows its sources — so people get the
+      <b>citation-grounded AI advisor</b>. It answers only from a vetted corpus and shows its sources, so people get the
       <b>right</b> answer instead of a confidently wrong one. Educational, not advice. <b>(This is the engine behind the
       /ask demo.)</b>
     </p>
@@ -142,9 +142,9 @@
           <path d="M784 444 C 804 446 818 446 838 448" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#ar)"/>
           <!-- research -> corpus (distilled) -->
           <path d="M1098 262 C 1040 268 1000 276 976 282" stroke="var(--ink)" stroke-width="2.2" stroke-dasharray="7 7" stroke-linecap="round" marker-end="url(#ar)"/>
-          <!-- stripe -> FastAPI (subscriptions) — routes below the corpus -->
+          <!-- stripe -> FastAPI (subscriptions), routes below the corpus -->
           <path d="M1098 362 C 992 356 892 348 792 312" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#ar)"/>
-          <!-- practice -> FastAPI (entitlement) — routes above Claude, through the gap -->
+          <!-- practice -> FastAPI (entitlement), routes above Claude, through the gap -->
           <path d="M1098 470 C 1024 384 936 364 794 316" stroke="var(--ink)" stroke-width="2.2" stroke-dasharray="7 7" stroke-linecap="round" marker-end="url(#ar)"/>
         </g>
 
@@ -173,7 +173,7 @@
           <text class="t-title" x="592" y="402" fill="var(--blue-s)">RAG advisor</text>
           <text class="t-desc" x="592" y="426">Retrieves from the corpus,</text>
           <text class="t-desc" x="592" y="443">answers with Claude, and</text>
-          <text class="t-desc" x="592" y="460">returns citations — checkable,</text>
+          <text class="t-desc" x="592" y="460">returns citations, checkable,</text>
           <text class="t-desc" x="592" y="477">not confidently wrong.</text>
 
           <!-- corpus -->
@@ -194,7 +194,7 @@
           <text class="t-db" x="1116" y="372">subscriptions</text>
           <text class="t-title" x="1116" y="462" font-size="14" fill="var(--green-s)">DCB Practice</text>
           <text class="t-db" x="1116" y="482">entitlement · comped</text>
-          <text class="t-db" x="1116" y="498">outbound only — no shared DB</text>
+          <text class="t-db" x="1116" y="498">outbound only, no shared DB</text>
 
           <!-- arrow labels -->
           <g transform="translate(544,264)"><rect class="pill" x="-40" y="-10" width="80" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--blue-s)">requests</text></g>
@@ -210,9 +210,9 @@
   <footer>
     <b>The flow:</b> the general public (Stripe subscribers) and comped firm clients hit a <b>Next.js front-end</b> that
     calls a <b>FastAPI backend</b>. Browsing serves vetted, cited explainers from a <b>Postgres corpus</b>; asking runs a
-    <b>RAG advisor</b> that retrieves from that corpus and generates a <b>cited answer</b> with Claude — checkable, not
+    <b>RAG advisor</b> that retrieves from that corpus and generates a <b>cited answer</b> with Claude, checkable, not
     confidently wrong, and clearly educational rather than personalized advice. <b>Stripe</b> gates subscriptions;
-    <b>DCB Practice</b> supplies <b>entitlement</b> for comped clients — outbound only, <b>no shared database</b>; and
+    <b>DCB Practice</b> supplies <b>entitlement</b> for comped clients, outbound only, <b>no shared database</b>; and
     <b>DCB Research</b> distills cited entries into the corpus. This backend is exactly what the <b>/ask</b> demo previews.
   </footer>
 </div>

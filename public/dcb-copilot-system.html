@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DCB Copilot — System Design</title>
+<title>DCB Copilot: System Design</title>
 </head>
 <body>
 <style>
@@ -74,10 +74,10 @@
 
 <div class="wrap">
   <header>
-    <h1>DCB Copilot — system design</h1>
+    <h1>DCB Copilot: system design</h1>
     <p class="sub">
       A <b>screen-aware</b> desktop copilot for CPAs. Hit a hotkey and it reads whatever accounting software is on
-      screen, answers in context, and grounds the answer in your firm's documents — <b>entirely on-device</b>, with
+      screen, answers in context, and grounds the answer in your firm's documents, <b>entirely on-device</b>, with
       your own Anthropic key. No server ever sits in the loop.
     </p>
     <div class="legend">
@@ -154,7 +154,7 @@
           <text class="t-user" x="153" y="92" text-anchor="middle">👤 CPA at work</text>
 
           <!-- device label -->
-          <text class="t-zone" x="130" y="176">🖥 on your Mac — everything on-device</text>
+          <text class="t-zone" x="130" y="176">🖥 on your Mac, everything on-device</text>
 
           <!-- overlay window -->
           <text class="t-title" x="342" y="252" fill="var(--violet-s)">Overlay window</text>
@@ -177,7 +177,7 @@
           <text class="t-desc" x="342" y="509">frontmost app (active-win). Captures an</text>
           <text class="t-desc" x="342" y="526">in-memory screenshot, redacts SSN / EIN,</text>
           <text class="t-desc" x="342" y="543">retrieves firm context, calls Claude.</text>
-          <text class="t-note" x="342" y="572">📸 screenshot in memory — never written to disk</text>
+          <text class="t-note" x="342" y="572">📸 screenshot in memory, never written to disk</text>
 
           <!-- RAG row -->
           <text class="t-title" x="229" y="700" text-anchor="middle" font-size="13">📁 Firm docs</text>
@@ -187,7 +187,7 @@
           <text class="t-db" x="608" y="742" text-anchor="middle">vector index · app data dir</text>
           <text class="t-desc" x="775" y="706" text-anchor="middle" font-size="11">rerank</text>
           <text class="t-db" x="775" y="722" text-anchor="middle" font-size="9">bge-reranker</text>
-          <text class="t-note" x="150" y="796">🗂 models &amp; vector index live in the app data dir — no server, no cloud sync</text>
+          <text class="t-note" x="150" y="796">🗂 models &amp; vector index live in the app data dir, no server, no cloud sync</text>
 
           <!-- Claude -->
           <text class="badge" x="1095" y="457" text-anchor="middle">🤖 Claude</text>
@@ -197,7 +197,7 @@
           <text class="t-db" x="1052" y="556">bring-your-own-key</text>
 
           <!-- arrow labels -->
-          <g transform="translate(214,300)"><rect class="pill" x="-52" y="-11" width="104" height="21" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">⌘⇧Space — ask</text></g>
+          <g transform="translate(214,300)"><rect class="pill" x="-52" y="-11" width="104" height="21" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">⌘⇧Space, ask</text></g>
           <g transform="translate(748,404)"><rect class="pill" x="-72" y="-11" width="144" height="21" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--muted)">live settings (Tauri events)</text></g>
           <g transform="translate(856,444)"><rect class="pill" x="-118" y="-17" width="236" height="34" rx="9"/><text class="t-arrow" x="0" y="-3" text-anchor="middle">redacted screenshot + question + context</text><text class="t-arrow" x="0" y="10" text-anchor="middle" fill="var(--muted)">your key · direct · no server DB</text></g>
           <g transform="translate(858,558)"><rect class="pill" x="-52" y="-10" width="104" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--muted)">← answer stream</text></g>
@@ -211,8 +211,8 @@
     <b>The loop:</b> a global hotkey wakes the <b>Rust/Tauri core</b>, which grabs an in-memory screenshot of the frontmost
     accounting app and redacts taxpayer PII. In parallel, firm documents are embedded on-device (BGE-base), stored as a
     JSON <b>vector index</b> in the app data directory, and reranked (bge-reranker) into <b>cited context</b>. The core
-    sends the redacted screenshot, the question, and that context straight to <b>Claude with your own key</b> — no server
-    of ours in the loop — and the answer streams back into the frameless <b>overlay</b>. A separate Settings window syncs
+    sends the redacted screenshot, the question, and that context straight to <b>Claude with your own key</b>, no server
+    of ours in the loop, and the answer streams back into the frameless <b>overlay</b>. A separate Settings window syncs
     live via Tauri events. Confidentiality by construction: screenshots never touch disk, PII is stripped, and models and
     the index stay on your machine.
   </footer>

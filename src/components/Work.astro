@@ -2,8 +2,8 @@
 import { projects } from '../data/projects';
 import { repoForLinks, fetchRepoStats, relativeTime } from '../data/github';
 
-// The DCB suite is featured in the "Building" section; every project — including
-// the earlier Xelsius build — gets a card here.
+// The DCB suite is featured in the "Building" section; every project, including
+// the earlier Xelsius build, gets a card here.
 const items = projects;
 
 // Pull live GitHub figures at build time and merge them in by repo,
@@ -18,10 +18,10 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
 <section class="section work" id="work">
   <div class="shell">
     <div class="work__head">
-      <span class="eyebrow" data-reveal>03 / Work — posted &amp; verified</span>
+      <span class="eyebrow" data-reveal>03 / Work: posted &amp; verified</span>
       <h2 class="section-title" data-reveal>Things I've shipped.</h2>
       <p class="work__more" data-reveal>
-        The DCB projects are one system — <a href="/dcb-system">see how they fit together →</a>
+        The DCB projects are one system, <a href="/dcb-system">see how they fit together →</a>
       </p>
     </div>
 
@@ -38,7 +38,7 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
               <h3 class="card__title">{p.name}</h3>
               <div class="card__badges">
                 {p.handCoded && (
-                  <span class="card__handcoded" title="Written by hand — not AI-generated">
+                  <span class="card__handcoded" title="Written by hand, not AI-generated">
                     &lt;/&gt; Hand-coded
                   </span>
                 )}
@@ -51,7 +51,7 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
             </ul>
 
             {/* Live, build-time GitHub figures rendered as an audited
-                ledger line — verified = links to a real public repo. */}
+                ledger line, verified = links to a real public repo. */}
             {(st || p.isPrivate) && (
               <div class="card__ledger" aria-label="Repository facts">
                 {st?.language && (
@@ -210,7 +210,7 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
     color: var(--text-faint);
   }
   .card__tech li::before { content: '· '; color: var(--signal); }
-  /* Audited ledger strip — live GitHub figures as line-items. */
+  /* Audited ledger strip, live GitHub figures as line-items. */
   .card__ledger {
     display: flex;
     flex-wrap: wrap;
@@ -249,10 +249,10 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
     transition: color 0.2s ease;
   }
   .card__links a:hover { color: var(--signal); }
-  /* Case-study link leads — it's the primary CTA for private, code-less projects. */
+  /* Case-study link leads, it's the primary CTA for private, code-less projects. */
   .card__case { color: var(--signal); font-weight: 500; }
   .card__case:hover { color: var(--text); }
-  /* Live-demo link — green (an "added", working thing you can actually use). */
+  /* Live-demo link, green (an "added", working thing you can actually use). */
   .card__demo { color: var(--add); font-weight: 500; }
   .card__demo:hover { color: var(--text); }
   .card__private {
