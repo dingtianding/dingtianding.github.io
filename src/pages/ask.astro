@@ -1,0 +1,359 @@
+---
+import Base from '../layouts/Base.astro';
+
+// Curated demo of DCB Public's grounded-answer approach. Every grounded answer
+// is a stable, structural rule (not an annual dollar figure that drifts) with an
+// authoritative IRS citation the visitor can verify. Educational, not advice.
+const examples = [
+  {
+    id: 'wash-sale',
+    q: 'Can I deduct a stock loss if I buy the same stock back a week later?',
+    keywords: 'wash sale loss deduct rebuy repurchase buy back 30 days disallowed',
+    ungrounded:
+      'Yes. Once you sell at a loss you can claim the capital loss on your taxes, then buy back in whenever you like.',
+    ungroundedMark: 'buy back in whenever you like',
+    grounded:
+      'No — the wash-sale rule disallows the loss if you buy the same or a substantially identical security within 30 days before or after the sale. The disallowed loss is added to the cost basis of the replacement shares instead.',
+    source: { name: 'IRS Publication 550 — Wash Sales', url: 'https://www.irs.gov/publications/p550', host: 'irs.gov' },
+  },
+  {
+    id: 'ltcg-holding',
+    q: 'How long do I have to hold a stock for the long-term capital gains rate?',
+    keywords: 'long term short term capital gains holding period one year 12 months rate',
+    ungrounded: 'Usually about six months — after that your gains qualify for the lower long-term rate.',
+    ungroundedMark: 'about six months',
+    grounded:
+      'More than one year. Hold a capital asset one year or less and the gain is short-term (taxed as ordinary income); hold it more than one year and it is long-term.',
+    source: { name: 'IRS Topic No. 409 — Capital Gains and Losses', url: 'https://www.irs.gov/taxtopics/tc409', host: 'irs.gov' },
+  },
+  {
+    id: 'capital-loss-cap',
+    q: 'My investments lost money — how much can I write off against my salary?',
+    keywords: 'capital loss deduction 3000 write off salary ordinary income carryforward limit',
+    ungrounded: 'You can deduct your full net capital loss against your ordinary income in the same year.',
+    ungroundedMark: 'your full net capital loss',
+    grounded:
+      'Up to $3,000 of net capital loss per year ($1,500 if married filing separately) against ordinary income. Anything beyond that carries forward to future tax years.',
+    source: { name: 'IRS Topic No. 409 — Capital Gains and Losses', url: 'https://www.irs.gov/taxtopics/tc409', host: 'irs.gov' },
+  },
+  {
+    id: 'roth-deduction',
+    q: 'Are Roth IRA contributions tax-deductible?',
+    keywords: 'roth ira deductible contribution after tax deduction retirement',
+    ungrounded: 'Yes — like a traditional IRA, contributing to a Roth lowers your taxable income for the year.',
+    ungroundedMark: 'lowers your taxable income',
+    grounded:
+      'No. Roth IRA contributions are made with after-tax dollars and are not deductible. The trade-off: qualified withdrawals — including the earnings — come out tax-free.',
+    source: { name: 'IRS — Roth IRAs', url: 'https://www.irs.gov/retirement-plans/roth-iras', host: 'irs.gov' },
+  },
+  {
+    id: 'stock-split',
+    q: 'Do I owe tax when a stock I own does a 2-for-1 split?',
+    keywords: 'stock split taxable dividend cost basis shares 2 for 1',
+    ungrounded: 'Yes — the extra shares count as a dividend and are taxed in the year of the split.',
+    ungroundedMark: 'count as a dividend and are taxed',
+    grounded:
+      'Generally no. A stock split is not a taxable event — you spread your original cost basis across the new share count. Tax applies only when you eventually sell.',
+    source: { name: 'IRS Publication 550 — Stock splits', url: 'https://www.irs.gov/publications/p550', host: 'irs.gov' },
+  },
+];
+---
+
+<Base
+  title="Ask — a grounded-answer demo — Dean Ding"
+  description="A live demo of DCB Public's grounded-answer approach: ask a money question and see an ungrounded AI answer next to one grounded in the authoritative IRS source, with a citation."
+>
+  <header class="topbar">
+    <div class="shell topbar__inner">
+      <a class="topbar__brand" href="/">
+        <span class="topbar__mark">DD</span>
+        <span class="topbar__path">dean_ding</span>
+      </a>
+      <a class="topbar__back" href="/#work">← All work</a>
+    </div>
+  </header>
+
+  <main class="ask">
+    <section class="ask__hero shell">
+      <span class="eyebrow">DCB Public · live demo</span>
+      <h1 class="ask__title">Grounded, not guessed.</h1>
+      <p class="ask__lede">
+        Ask a tax or investing question. A generic chatbot answers from memory — and sometimes
+        <strong>confidently wrong</strong>. DCB Public answers only from the <strong>authoritative
+        source</strong> and shows you the citation. Try one:
+      </p>
+    </section>
+
+    <section class="ask__demo shell">
+      <form class="ask__form" id="ask-form" autocomplete="off">
+        <span class="ask__prompt" aria-hidden="true">?</span>
+        <input
+          class="ask__input"
+          id="ask-input"
+          type="text"
+          placeholder="Ask about taxes, investing, or retirement…"
+          aria-label="Ask a money question"
+        />
+        <button class="ask__submit" type="submit">Ask</button>
+      </form>
+
+      <div class="ask__chips" id="ask-chips" role="list">
+        {examples.map((e, i) => (
+          <button class="ask__chip" type="button" role="listitem" data-index={i}>{e.q}</button>
+        ))}
+      </div>
+
+      <div class="ask__stage" id="ask-stage" aria-live="polite"></div>
+
+      <p class="ask__note">
+        Illustrative demo of DCB Public's grounded-answer approach. Answers are simplified and cite the
+        authoritative source — <strong>educational, not tax advice</strong>. Always verify with the linked source.
+      </p>
+    </section>
+  </main>
+
+  <script define:vars={{ examples }}>
+    const form = document.getElementById('ask-form');
+    const input = document.getElementById('ask-input');
+    const chips = document.getElementById('ask-chips');
+    const stage = document.getElementById('ask-stage');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Loose keyword match: score how many query words hit a question's text/keywords.
+    const pick = (query) => {
+      const q = query.toLowerCase().trim();
+      if (!q) return null;
+      const words = q.split(/\s+/).filter((w) => w.length > 2);
+      let best = null;
+      let bestScore = 0;
+      examples.forEach((e) => {
+        const hay = (e.q + ' ' + e.keywords).toLowerCase();
+        const score = words.reduce((s, w) => s + (hay.includes(w) ? 1 : 0), 0);
+        if (score > bestScore) {
+          bestScore = score;
+          best = e;
+        }
+      });
+      return bestScore > 0 ? best : null;
+    };
+
+    const esc = (s) => s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+    const markWrong = (text, phrase) => {
+      const safe = esc(text);
+      if (!phrase) return safe;
+      return safe.replace(esc(phrase), `<span class="ask__strike">${esc(phrase)}</span>`);
+    };
+
+    const render = (e) => {
+      stage.innerHTML = `
+        <div class="ans" data-ans>
+          <p class="ans__q"><span class="ans__qmark">Q</span>${esc(e.q)}</p>
+          <div class="ans__status" data-status>
+            <span class="ans__spin"></span> retrieving from <b>${esc(e.source.host)}</b>…
+          </div>
+          <div class="ans__grid" data-grid hidden>
+            <article class="ans__card ans__card--bad">
+              <header class="ans__card-head">Ungrounded AI <span class="ans__tag">illustrative</span></header>
+              <p class="ans__body">${markWrong(e.ungrounded, e.ungroundedMark)}</p>
+              <div class="ans__verdict ans__verdict--bad">✗ no source · sometimes wrong</div>
+            </article>
+            <article class="ans__card ans__card--good">
+              <header class="ans__card-head">DCB grounded answer <span class="ans__tag ans__tag--ok">cited</span></header>
+              <p class="ans__body" data-typed></p>
+              <a class="ans__cite" href="${e.source.url}" target="_blank" rel="noopener">
+                <span class="ans__cite-k">source</span>
+                <span class="ans__cite-name">${esc(e.source.name)}</span>
+                <span class="ans__cite-go">verify ↗</span>
+              </a>
+            </article>
+          </div>
+        </div>`;
+
+      const status = stage.querySelector('[data-status]');
+      const grid = stage.querySelector('[data-grid]');
+      const typed = stage.querySelector('[data-typed]');
+
+      const reveal = () => {
+        status.hidden = true;
+        grid.hidden = false;
+        if (reduce) {
+          typed.textContent = e.grounded;
+          return;
+        }
+        // Type the grounded answer in, word by word — the "streaming" beat.
+        const words = e.grounded.split(' ');
+        let i = 0;
+        const step = () => {
+          typed.textContent = words.slice(0, i + 1).join(' ');
+          i++;
+          if (i < words.length) setTimeout(step, 26);
+        };
+        step();
+      };
+
+      if (reduce) reveal();
+      else setTimeout(reveal, 620);
+    };
+
+    const ask = (e) => {
+      render(e);
+      stage.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
+    };
+
+    chips.addEventListener('click', (ev) => {
+      const btn = ev.target.closest('[data-index]');
+      if (!btn) return;
+      const e = examples[Number(btn.dataset.index)];
+      input.value = e.q;
+      ask(e);
+    });
+
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const match = pick(input.value);
+      if (match) {
+        ask(match);
+      } else {
+        stage.innerHTML = `
+          <div class="ans ans--empty">
+            <p>This is a curated demo — I only have vetted, cited answers for a handful of questions so far.
+            Pick one of the questions above to see how grounding works.</p>
+          </div>`;
+      }
+    });
+  </script>
+
+  <!-- Global (not scoped): the answer cards are built in JS via innerHTML, so
+       they don't carry Astro's scoping attribute and scoped rules would miss them.
+       Every selector is .ask__/.ans__/.topbar-prefixed and this CSS only ships on /ask. -->
+  <style is:global>
+    /* ---- top bar (mirrors the case-study / system pages) ---- */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(to bottom, rgba(10, 10, 12, 0.85), rgba(10, 10, 12, 0.4));
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar__inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .topbar__brand { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-size: var(--fs-xs); }
+    .topbar__mark {
+      display: grid; place-items: center; width: 28px; height: 28px;
+      border: 1px solid var(--line-strong); border-radius: 7px;
+      font-weight: 700; color: var(--signal); letter-spacing: 0.05em;
+    }
+    .topbar__path { color: var(--text-dim); }
+    .topbar__back { font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text-dim); transition: color 0.2s ease; }
+    .topbar__back:hover { color: var(--signal); }
+
+    .ask__hero { padding-block: clamp(3rem, 8vh, 5.5rem) clamp(1.5rem, 4vh, 2.5rem); }
+    .ask__title {
+      font-family: var(--font-display); font-weight: 600;
+      font-size: var(--fs-3xl); line-height: 1.02; letter-spacing: -0.025em; margin-top: 1.1rem;
+    }
+    .ask__lede { margin-top: 1.1rem; max-width: 60ch; color: var(--text-dim); font-size: var(--fs-lg); line-height: 1.5; }
+    .ask__lede strong { color: var(--text); font-weight: 600; }
+
+    .ask__demo { padding-bottom: clamp(3rem, 8vh, 6rem); }
+
+    /* ---- ask box ---- */
+    .ask__form {
+      display: flex; align-items: center; gap: 0.7rem;
+      border: 1px solid var(--line-strong); border-radius: 14px;
+      background: var(--bg-card); padding: 0.5rem 0.6rem 0.5rem 1rem;
+      max-width: 720px;
+      box-shadow: 0 20px 60px -30px rgba(0, 0, 0, 0.8);
+    }
+    .ask__form:focus-within { border-color: var(--signal); }
+    .ask__prompt { font-family: var(--font-mono); color: var(--signal); font-size: 1.1rem; }
+    .ask__input {
+      flex: 1; background: transparent; border: 0; outline: 0; color: var(--text);
+      font-family: var(--font-body); font-size: var(--fs-md); padding: 0.5rem 0;
+    }
+    .ask__input::placeholder { color: var(--text-faint); }
+    .ask__submit {
+      font-family: var(--font-mono); font-size: var(--fs-sm); font-weight: 500;
+      color: #0a0a0c; background: var(--signal); border: 0; border-radius: 9px;
+      padding: 0.6em 1.2em; cursor: pointer; transition: transform 0.15s ease;
+    }
+    .ask__submit:hover { transform: translateY(-1px); }
+
+    .ask__chips { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 1rem; max-width: 900px; }
+    .ask__chip {
+      font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--text-dim);
+      background: var(--bg-elev); border: 1px solid var(--line); border-radius: 999px;
+      padding: 0.5em 0.9em; cursor: pointer; text-align: left;
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+    .ask__chip:hover { border-color: var(--signal); color: var(--text); }
+
+    .ask__note {
+      margin-top: 2rem; max-width: 70ch; font-family: var(--font-mono);
+      font-size: var(--fs-2xs); line-height: 1.6; color: var(--text-faint);
+    }
+    .ask__note strong { color: var(--text-dim); font-weight: 600; }
+
+    /* ---- answer stage ---- */
+    .ask__stage { margin-top: 1.8rem; }
+    /* Our explicit display rules below would otherwise beat the `hidden`
+       attribute, so the retrieve→reveal beat never hides anything. Restore it. */
+    .ans__status[hidden], .ans__grid[hidden] { display: none !important; }
+    .ans { animation: ans-in 0.4s ease-out both; }
+    @keyframes ans-in { from { opacity: 0; transform: translateY(10px); } }
+    .ans--empty { color: var(--text-dim); max-width: 60ch; font-size: var(--fs-sm); }
+    .ans__q {
+      font-family: var(--font-display); font-weight: 500; font-size: var(--fs-lg);
+      color: var(--text); display: flex; gap: 0.7rem; align-items: baseline; max-width: 70ch;
+    }
+    .ans__qmark {
+      font-family: var(--font-mono); font-size: 0.7em; color: var(--signal);
+      border: 1px solid var(--line-strong); border-radius: 5px; padding: 0.1em 0.45em; flex: none;
+    }
+    .ans__status {
+      margin-top: 1rem; font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-dim);
+      display: inline-flex; align-items: center; gap: 0.6em;
+    }
+    .ans__status b { color: var(--signal); }
+    .ans__spin {
+      width: 12px; height: 12px; border-radius: 50%;
+      border: 2px solid var(--line-strong); border-top-color: var(--signal);
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .ans__grid {
+      margin-top: 1.2rem; display: grid; grid-template-columns: 1fr; gap: 1.1rem;
+    }
+    .ans__card {
+      border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-card);
+      padding: 1.2rem 1.3rem; display: flex; flex-direction: column; gap: 0.7rem;
+    }
+    .ans__card--bad { border-color: rgba(240, 100, 88, 0.3); background: rgba(240, 100, 88, 0.04); }
+    .ans__card--good { border-color: rgba(70, 192, 90, 0.35); background: rgba(70, 192, 90, 0.05); }
+    .ans__card-head {
+      font-family: var(--font-mono); font-size: var(--fs-2xs); text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text-dim); display: flex; align-items: center; gap: 0.6em;
+    }
+    .ans__tag {
+      font-size: 0.9em; text-transform: none; letter-spacing: 0; color: var(--del);
+      border: 1px solid rgba(240, 100, 88, 0.35); border-radius: 999px; padding: 0.1em 0.6em;
+    }
+    .ans__tag--ok { color: var(--add); border-color: rgba(70, 192, 90, 0.4); }
+    .ans__body { font-size: var(--fs-sm); line-height: 1.6; color: var(--text); min-height: 1.2em; }
+    .ask__strike { color: var(--del); text-decoration: line-through; text-decoration-color: rgba(240,100,88,0.7); }
+    .ans__verdict { font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--del); margin-top: auto; }
+    .ans__cite {
+      display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.7rem;
+      margin-top: auto; padding-top: 0.8rem; border-top: 1px dashed rgba(70, 192, 90, 0.3);
+      font-family: var(--font-mono); font-size: var(--fs-2xs);
+    }
+    .ans__cite-k { color: var(--add); text-transform: uppercase; letter-spacing: 0.08em; }
+    .ans__cite-name { color: var(--text-dim); }
+    .ans__cite-go { color: var(--add); white-space: nowrap; }
+    .ans__cite:hover .ans__cite-name { color: var(--text); }
+    .ans__cite:hover .ans__cite-go { text-decoration: underline; }
+
+    @media (min-width: 780px) {
+      .ans__grid { grid-template-columns: 1fr 1fr; align-items: stretch; }
+    }
+  </style>
+</Base>
