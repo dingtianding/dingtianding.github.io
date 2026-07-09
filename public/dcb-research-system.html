@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DCB Research — System Design</title>
+</head>
+<body>
+<style>
+  :root {
+    --canvas: #fbfbf8; --panel: #ffffff; --ink: #1b1b1f; --muted: #6b6b73;
+    --grid: rgba(20,20,30,.06); --edge: rgba(20,20,30,.14);
+    --yellow-s: #d98207; --yellow-f: #fff3bf; --yellow-zone: rgba(217,130,7,.05);
+    --green-s: #2f9e44; --green-f: #d6f9dd; --blue-s: #1971c2; --blue-f: #d3ebff;
+    --grey-s: #5a6069; --grey-f: #eef0f2; --pink-s: #d83a3a; --pink-f: #ffe3e3;
+    --hand: "Comic Sans MS","Chalkboard SE","Bradley Hand","Segoe Print",ui-rounded,cursive;
+    --sans: ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --canvas: #14151a; --panel: #1a1c22; --ink: #e7e7ec; --muted: #9a9aa6;
+      --grid: rgba(255,255,255,.06); --edge: rgba(255,255,255,.16);
+      --yellow-s: #ffd43b; --yellow-f: rgba(255,212,59,.15); --yellow-zone: rgba(255,212,59,.05);
+      --green-s: #69db7c; --green-f: rgba(105,219,124,.15); --blue-s: #74c0fc; --blue-f: rgba(116,192,252,.15);
+      --grey-s: #aeb4bd; --grey-f: rgba(174,180,189,.10); --pink-s: #ff8787; --pink-f: rgba(255,135,135,.15);
+    }
+  }
+  :root[data-theme="light"] {
+    --canvas: #fbfbf8; --panel: #ffffff; --ink: #1b1b1f; --muted: #6b6b73;
+    --grid: rgba(20,20,30,.06); --edge: rgba(20,20,30,.14);
+    --yellow-s: #d98207; --yellow-f: #fff3bf; --yellow-zone: rgba(217,130,7,.05);
+    --green-s: #2f9e44; --green-f: #d6f9dd; --blue-s: #1971c2; --blue-f: #d3ebff;
+    --grey-s: #5a6069; --grey-f: #eef0f2; --pink-s: #d83a3a; --pink-f: #ffe3e3;
+  }
+  :root[data-theme="dark"] {
+    --canvas: #14151a; --panel: #1a1c22; --ink: #e7e7ec; --muted: #9a9aa6;
+    --grid: rgba(255,255,255,.06); --edge: rgba(255,255,255,.16);
+    --yellow-s: #ffd43b; --yellow-f: rgba(255,212,59,.15); --yellow-zone: rgba(255,212,59,.05);
+    --green-s: #69db7c; --green-f: rgba(105,219,124,.15); --blue-s: #74c0fc; --blue-f: rgba(116,192,252,.15);
+    --grey-s: #aeb4bd; --grey-f: rgba(174,180,189,.10); --pink-s: #ff8787; --pink-f: rgba(255,135,135,.15);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1360px; margin: 0 auto; padding: 28px clamp(16px,4vw,40px) 56px; }
+  h1 { font-family: var(--hand); font-weight: 700; font-size: clamp(1.6rem,1.2rem+2vw,2.5rem); margin: 0; letter-spacing: -.01em; }
+  .sub { color: var(--muted); font-size: .98rem; margin-top: 6px; max-width: 78ch; line-height: 1.5; }
+  .sub b { color: var(--ink); font-weight: 600; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; font-size: .82rem; color: var(--muted); align-items: center; }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .lg-h { color: var(--ink); font-weight: 700; font-size: .78rem; margin-right: 2px; }
+  .ic { width: 22px; height: 15px; flex: none; }
+  .stage-scroll { overflow-x: auto; margin-top: 20px; padding-bottom: 6px; }
+  .stage { min-width: 1120px; background: radial-gradient(var(--grid) 1.4px, transparent 1.4px); background-size: 26px 26px; background-position: -1px -1px; border: 2px solid var(--edge); border-radius: 16px; padding: 8px; }
+  svg.diagram { width: 100%; height: auto; display: block; }
+
+  .t-title { font-family: var(--hand); font-weight: 700; font-size: 16px; }
+  .t-eyebrow { font-family: var(--hand); font-size: 12px; }
+  .t-desc { font-family: var(--sans); font-size: 11.5px; fill: var(--ink); }
+  .t-db { font-family: var(--sans); font-size: 10px; fill: var(--muted); }
+  .t-note { font-family: var(--hand); font-size: 11.5px; fill: var(--muted); }
+  .t-src { font-family: var(--hand); font-weight: 700; font-size: 14px; fill: var(--ink); }
+  .t-arrow { font-family: var(--sans); font-size: 10.5px; fill: var(--ink); }
+  .badge { font-family: var(--sans); font-size: 10px; fill: var(--ink); }
+  .pill { fill: var(--panel); stroke: var(--edge); stroke-width: 1.4; }
+  .stage { opacity: 0; transform: translateY(10px); animation: rise .5s ease-out .05s forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .stage { animation: none; opacity: 1; transform: none; } }
+  footer { margin-top: 20px; color: var(--muted); font-size: .82rem; line-height: 1.6; max-width: 100ch; }
+  footer b { color: var(--ink); font-weight: 600; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>DCB Research — system design</h1>
+    <p class="sub">
+      The grounded <b>source of truth</b> for the suite. It ingests SEC filings + tax sources, normalizes them into
+      Postgres, and answers questions with <b>hybrid retrieval</b> and <b>cited</b> generation — with an
+      <b>eval harness</b> that measures both, so quality is proven, not assumed.
+    </p>
+    <div class="legend">
+      <b class="lg-h">Legend</b>
+      <span><svg class="ic" viewBox="0 0 24 15"><rect x="1.5" y="1.5" width="21" height="12" rx="3.5" fill="var(--yellow-f)" stroke="var(--yellow-s)" stroke-width="1.7"/></svg>Research service</span>
+      <span><svg class="ic" viewBox="0 0 22 17"><ellipse cx="11" cy="4" rx="8.5" ry="2.8" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.5"/><path d="M2.5 4 v9 a8.5 2.8 0 0 0 17 0 v-9" fill="none" stroke="var(--ink)" stroke-width="1.5"/></svg>Database</span>
+      <span><svg class="ic" viewBox="0 0 24 15"><rect x="1.5" y="1.5" width="21" height="12" rx="3.5" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="1.7"/></svg>Source / external</span>
+      <span><svg class="ic" viewBox="0 0 24 15"><rect x="1.5" y="1.5" width="21" height="12" rx="3.5" fill="var(--blue-f)" stroke="var(--blue-s)" stroke-width="1.7"/></svg>Consumer product</span>
+      <span><i style="display:inline-block;width:26px;border-top:2.5px solid var(--edge)"></i>data flow</span>
+      <span><i style="display:inline-block;width:26px;border-top:2.5px dashed var(--edge)"></i>measures · distills</span>
+    </div>
+  </header>
+
+  <div class="stage-scroll">
+    <div class="stage">
+      <svg class="diagram" viewBox="0 180 1340 560" role="img"
+        aria-label="DCB Research system design: SEC and tax sources are ingested to object storage, normalized into a Postgres corpus of filings, facts, and sections; the corpus feeds an analytics dashboard and a hybrid retrieval layer (semantic embeddings plus BM25, fused with reciprocal-rank fusion) that produces grounded, cited answers via Claude; an eval harness scores retrieval hit@k and answer groundedness in CI; distilled cited entries feed DCB Public and DCB Practice's knowledge base.">
+        <defs>
+          <filter id="rough" x="-4%" y="-4%" width="108%" height="108%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.011 0.013" numOctaves="2" seed="9" result="n"/>
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+          <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--ink)"/></marker>
+          <marker id="arY" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--yellow-s)"/></marker>
+          <marker id="arM" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/></marker>
+        </defs>
+
+        <!-- ===== roughened shapes ===== -->
+        <g filter="url(#rough)" fill="none">
+          <!-- sources -->
+          <rect x="44" y="206" width="180" height="72" rx="12" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.4"/>
+          <rect x="44" y="306" width="180" height="72" rx="12" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.4"/>
+
+          <!-- ingest -->
+          <rect x="278" y="238" width="188" height="106" rx="13" fill="var(--yellow-f)" stroke="var(--yellow-s)" stroke-width="2.6"/>
+          <!-- postgres corpus -->
+          <g fill="var(--yellow-f)" stroke="var(--yellow-s)" stroke-width="2.6"><ellipse cx="616" cy="288" rx="66" ry="10"/><path d="M550 288 v40 a66 10 0 0 0 132 0 v-40"/></g>
+
+          <!-- hybrid retrieval (star) -->
+          <rect x="770" y="204" width="258" height="128" rx="14" fill="var(--yellow-f)" stroke="var(--yellow-s)" stroke-width="3.4"/>
+          <!-- grounded answer -->
+          <rect x="770" y="392" width="258" height="106" rx="14" fill="var(--yellow-f)" stroke="var(--yellow-s)" stroke-width="2.6"/>
+
+          <!-- analytics -->
+          <rect x="300" y="474" width="248" height="118" rx="14" fill="var(--yellow-f)" stroke="var(--yellow-s)" stroke-width="2.6"/>
+
+          <!-- eval harness -->
+          <rect x="600" y="560" width="300" height="146" rx="14" fill="var(--yellow-f)" stroke="var(--yellow-s)" stroke-width="2.6" stroke-dasharray="3 5"/>
+
+          <!-- consumers / external -->
+          <rect x="1096" y="212" width="204" height="92" rx="14" fill="var(--blue-f)" stroke="var(--blue-s)" stroke-width="2.6"/>
+          <rect x="1096" y="366" width="204" height="92" rx="14" fill="var(--green-f)" stroke="var(--green-s)" stroke-width="2.6"/>
+          <rect x="1096" y="576" width="204" height="92" rx="14" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.6"/>
+
+          <!-- ===== connectors ===== -->
+          <!-- sources -> ingest -->
+          <path d="M224 242 C 244 246 256 258 276 268" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#ar)"/>
+          <path d="M224 342 C 244 342 256 306 276 296" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#ar)"/>
+          <!-- ingest -> postgres -->
+          <path d="M466 290 C 496 290 518 289 548 288" stroke="var(--yellow-s)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arY)"/>
+          <!-- postgres -> hybrid retrieval -->
+          <path d="M682 276 C 720 262 740 250 768 244" stroke="var(--yellow-s)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arY)"/>
+          <!-- hybrid -> grounded -->
+          <path d="M899 332 C 899 352 899 370 899 390" stroke="var(--yellow-s)" stroke-width="2.6" stroke-linecap="round" marker-end="url(#arY)"/>
+          <!-- postgres -> analytics -->
+          <path d="M590 336 C 520 390 470 430 440 472" stroke="var(--yellow-s)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arY)"/>
+          <!-- grounded -> Claude (generation) -->
+          <path d="M1028 470 C 1060 500 1082 560 1120 574" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#ar)"/>
+          <!-- grounded -> DCB Public (distilled) -->
+          <path d="M1028 418 C 1060 400 1074 340 1090 300" stroke="var(--ink)" stroke-width="2.2" stroke-dasharray="7 7" stroke-linecap="round" marker-end="url(#ar)"/>
+          <!-- grounded -> DCB Practice KB -->
+          <path d="M1028 440 C 1058 434 1072 424 1092 416" stroke="var(--ink)" stroke-width="2.2" stroke-dasharray="7 7" stroke-linecap="round" marker-end="url(#ar)"/>
+          <!-- eval -> hybrid (measures) -->
+          <path d="M760 592 C 730 500 740 400 782 336" stroke="var(--muted)" stroke-width="2.2" stroke-dasharray="6 6" stroke-linecap="round" marker-end="url(#arM)"/>
+          <!-- eval -> grounded (measures) -->
+          <path d="M820 560 C 830 540 840 522 852 502" stroke="var(--muted)" stroke-width="2.2" stroke-dasharray="6 6" stroke-linecap="round" marker-end="url(#arM)"/>
+          <!-- eval -> Claude (judge) -->
+          <path d="M900 636 C 980 630 1030 626 1092 624" stroke="var(--muted)" stroke-width="2.2" stroke-dasharray="6 6" stroke-linecap="round" marker-end="url(#arM)"/>
+        </g>
+
+        <!-- ===== crisp text ===== -->
+        <g>
+          <!-- sources -->
+          <text class="t-src" x="60" y="234">SEC EDGAR</text>
+          <text class="t-db" x="60" y="254">submissions · XBRL facts</text>
+          <text class="t-src" x="60" y="334">Federal &amp; state</text>
+          <text class="t-db" x="60" y="354">tax sources</text>
+
+          <!-- ingest -->
+          <text class="t-title" x="296" y="270" fill="var(--yellow-s)">Ingest</text>
+          <text class="t-desc" x="296" y="292">SEC submissions + XBRL</text>
+          <text class="t-desc" x="296" y="309">for a ticker universe →</text>
+          <text class="t-desc" x="296" y="326">object storage (raw JSON)</text>
+
+          <!-- postgres -->
+          <text class="t-title" x="616" y="284" text-anchor="middle" font-size="13" fill="var(--yellow-s)">Postgres</text>
+          <text class="t-db" x="616" y="342" text-anchor="middle">normalized corpus</text>
+          <text class="t-db" x="616" y="356" text-anchor="middle" font-size="9">filings · facts · sections</text>
+
+          <!-- hybrid retrieval -->
+          <text class="t-title" x="788" y="238" fill="var(--yellow-s)">Hybrid retrieval</text>
+          <text class="t-desc" x="788" y="262">semantic embeddings (hashing,</text>
+          <text class="t-desc" x="788" y="279">no API key) + BM25 keyword,</text>
+          <text class="t-desc" x="788" y="296">fused with reciprocal-rank</text>
+          <text class="t-desc" x="788" y="313">fusion (RRF).</text>
+
+          <!-- grounded answer -->
+          <text class="t-title" x="788" y="424" fill="var(--yellow-s)">Grounded answer</text>
+          <text class="t-desc" x="788" y="447">Cites the exact filing sections</text>
+          <text class="t-desc" x="788" y="464">it used — checkable, not</text>
+          <text class="t-desc" x="788" y="481">confidently wrong.</text>
+
+          <!-- analytics -->
+          <text class="t-title" x="318" y="504" font-size="15" fill="var(--yellow-s)">Analytics + dashboard</text>
+          <text class="t-desc" x="318" y="527">revenue · margin · debt · liquidity</text>
+          <text class="t-desc" x="318" y="544">risk-text changes · filing diffs</text>
+          <text class="t-desc" x="318" y="568">FastAPI · React · TypeScript</text>
+
+          <!-- eval harness -->
+          <text class="t-title" x="620" y="592" fill="var(--yellow-s)">🎯 Eval harness</text>
+          <text class="t-desc" x="620" y="616">retrieval — hit@k on a gold set (offline)</text>
+          <text class="t-desc" x="620" y="634">generation — groundedness (LLM judge)</text>
+          <text class="t-desc" x="620" y="652">writes a scorecard · runs in CI</text>
+          <text class="t-note" x="620" y="682">quality is proven, not assumed</text>
+
+          <!-- consumers / external -->
+          <text class="t-title" x="1114" y="244" font-size="15" fill="var(--blue-s)">DCB Public</text>
+          <text class="t-db" x="1114" y="264">distilled cited entries</text>
+          <text class="t-db" x="1114" y="280">the consumer KB</text>
+          <text class="t-title" x="1114" y="398" font-size="15" fill="var(--green-s)">DCB Practice</text>
+          <text class="t-db" x="1114" y="418">firm KB — how a task</text>
+          <text class="t-db" x="1114" y="434">should be performed</text>
+          <text class="t-title" x="1114" y="608" font-size="15" fill="var(--grey-s)">🤖 Anthropic</text>
+          <text class="t-db" x="1114" y="628">Claude — generate + judge</text>
+          <text class="t-db" x="1114" y="644">bring-your-own-key</text>
+
+          <!-- arrow labels -->
+          <g transform="translate(508,272)"><rect class="pill" x="-42" y="-10" width="84" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">normalize</text></g>
+          <g transform="translate(724,238)"><rect class="pill" x="-52" y="-10" width="104" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">search sections</text></g>
+          <g transform="translate(899,362)"><rect class="pill" x="-46" y="-10" width="92" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">top-k · RRF</text></g>
+          <g transform="translate(492,406)"><rect class="pill" x="-50" y="-10" width="100" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">facts → charts</text></g>
+          <g transform="translate(1064,528)"><rect class="pill" x="-42" y="-10" width="84" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">compose</text></g>
+          <g transform="translate(744,540)"><rect class="pill" x="-58" y="-10" width="116" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--muted)">scores both tiers</text></g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <footer>
+    <b>The pipeline:</b> SEC submissions and XBRL company facts (plus federal/state tax sources) are ingested to object
+    storage and <b>normalized into a Postgres corpus</b> of filings, facts, and sections. That corpus drives two things: an
+    <b>analytics dashboard</b> (revenue, margin, debt, liquidity, risk-text changes, filing diffs) and a
+    <b>hybrid-retrieval</b> layer — semantic embeddings (a dependency-free hashing embedder, no API key) plus BM25 keyword,
+    fused with <b>reciprocal-rank fusion</b> — that feeds a <b>grounded answer</b> citing the exact sections it used. An
+    <b>eval harness</b> scores retrieval (hit@k, offline) and generation (groundedness via an LLM judge) and runs in CI, so
+    regressions are caught, not shipped. Distilled cited entries flow to <b>DCB Public</b>, and procedural how-to feeds
+    <b>DCB Practice</b>'s firm knowledge base.
+  </footer>
+</div>
+</body>
+</html>
