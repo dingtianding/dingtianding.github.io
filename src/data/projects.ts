@@ -35,6 +35,7 @@ export interface Project {
   award?: string;
   isPrivate?: boolean; // private repo — no public code link
   handCoded?: boolean; // genuinely hand-written, not AI-generated
+  demo?: string; // internal path to a live, interactive demo (e.g. "/ask")
   links: { label: string; href: string }[];
   detail?: ProjectDetail;
 }
@@ -173,6 +174,7 @@ export const projects: Project[] = [
     tech: ['FastAPI', 'RAG', 'Claude', 'Next.js', 'PostgreSQL'],
     award: 'Private · building',
     isPrivate: true,
+    demo: '/ask',
     links: [],
     detail: {
       oneLiner: 'A vetted finance knowledge base with a citation-grounded AI advisor.',

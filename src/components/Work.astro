@@ -68,8 +68,11 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
               </div>
             )}
 
-            {(p.links.length > 0 || (p.slug && p.detail)) && (
+            {(p.links.length > 0 || (p.slug && p.detail) || p.demo) && (
               <div class="card__links">
+                {p.demo && (
+                  <a class="card__demo" href={p.demo}>Live demo →</a>
+                )}
                 {p.slug && p.detail && (
                   <a class="card__case" href={`/work/${p.slug}`}>Case study →</a>
                 )}
@@ -246,6 +249,9 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
   /* Case-study link leads — it's the primary CTA for private, code-less projects. */
   .card__case { color: var(--signal); font-weight: 500; }
   .card__case:hover { color: var(--text); }
+  /* Live-demo link — green (an "added", working thing you can actually use). */
+  .card__demo { color: var(--add); font-weight: 500; }
+  .card__demo:hover { color: var(--text); }
   .card__private {
     font-family: var(--font-mono);
     font-size: var(--fs-xs);
