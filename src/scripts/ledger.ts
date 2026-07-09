@@ -65,9 +65,11 @@ export function initLedger(): void {
   let scanY = 0;
   const BAND = 150; // reconciliation influence radius
 
-  // Faint base palette pulled from the site's CSS variables.
-  const css = getComputedStyle(document.documentElement);
-  const faint = css.getPropertyValue('--text-faint').trim() || '#62625e';
+  // Parallax: the ledger drifts with the page at this fraction of scroll speed,
+  // wrapping seamlessly at fieldH — depth, not a fixed overlay pinned behind text.
+  const PARALLAX = 0.28;
+  let fieldH = 0;
+
   const signal = '232, 178, 90'; // gold, as rgb triplet
   const add = '70, 192, 90'; // reconciled green
 
@@ -90,6 +92,7 @@ export function initLedger(): void {
     rows = [];
     const cols = Math.max(1, Math.ceil(cssW / colW));
     const rowsPer = Math.ceil(cssH / LINE_H) + 2;
+    fieldH = rowsPer * LINE_H; // seamless parallax wrap period
     for (let c = 0; c < cols; c++) {
       for (let r = 0; r < rowsPer; r++) {
         rows.push({
@@ -118,39 +121,45 @@ export function initLedger(): void {
     ctx.font = `${FONT_SIZE}px 'JetBrains Mono', ui-monospace, monospace`;
     ctx.textBaseline = 'middle';
 
+    // Parallax offset from the page scroll (Lenis if present), wrapped to fieldH.
+    const l = (window as any).__lenis;
+    const scrollY = l && typeof l.scroll === 'number' ? l.scroll : window.scrollY || 0;
+    const off = fieldH > 0 ? (((scrollY * PARALLAX) % fieldH) + fieldH) % fieldH : 0;
+
     for (const row of rows) {
-      const d = row.y - scanY; // <0 = already reconciled, >0 = ahead
+      let y = row.y - off;
+      if (y < -LINE_H) y += fieldH; // wrap the row that scrolled off the top
+
+      const d = y - scanY; // <0 = already reconciled, >0 = ahead
       const prox = Math.max(0, 1 - Math.abs(d) / BAND);
 
-      let alpha = 0.05; // resting faint state
-      let color = faint;
-
+      // Kept genuinely ambient: peaks stay well under the text so content is
+      // always legible, even as the scan sweeps behind it.
+      let alpha = 0.035; // resting faint state
       if (prox > 0) {
         if (d <= 0) {
           // Passed by the scan: settle green, brightest right at the line.
-          const settle = prox * (0.55 + row.seed * 0.2);
-          alpha = 0.05 + settle;
-          color = `rgba(${add}, ${alpha})`;
+          alpha = 0.035 + prox * (0.1 + row.seed * 0.05);
+          ctx.fillStyle = `rgba(${add}, ${alpha})`;
         } else {
-          // Just ahead of the scan: a warm gold "being read" glow.
-          alpha = 0.05 + prox * 0.28;
-          color = `rgba(${signal}, ${alpha})`;
+          // Just ahead of the scan: a faint warm "being read" glow.
+          alpha = 0.035 + prox * 0.09;
+          ctx.fillStyle = `rgba(${signal}, ${alpha})`;
         }
-        ctx.fillStyle = color;
       } else {
         ctx.fillStyle = `rgba(150, 150, 145, ${alpha})`;
       }
 
-      ctx.fillText(row.text, row.x, row.y);
+      ctx.fillText(row.text, row.x, y);
     }
 
     // The scan line itself, a thin gold sweep with a soft leading gradient.
     const grad = ctx.createLinearGradient(0, scanY - 60, 0, scanY + 4);
     grad.addColorStop(0, 'rgba(232, 178, 90, 0)');
-    grad.addColorStop(1, 'rgba(232, 178, 90, 0.10)');
+    grad.addColorStop(1, 'rgba(232, 178, 90, 0.055)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, scanY - 60, cssW, 64);
-    ctx.fillStyle = 'rgba(232, 178, 90, 0.45)';
+    ctx.fillStyle = 'rgba(232, 178, 90, 0.2)';
     ctx.fillRect(0, scanY, cssW, 1);
 
     requestAnimationFrame(frame);

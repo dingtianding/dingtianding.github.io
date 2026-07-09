@@ -1,4 +1,9 @@
 ---
+import Card from './Card.astro';
+import { projects } from '../data/projects';
+
+// The four DCB products, shown as cards beneath the firm-level intro.
+const dcb = projects.filter((p) => p.name.startsWith('DCB '));
 ---
 
 <section class="section building" id="building">
@@ -15,13 +20,6 @@
           review and approve, and every answer is grounded in authoritative sources with every change
           reviewable.
         </p>
-
-        <ul class="building__parts" data-reveal>
-          <li><strong>DCB Practice</strong>, the operations: agents do the work, humans approve; the firm's system of record.</li>
-          <li><strong>DCB Copilot</strong>, a screen-aware desktop overlay that reads your accounting software and answers in context.</li>
-          <li><strong>DCB Research</strong>, grounds it all in SEC filings and federal &amp; state tax sources.</li>
-          <li><strong>DCB Public</strong>, a citation-backed money &amp; investing knowledge base + AI advisor.</li>
-        </ul>
 
         <div class="building__tags" data-reveal>
           <span class="tag">Agentic AI</span>
@@ -54,6 +52,10 @@
 <span class="t-line c-sig">  ▸ 3 changes · 0 unbalanced · <span class="t-approve">approve?</span></span></code></pre>
       </div>
     </div>
+
+    <div class="building__cards">
+      {dcb.map((p) => <Card p={p} />)}
+    </div>
   </div>
 </section>
 
@@ -70,6 +72,12 @@
     grid-template-columns: 1fr;
     gap: clamp(2rem, 5vw, 3.5rem);
     align-items: center;
+  }
+  .building__cards {
+    margin-top: clamp(2.4rem, 5vw, 3.6rem);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+    gap: 1.4rem;
   }
   .building__tagline {
     font-family: var(--font-display);
