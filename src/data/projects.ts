@@ -183,6 +183,7 @@ export const projects: Project[] = [
     detail: {
       oneLiner: 'A vetted finance knowledge base with a citation-grounded AI advisor.',
       status: 'Private · building',
+      systemUrl: '/dcb-public-system.html',
       problem:
         'Personal-finance information online is either shallow SEO filler or paywalled and ungrounded. People want vetted, sourced explainers — and an AI advisor that answers from that corpus with citations, with a clear line between education and personalized advice.',
       architecture: [

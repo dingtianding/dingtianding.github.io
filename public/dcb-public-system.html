@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DCB Public — System Design</title>
+</head>
+<body>
+<style>
+  :root {
+    --canvas: #fbfbf8; --panel: #ffffff; --ink: #1b1b1f; --muted: #6b6b73;
+    --grid: rgba(20,20,30,.06); --edge: rgba(20,20,30,.14);
+    --blue-s: #1971c2; --blue-f: #d3ebff; --blue-zone: rgba(25,113,194,.05);
+    --yellow-s: #d98207; --yellow-f: #fff3bf; --green-s: #2f9e44; --green-f: #d6f9dd;
+    --grey-s: #5a6069; --grey-f: #eef0f2; --pink-s: #d83a3a; --pink-f: #ffe3e3;
+    --hand: "Comic Sans MS","Chalkboard SE","Bradley Hand","Segoe Print",ui-rounded,cursive;
+    --sans: ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --canvas: #14151a; --panel: #1a1c22; --ink: #e7e7ec; --muted: #9a9aa6;
+      --grid: rgba(255,255,255,.06); --edge: rgba(255,255,255,.16);
+      --blue-s: #74c0fc; --blue-f: rgba(116,192,252,.15); --blue-zone: rgba(116,192,252,.05);
+      --yellow-s: #ffd43b; --yellow-f: rgba(255,212,59,.15); --green-s: #69db7c; --green-f: rgba(105,219,124,.15);
+      --grey-s: #aeb4bd; --grey-f: rgba(174,180,189,.10); --pink-s: #ff8787; --pink-f: rgba(255,135,135,.15);
+    }
+  }
+  :root[data-theme="light"] {
+    --canvas: #fbfbf8; --panel: #ffffff; --ink: #1b1b1f; --muted: #6b6b73;
+    --grid: rgba(20,20,30,.06); --edge: rgba(20,20,30,.14);
+    --blue-s: #1971c2; --blue-f: #d3ebff; --blue-zone: rgba(25,113,194,.05);
+    --yellow-s: #d98207; --yellow-f: #fff3bf; --green-s: #2f9e44; --green-f: #d6f9dd;
+    --grey-s: #5a6069; --grey-f: #eef0f2; --pink-s: #d83a3a; --pink-f: #ffe3e3;
+  }
+  :root[data-theme="dark"] {
+    --canvas: #14151a; --panel: #1a1c22; --ink: #e7e7ec; --muted: #9a9aa6;
+    --grid: rgba(255,255,255,.06); --edge: rgba(255,255,255,.16);
+    --blue-s: #74c0fc; --blue-f: rgba(116,192,252,.15); --blue-zone: rgba(116,192,252,.05);
+    --yellow-s: #ffd43b; --yellow-f: rgba(255,212,59,.15); --green-s: #69db7c; --green-f: rgba(105,219,124,.15);
+    --grey-s: #aeb4bd; --grey-f: rgba(174,180,189,.10); --pink-s: #ff8787; --pink-f: rgba(255,135,135,.15);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1360px; margin: 0 auto; padding: 28px clamp(16px,4vw,40px) 56px; }
+  h1 { font-family: var(--hand); font-weight: 700; font-size: clamp(1.6rem,1.2rem+2vw,2.5rem); margin: 0; letter-spacing: -.01em; }
+  .sub { color: var(--muted); font-size: .98rem; margin-top: 6px; max-width: 78ch; line-height: 1.5; }
+  .sub b { color: var(--ink); font-weight: 600; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; font-size: .82rem; color: var(--muted); align-items: center; }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .lg-h { color: var(--ink); font-weight: 700; font-size: .78rem; margin-right: 2px; }
+  .ic { width: 22px; height: 15px; flex: none; }
+  .stage-scroll { overflow-x: auto; margin-top: 20px; padding-bottom: 6px; }
+  .stage { min-width: 1120px; background: radial-gradient(var(--grid) 1.4px, transparent 1.4px); background-size: 26px 26px; background-position: -1px -1px; border: 2px solid var(--edge); border-radius: 16px; padding: 8px; }
+  svg.diagram { width: 100%; height: auto; display: block; }
+
+  .t-title { font-family: var(--hand); font-weight: 700; font-size: 16px; }
+  .t-eyebrow { font-family: var(--hand); font-size: 12px; }
+  .t-desc { font-family: var(--sans); font-size: 11.5px; fill: var(--ink); }
+  .t-db { font-family: var(--sans); font-size: 10px; fill: var(--muted); }
+  .t-note { font-family: var(--hand); font-size: 11.5px; fill: var(--muted); }
+  .t-user { font-family: var(--hand); font-size: 13.5px; fill: var(--ink); }
+  .t-arrow { font-family: var(--sans); font-size: 10.5px; fill: var(--ink); }
+  .badge { font-family: var(--sans); font-size: 10px; fill: var(--ink); }
+  .pill { fill: var(--panel); stroke: var(--edge); stroke-width: 1.4; }
+  .stage { opacity: 0; transform: translateY(10px); animation: rise .5s ease-out .05s forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .stage { animation: none; opacity: 1; transform: none; } }
+  footer { margin-top: 20px; color: var(--muted); font-size: .82rem; line-height: 1.6; max-width: 100ch; }
+  footer b { color: var(--ink); font-weight: 600; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>DCB Public — system design</h1>
+    <p class="sub">
+      The <b>consumer front door</b>: a vetted money &amp; investing knowledge base with a
+      <b>citation-grounded AI advisor</b>. It answers only from a vetted corpus and shows its sources — so people get the
+      <b>right</b> answer instead of a confidently wrong one. Educational, not advice. <b>(This is the engine behind the
+      /ask demo.)</b>
+    </p>
+    <div class="legend">
+      <b class="lg-h">Legend</b>
+      <span><svg class="ic" viewBox="0 0 24 15"><rect x="1.5" y="1.5" width="21" height="12" rx="3.5" fill="var(--blue-f)" stroke="var(--blue-s)" stroke-width="1.7"/></svg>Public service</span>
+      <span><svg class="ic" viewBox="0 0 22 17"><ellipse cx="11" cy="4" rx="8.5" ry="2.8" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.5"/><path d="M2.5 4 v9 a8.5 2.8 0 0 0 17 0 v-9" fill="none" stroke="var(--ink)" stroke-width="1.5"/></svg>Database</span>
+      <span><svg class="ic" viewBox="0 0 26 15"><rect x="1.5" y="1.5" width="23" height="12" rx="6" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="1.7"/></svg>👤 User</span>
+      <span><svg class="ic" viewBox="0 0 24 15"><rect x="1.5" y="1.5" width="21" height="12" rx="3.5" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="1.7"/></svg>External / sibling</span>
+      <span><i style="display:inline-block;width:26px;border-top:2.5px solid var(--edge)"></i>request</span>
+      <span><i style="display:inline-block;width:26px;border-top:2.5px dashed var(--edge)"></i>entitlement · feed</span>
+    </div>
+  </header>
+
+  <div class="stage-scroll">
+    <div class="stage">
+      <svg class="diagram" viewBox="0 185 1340 375" role="img"
+        aria-label="DCB Public system design: the general public and comped firm clients use a Next.js front-end that calls a FastAPI backend; browsing serves vetted explainers from a Postgres corpus, and asking runs a RAG advisor that retrieves from the corpus and generates a cited answer via Claude. Stripe gates subscriptions, DCB Practice supplies entitlement for comped clients with no shared database, and DCB Research distills cited entries into the corpus.">
+        <defs>
+          <filter id="rough" x="-4%" y="-4%" width="108%" height="108%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.011 0.013" numOctaves="2" seed="5" result="n"/>
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+          <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--ink)"/></marker>
+          <marker id="arB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--blue-s)"/></marker>
+          <marker id="arM" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/></marker>
+        </defs>
+
+        <!-- ===== roughened shapes ===== -->
+        <g filter="url(#rough)" fill="none">
+          <!-- users -->
+          <rect x="44" y="222" width="200" height="58" rx="16" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="2.2"/>
+          <rect x="44" y="316" width="200" height="58" rx="16" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="2.2"/>
+
+          <!-- next.js front-end -->
+          <rect x="286" y="230" width="228" height="140" rx="14" fill="var(--blue-f)" stroke="var(--blue-s)" stroke-width="2.8"/>
+          <!-- FastAPI -->
+          <rect x="574" y="220" width="210" height="98" rx="13" fill="var(--blue-f)" stroke="var(--blue-s)" stroke-width="2.6"/>
+          <!-- RAG advisor -->
+          <rect x="574" y="372" width="210" height="120" rx="13" fill="var(--blue-f)" stroke="var(--blue-s)" stroke-width="3.2"/>
+          <!-- corpus postgres -->
+          <g fill="var(--blue-f)" stroke="var(--blue-s)" stroke-width="2.6"><ellipse cx="906" cy="284" rx="66" ry="10"/><path d="M840 284 v40 a66 10 0 0 0 132 0 v-40"/></g>
+          <!-- Claude -->
+          <rect x="842" y="404" width="204" height="86" rx="13" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.6"/>
+
+          <!-- right column: sources / external -->
+          <rect x="1098" y="212" width="200" height="84" rx="14" fill="var(--yellow-f)" stroke="var(--yellow-s)" stroke-width="2.6"/>
+          <rect x="1098" y="322" width="200" height="76" rx="14" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.6"/>
+          <rect x="1098" y="430" width="200" height="90" rx="14" fill="var(--green-f)" stroke="var(--green-s)" stroke-width="2.6"/>
+
+          <!-- ===== connectors ===== -->
+          <!-- users -> next.js -->
+          <path d="M244 250 C 260 254 268 258 284 264" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#ar)"/>
+          <path d="M244 344 C 262 344 270 330 284 320" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#ar)"/>
+          <!-- next.js -> FastAPI -->
+          <path d="M514 276 C 536 272 552 270 572 268" stroke="var(--blue-s)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arB)"/>
+          <!-- FastAPI -> corpus (browse) -->
+          <path d="M784 260 C 810 262 824 268 848 278" stroke="var(--blue-s)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arB)"/>
+          <!-- FastAPI -> RAG advisor (ask) -->
+          <path d="M660 318 C 660 336 660 352 662 370" stroke="var(--blue-s)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arB)"/>
+          <!-- RAG -> corpus (retrieve) -->
+          <path d="M784 400 C 828 380 856 344 872 320" stroke="var(--blue-s)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arB)"/>
+          <!-- RAG -> Claude (generate) -->
+          <path d="M784 444 C 804 446 818 446 838 448" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#ar)"/>
+          <!-- research -> corpus (distilled) -->
+          <path d="M1098 262 C 1040 268 1000 276 976 282" stroke="var(--ink)" stroke-width="2.2" stroke-dasharray="7 7" stroke-linecap="round" marker-end="url(#ar)"/>
+          <!-- stripe -> FastAPI (subscriptions) — routes below the corpus -->
+          <path d="M1098 362 C 992 356 892 348 792 312" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#ar)"/>
+          <!-- practice -> FastAPI (entitlement) — routes above Claude, through the gap -->
+          <path d="M1098 470 C 1024 384 936 364 794 316" stroke="var(--ink)" stroke-width="2.2" stroke-dasharray="7 7" stroke-linecap="round" marker-end="url(#ar)"/>
+        </g>
+
+        <!-- ===== crisp text ===== -->
+        <g>
+          <!-- users -->
+          <text class="t-user" x="144" y="248" text-anchor="middle">👥 general public</text>
+          <text class="t-db" x="144" y="266" text-anchor="middle">subscribers (Stripe)</text>
+          <text class="t-user" x="144" y="342" text-anchor="middle">👤 firm clients</text>
+          <text class="t-db" x="144" y="360" text-anchor="middle">comped via Practice</text>
+
+          <!-- next.js -->
+          <text class="t-title" x="304" y="262" fill="var(--blue-s)">Next.js front-end</text>
+          <text class="t-desc" x="304" y="286">App Router · React 19 · Tailwind v4.</text>
+          <text class="t-desc" x="304" y="303">The marketing home leading into</text>
+          <text class="t-desc" x="304" y="320">the knowledge base + AI advisor.</text>
+          <text class="t-desc" x="304" y="344">Browse vetted explainers for free;</text>
+          <text class="t-desc" x="304" y="361">ask the advisor to go deeper.</text>
+
+          <!-- FastAPI -->
+          <text class="t-title" x="592" y="252" font-size="15" fill="var(--blue-s)">FastAPI backend</text>
+          <text class="t-desc" x="592" y="274">SQLAlchemy · auth</text>
+          <text class="t-desc" x="592" y="291">entitlement · subscriptions</text>
+
+          <!-- RAG advisor -->
+          <text class="t-title" x="592" y="402" fill="var(--blue-s)">RAG advisor</text>
+          <text class="t-desc" x="592" y="426">Retrieves from the corpus,</text>
+          <text class="t-desc" x="592" y="443">answers with Claude, and</text>
+          <text class="t-desc" x="592" y="460">returns citations — checkable,</text>
+          <text class="t-desc" x="592" y="477">not confidently wrong.</text>
+
+          <!-- corpus -->
+          <text class="t-title" x="906" y="280" text-anchor="middle" font-size="13" fill="var(--blue-s)">Corpus</text>
+          <text class="t-db" x="906" y="338" text-anchor="middle">vetted, cited explainers</text>
+          <text class="t-db" x="906" y="352" text-anchor="middle" font-size="9">Postgres</text>
+
+          <!-- Claude -->
+          <text class="t-title" x="860" y="438" font-size="14" fill="var(--grey-s)">🤖 Claude</text>
+          <text class="t-db" x="860" y="458">advisor LLM</text>
+          <text class="t-db" x="860" y="474">bring-your-own-key</text>
+
+          <!-- right column -->
+          <text class="t-title" x="1116" y="244" font-size="14" fill="var(--yellow-s)">DCB Research</text>
+          <text class="t-db" x="1116" y="264">distilled cited entries</text>
+          <text class="t-db" x="1116" y="280">→ the corpus</text>
+          <text class="t-title" x="1116" y="352" font-size="14" fill="var(--grey-s)">Stripe</text>
+          <text class="t-db" x="1116" y="372">subscriptions</text>
+          <text class="t-title" x="1116" y="462" font-size="14" fill="var(--green-s)">DCB Practice</text>
+          <text class="t-db" x="1116" y="482">entitlement · comped</text>
+          <text class="t-db" x="1116" y="498">outbound only — no shared DB</text>
+
+          <!-- arrow labels -->
+          <g transform="translate(544,264)"><rect class="pill" x="-40" y="-10" width="80" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--blue-s)">requests</text></g>
+          <g transform="translate(816,246)"><rect class="pill" x="-34" y="-10" width="68" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--blue-s)">browse</text></g>
+          <g transform="translate(661,346)"><rect class="pill" x="-24" y="-10" width="48" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--blue-s)">ask</text></g>
+          <g transform="translate(846,352)"><rect class="pill" x="-40" y="-10" width="80" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--blue-s)">retrieve</text></g>
+          <g transform="translate(812,436)"><rect class="pill" x="-42" y="-10" width="84" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">generate</text></g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <footer>
+    <b>The flow:</b> the general public (Stripe subscribers) and comped firm clients hit a <b>Next.js front-end</b> that
+    calls a <b>FastAPI backend</b>. Browsing serves vetted, cited explainers from a <b>Postgres corpus</b>; asking runs a
+    <b>RAG advisor</b> that retrieves from that corpus and generates a <b>cited answer</b> with Claude — checkable, not
+    confidently wrong, and clearly educational rather than personalized advice. <b>Stripe</b> gates subscriptions;
+    <b>DCB Practice</b> supplies <b>entitlement</b> for comped clients — outbound only, <b>no shared database</b>; and
+    <b>DCB Research</b> distills cited entries into the corpus. This backend is exactly what the <b>/ask</b> demo previews.
+  </footer>
+</div>
+</body>
+</html>
