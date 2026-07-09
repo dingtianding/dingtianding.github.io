@@ -84,6 +84,16 @@ const n = (key: string) => String(sections.indexOf(key) + 1).padStart(2, '0');
               <img src={d.diagram} alt={`${project.name} architecture diagram`} loading="lazy" />
             </figure>
           )}
+          {d.systemUrl && (
+            <figure class="case__sys" data-reveal>
+              <div class="case__sysframe">
+                <iframe src={d.systemUrl} title={`${project.name} system design`} loading="lazy"></iframe>
+              </div>
+              <figcaption class="case__syscap">
+                <a href={d.systemUrl} target="_blank" rel="noopener">Open the full system diagram ↗</a>
+              </figcaption>
+            </figure>
+          )}
         </div>
       </div>
     </section>
@@ -336,6 +346,17 @@ const n = (key: string) => String(sections.indexOf(key) + 1).padStart(2, '0');
   }
   .case__diagram { margin-top: 1.4rem; }
   .case__diagram img { width: 100%; border: 1px solid var(--line); border-radius: var(--radius); }
+  /* Embedded, interactive system-design diagram (self-contained HTML). */
+  .case__sys { margin-top: 1.6rem; }
+  .case__sysframe {
+    border: 1px solid var(--line-strong); border-radius: var(--radius); overflow: hidden;
+    background: #14151a; height: clamp(460px, 62vh, 680px);
+    box-shadow: 0 24px 60px -40px rgba(0, 0, 0, 0.7);
+  }
+  .case__sysframe iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .case__syscap { margin-top: 0.8rem; font-family: var(--font-mono); font-size: var(--fs-xs); }
+  .case__syscap a { color: var(--text); border-bottom: 1px solid var(--signal); padding-bottom: 2px; transition: color 0.2s ease; }
+  .case__syscap a:hover { color: var(--signal); }
   .video {
     position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius);
     overflow: hidden; border: 1px solid var(--line);

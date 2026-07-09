@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DCB Copilot — System Design</title>
+</head>
+<body>
+<style>
+  :root {
+    --canvas: #fbfbf8; --panel: #ffffff; --ink: #1b1b1f; --muted: #6b6b73;
+    --grid: rgba(20,20,30,.06); --edge: rgba(20,20,30,.14);
+    --violet-s: #6741d9; --violet-f: #efe9ff; --violet-zone: rgba(103,65,217,.05);
+    --grey-s: #5a6069; --grey-f: #eef0f2; --pink-s: #d83a3a; --pink-f: #ffe3e3;
+    --green-s: #2f9e44; --green-f: #d6f9dd;
+    --hand: "Comic Sans MS","Chalkboard SE","Bradley Hand","Segoe Print",ui-rounded,cursive;
+    --sans: ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --canvas: #14151a; --panel: #1a1c22; --ink: #e7e7ec; --muted: #9a9aa6;
+      --grid: rgba(255,255,255,.06); --edge: rgba(255,255,255,.16);
+      --violet-s: #b197fc; --violet-f: rgba(177,151,252,.16); --violet-zone: rgba(177,151,252,.05);
+      --grey-s: #aeb4bd; --grey-f: rgba(174,180,189,.10); --pink-s: #ff8787; --pink-f: rgba(255,135,135,.15);
+      --green-s: #69db7c; --green-f: rgba(105,219,124,.15);
+    }
+  }
+  :root[data-theme="light"] {
+    --canvas: #fbfbf8; --panel: #ffffff; --ink: #1b1b1f; --muted: #6b6b73;
+    --grid: rgba(20,20,30,.06); --edge: rgba(20,20,30,.14);
+    --violet-s: #6741d9; --violet-f: #efe9ff; --violet-zone: rgba(103,65,217,.05);
+    --grey-s: #5a6069; --grey-f: #eef0f2; --pink-s: #d83a3a; --pink-f: #ffe3e3;
+    --green-s: #2f9e44; --green-f: #d6f9dd;
+  }
+  :root[data-theme="dark"] {
+    --canvas: #14151a; --panel: #1a1c22; --ink: #e7e7ec; --muted: #9a9aa6;
+    --grid: rgba(255,255,255,.06); --edge: rgba(255,255,255,.16);
+    --violet-s: #b197fc; --violet-f: rgba(177,151,252,.16); --violet-zone: rgba(177,151,252,.05);
+    --grey-s: #aeb4bd; --grey-f: rgba(174,180,189,.10); --pink-s: #ff8787; --pink-f: rgba(255,135,135,.15);
+    --green-s: #69db7c; --green-f: rgba(105,219,124,.15);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 28px clamp(16px,4vw,40px) 56px; }
+  h1 { font-family: var(--hand); font-weight: 700; font-size: clamp(1.6rem,1.2rem+2vw,2.5rem); margin: 0; letter-spacing: -.01em; }
+  .sub { color: var(--muted); font-size: .98rem; margin-top: 6px; max-width: 76ch; line-height: 1.5; }
+  .sub b { color: var(--ink); font-weight: 600; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; font-size: .82rem; color: var(--muted); align-items: center; }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .lg-h { color: var(--ink); font-weight: 700; font-size: .78rem; margin-right: 2px; }
+  .ic { width: 22px; height: 15px; flex: none; }
+  .stage-scroll { overflow-x: auto; margin-top: 20px; padding-bottom: 6px; }
+  .stage { min-width: 1080px; background: radial-gradient(var(--grid) 1.4px, transparent 1.4px); background-size: 26px 26px; background-position: -1px -1px; border: 2px solid var(--edge); border-radius: 16px; padding: 8px; }
+  svg.diagram { width: 100%; height: auto; display: block; }
+
+  .t-title { font-family: var(--hand); font-weight: 700; font-size: 17px; }
+  .t-eyebrow { font-family: var(--hand); font-size: 12.5px; }
+  .t-desc { font-family: var(--sans); font-size: 11.5px; fill: var(--ink); }
+  .t-stack { font-family: var(--sans); font-size: 10px; fill: var(--muted); }
+  .t-note { font-family: var(--hand); font-size: 11.5px; fill: var(--muted); }
+  .t-db { font-family: var(--sans); font-size: 10px; fill: var(--muted); }
+  .t-user { font-family: var(--hand); font-size: 14px; fill: var(--ink); }
+  .t-zone { font-family: var(--hand); font-weight: 700; font-size: 13px; fill: var(--grey-s); }
+  .t-arrow { font-family: var(--sans); font-size: 10.5px; fill: var(--ink); }
+  .badge { font-family: var(--sans); font-size: 10px; fill: var(--ink); }
+  .pill { fill: var(--panel); stroke: var(--edge); stroke-width: 1.4; }
+  .stage { opacity: 0; transform: translateY(10px); animation: rise .5s ease-out .05s forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .stage { animation: none; opacity: 1; transform: none; } }
+  footer { margin-top: 20px; color: var(--muted); font-size: .82rem; line-height: 1.6; max-width: 100ch; }
+  footer b { color: var(--ink); font-weight: 600; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>DCB Copilot — system design</h1>
+    <p class="sub">
+      A <b>screen-aware</b> desktop copilot for CPAs. Hit a hotkey and it reads whatever accounting software is on
+      screen, answers in context, and grounds the answer in your firm's documents — <b>entirely on-device</b>, with
+      your own Anthropic key. No server ever sits in the loop.
+    </p>
+    <div class="legend">
+      <b class="lg-h">Legend</b>
+      <span><svg class="ic" viewBox="0 0 24 15"><rect x="1.5" y="1.5" width="21" height="12" rx="3.5" fill="var(--violet-f)" stroke="var(--violet-s)" stroke-width="1.7"/></svg>App window / core</span>
+      <span><svg class="ic" viewBox="0 0 22 17"><ellipse cx="11" cy="4" rx="8.5" ry="2.8" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.5"/><path d="M2.5 4 v9 a8.5 2.8 0 0 0 17 0 v-9" fill="none" stroke="var(--ink)" stroke-width="1.5"/></svg>On-device store</span>
+      <span><svg class="ic" viewBox="0 0 26 15"><rect x="1.5" y="1.5" width="23" height="12" rx="6" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="1.7"/></svg>👤 User</span>
+      <span><svg class="ic" viewBox="0 0 24 15"><rect x="1.5" y="1.5" width="21" height="12" rx="3.5" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="1.7"/></svg>External service</span>
+      <span><i style="display:inline-block;width:26px;border-top:2.5px solid var(--edge)"></i>data</span>
+      <span><i style="display:inline-block;width:26px;border-top:2.5px dashed var(--edge)"></i>BYOK · sync</span>
+    </div>
+  </header>
+
+  <div class="stage-scroll">
+    <div class="stage">
+      <svg class="diagram" viewBox="0 0 1280 900" role="img"
+        aria-label="DCB Copilot system design: a Rust/Tauri core on the user's Mac captures the screen in memory, redacts PII, retrieves context from an on-device firm-document RAG index, and sends the request to Anthropic Claude with the user's own key; the answer streams back into a frameless overlay window.">
+        <defs>
+          <filter id="rough" x="-4%" y="-4%" width="108%" height="108%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.012 0.014" numOctaves="2" seed="4" result="n"/>
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+          <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--ink)"/></marker>
+          <marker id="arV" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--violet-s)"/></marker>
+          <marker id="arM" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/></marker>
+        </defs>
+
+        <!-- ===== roughened shapes ===== -->
+        <g filter="url(#rough)" fill="none">
+          <!-- device boundary -->
+          <rect x="110" y="150" width="838" height="700" rx="22" fill="var(--violet-zone)" stroke="var(--grey-s)" stroke-width="2.2" stroke-dasharray="2 8"/>
+
+          <!-- user -->
+          <rect x="54" y="60" width="198" height="52" rx="16" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="2.2"/>
+
+          <!-- windows -->
+          <rect x="322" y="216" width="316" height="150" rx="14" fill="var(--violet-f)" stroke="var(--violet-s)" stroke-width="2.8"/>
+          <rect x="680" y="216" width="250" height="150" rx="14" fill="var(--violet-f)" stroke="var(--violet-s)" stroke-width="2.4"/>
+          <!-- core -->
+          <rect x="322" y="432" width="362" height="170" rx="16" fill="var(--violet-f)" stroke="var(--violet-s)" stroke-width="3.4"/>
+
+          <!-- local RAG row -->
+          <rect x="150" y="672" width="158" height="74" rx="12" fill="var(--violet-f)" stroke="var(--violet-s)" stroke-width="2.2"/>
+          <rect x="346" y="680" width="150" height="58" rx="12" fill="var(--violet-f)" stroke="var(--violet-s)" stroke-width="2.2"/>
+          <g fill="var(--violet-f)" stroke="var(--violet-s)" stroke-width="2.2"><ellipse cx="608" cy="700" rx="52" ry="8.5"/><path d="M556 700 v22 a52 8.5 0 0 0 104 0 v-22"/></g>
+          <rect x="700" y="680" width="150" height="58" rx="12" fill="var(--violet-f)" stroke="var(--violet-s)" stroke-width="2.2"/>
+
+          <!-- external: Claude -->
+          <rect x="1032" y="430" width="196" height="150" rx="14" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.6"/>
+          <rect x="1052" y="440" width="86" height="25" rx="9" fill="var(--panel)" stroke="var(--grey-s)" stroke-width="1.6"/>
+
+          <!-- connectors -->
+          <!-- user -> core (hotkey) -->
+          <path d="M150 112 C 150 300 210 440 320 486" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#ar)"/>
+          <!-- core -> overlay -->
+          <path d="M460 432 C 460 410 460 392 470 368" stroke="var(--violet-s)" stroke-width="2.6" stroke-linecap="round" marker-end="url(#arV)"/>
+          <!-- core <-> settings (event sync) -->
+          <path d="M684 486 C 760 486 792 400 800 368" stroke="var(--muted)" stroke-width="2.2" stroke-dasharray="7 7" stroke-linecap="round" marker-start="url(#arM)" marker-end="url(#arM)"/>
+          <!-- RAG pipeline -->
+          <path d="M308 710 C 322 710 330 710 344 710" stroke="var(--violet-s)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arV)"/>
+          <path d="M496 709 C 520 709 532 703 554 701" stroke="var(--violet-s)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arV)"/>
+          <path d="M660 701 C 680 703 690 707 698 709" stroke="var(--violet-s)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arV)"/>
+          <!-- rerank -> core (cited context) -->
+          <path d="M776 680 C 776 650 700 614 640 596" stroke="var(--violet-s)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arV)"/>
+          <!-- core -> Claude (request, BYOK) -->
+          <path d="M684 466 C 810 466 940 470 1030 478" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#ar)"/>
+          <!-- Claude -> core (answer stream) -->
+          <path d="M1032 540 C 910 548 782 536 686 522" stroke="var(--muted)" stroke-width="2.2" stroke-dasharray="6 6" stroke-linecap="round" marker-end="url(#arM)"/>
+        </g>
+
+        <!-- ===== crisp text ===== -->
+        <g>
+          <!-- user -->
+          <text class="t-user" x="153" y="92" text-anchor="middle">👤 CPA at work</text>
+
+          <!-- device label -->
+          <text class="t-zone" x="130" y="176">🖥 on your Mac — everything on-device</text>
+
+          <!-- overlay window -->
+          <text class="t-title" x="342" y="252" fill="var(--violet-s)">Overlay window</text>
+          <text class="t-eyebrow" x="342" y="270" fill="var(--muted)">frameless · always-on-top</text>
+          <text class="t-desc" x="342" y="294">React + TypeScript webview.</text>
+          <text class="t-desc" x="342" y="311">The answer streams in here,</text>
+          <text class="t-desc" x="342" y="328">in context, without leaving</text>
+          <text class="t-desc" x="342" y="345">your accounting software.</text>
+
+          <!-- settings window -->
+          <text class="t-title" x="700" y="252" fill="var(--violet-s)">Settings</text>
+          <text class="t-eyebrow" x="700" y="270" fill="var(--muted)">separate window</text>
+          <text class="t-desc" x="700" y="294">API key · model tier</text>
+          <text class="t-desc" x="700" y="311">opacity · hotkeys</text>
+          <text class="t-desc" x="700" y="328">knowledge base</text>
+
+          <!-- core -->
+          <text class="t-title" x="342" y="468" fill="var(--violet-s)">Rust · Tauri 2 core</text>
+          <text class="t-desc" x="342" y="492">Global hotkey (global-shortcut) + the</text>
+          <text class="t-desc" x="342" y="509">frontmost app (active-win). Captures an</text>
+          <text class="t-desc" x="342" y="526">in-memory screenshot, redacts SSN / EIN,</text>
+          <text class="t-desc" x="342" y="543">retrieves firm context, calls Claude.</text>
+          <text class="t-note" x="342" y="572">📸 screenshot in memory — never written to disk</text>
+
+          <!-- RAG row -->
+          <text class="t-title" x="229" y="700" text-anchor="middle" font-size="13">📁 Firm docs</text>
+          <text class="t-db" x="229" y="718" text-anchor="middle">Markdown · PDF · text</text>
+          <text class="t-desc" x="421" y="706" text-anchor="middle" font-size="11">embed</text>
+          <text class="t-db" x="421" y="722" text-anchor="middle" font-size="9">fastembed · BGE-base</text>
+          <text class="t-db" x="608" y="742" text-anchor="middle">vector index · app data dir</text>
+          <text class="t-desc" x="775" y="706" text-anchor="middle" font-size="11">rerank</text>
+          <text class="t-db" x="775" y="722" text-anchor="middle" font-size="9">bge-reranker</text>
+          <text class="t-note" x="150" y="796">🗂 models &amp; vector index live in the app data dir — no server, no cloud sync</text>
+
+          <!-- Claude -->
+          <text class="badge" x="1095" y="457" text-anchor="middle">🤖 Claude</text>
+          <text class="t-title" x="1052" y="500" fill="var(--grey-s)" font-size="15">Anthropic</text>
+          <text class="t-desc" x="1052" y="522">Claude (vision)</text>
+          <text class="t-db" x="1052" y="540">external LLM</text>
+          <text class="t-db" x="1052" y="556">bring-your-own-key</text>
+
+          <!-- arrow labels -->
+          <g transform="translate(214,300)"><rect class="pill" x="-52" y="-11" width="104" height="21" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">⌘⇧Space — ask</text></g>
+          <g transform="translate(748,404)"><rect class="pill" x="-72" y="-11" width="144" height="21" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--muted)">live settings (Tauri events)</text></g>
+          <g transform="translate(856,444)"><rect class="pill" x="-118" y="-17" width="236" height="34" rx="9"/><text class="t-arrow" x="0" y="-3" text-anchor="middle">redacted screenshot + question + context</text><text class="t-arrow" x="0" y="10" text-anchor="middle" fill="var(--muted)">your key · direct · no server DB</text></g>
+          <g transform="translate(858,558)"><rect class="pill" x="-52" y="-10" width="104" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--muted)">← answer stream</text></g>
+          <g transform="translate(736,632)"><rect class="pill" x="-46" y="-10" width="92" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">cited context</text></g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <footer>
+    <b>The loop:</b> a global hotkey wakes the <b>Rust/Tauri core</b>, which grabs an in-memory screenshot of the frontmost
+    accounting app and redacts taxpayer PII. In parallel, firm documents are embedded on-device (BGE-base), stored as a
+    JSON <b>vector index</b> in the app data directory, and reranked (bge-reranker) into <b>cited context</b>. The core
+    sends the redacted screenshot, the question, and that context straight to <b>Claude with your own key</b> — no server
+    of ours in the loop — and the answer streams back into the frameless <b>overlay</b>. A separate Settings window syncs
+    live via Tauri events. Confidentiality by construction: screenshots never touch disk, PII is stripped, and models and
+    the index stay on your machine.
+  </footer>
+</div>
+</body>
+</html>

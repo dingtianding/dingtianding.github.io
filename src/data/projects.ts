@@ -18,6 +18,7 @@ export interface ProjectDetail {
   problem: string;
   architecture: string[]; // one entry per paragraph
   diagram?: string; // /images/<slug>-architecture.(png|svg)
+  systemUrl?: string; // path to a self-contained HTML system-design diagram (embedded as an iframe)
   stack: StackGroup[];
   challenges: Challenge[];
   screenshots?: string[]; // /images/<slug>-1.png, ...
@@ -56,6 +57,7 @@ export const projects: Project[] = [
     detail: {
       oneLiner: 'A screen-aware AI copilot overlay, built by a practicing CPA for daily use.',
       status: 'Private · in daily use',
+      systemUrl: '/dcb-copilot-system.html',
       problem:
         'CPAs live inside legacy desktop software — tax prep tools, Excel workpapers, QuickBooks, financial PDFs. Most AI tooling assumes you will copy-paste into a chat tab, which is a non-starter mid-workpaper for a non-technical finance professional. The screen is the context that AI tools throw away.',
       architecture: [
