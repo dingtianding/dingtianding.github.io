@@ -144,7 +144,7 @@ export function initLedger(): void {
       ctx.fillText(row.text, row.x, row.y);
     }
 
-    // The scan line itself — a thin gold sweep with a soft leading gradient.
+    // The scan line itself, a thin gold sweep with a soft leading gradient.
     const grad = ctx.createLinearGradient(0, scanY - 60, 0, scanY + 4);
     grad.addColorStop(0, 'rgba(232, 178, 90, 0)');
     grad.addColorStop(1, 'rgba(232, 178, 90, 0.10)');

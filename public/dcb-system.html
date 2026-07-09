@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DCB — System Design</title>
+<title>DCB: System Design</title>
 </head>
 <body>
 <style>
@@ -99,19 +99,19 @@
 
 <div class="wrap">
   <header>
-    <h1>DCB — how the suite fits together</h1>
+    <h1>How the DCB suite fits together</h1>
     <p class="sub">
-      One thesis, four products — <b>AI-native services for accounting &amp; finance</b>: agents do the work, humans approve.
+      One thesis, four products, <b>AI-native services for accounting &amp; finance</b>: agents do the work, humans approve.
       Each product owns its own database; integration is API + entitlement, never a shared DB.
     </p>
     <div class="why">
       <div>
         <h3>💡 Why the suite exists</h3>
         <ul>
-          <li><span class="pn p-blue">Public</span> — general AI answers finance questions confidently wrong; the real answer sits on IRS / SEC / state sites, so it gives vetted, <i>cited</i> answers instead.</li>
-          <li><span class="pn p-green">Practice</span> — tax work is competitive &amp; commoditised and a firm's roles split cleanly into agents, so it delivers the service itself, not another tool.</li>
-          <li><span class="pn p-violet">Copilot</span> — you can't ship a Cursor-style sidebar inside every legacy accounting app, so it's screen-aware and spans them all.</li>
-          <li><span class="pn p-yellow">Research</span> — the backbone that funnels correct, grounded information into the other three.</li>
+          <li><span class="pn p-blue">Public</span>, general AI answers finance questions confidently wrong; the real answer sits on IRS / SEC / state sites, so it gives vetted, <i>cited</i> answers instead.</li>
+          <li><span class="pn p-green">Practice</span>, tax work is competitive &amp; commoditised and a firm's roles split cleanly into agents, so it delivers the service itself, not another tool.</li>
+          <li><span class="pn p-violet">Copilot</span>, you can't ship a Cursor-style sidebar inside every legacy accounting app, so it's screen-aware and spans them all.</li>
+          <li><span class="pn p-yellow">Research</span>, the backbone that funnels correct, grounded information into the other three.</li>
         </ul>
       </div>
       <div>
@@ -277,7 +277,7 @@
           <!-- copilot -->
           <text class="t-title" x="86" y="704" fill="var(--violet-s)">DCB Copilot</text>
           <text class="t-eyebrow" x="86" y="722" fill="var(--muted)">the screen assistant</text>
-          <text class="t-desc" x="86" y="746">Watches the work being performed —</text>
+          <text class="t-desc" x="86" y="746">Watches the work being performed, </text>
           <text class="t-desc" x="86" y="763">reads on-screen tax sw / Excel / PDFs.</text>
           <text class="t-stack" x="86" y="787">Rust · Tauri · React · Claude vision</text>
           <text class="t-note" x="86" y="809">on-device · BYOK · no server DB</text>
@@ -295,9 +295,9 @@
           <text class="t-src-title" x="1268" y="722" font-size="14">🏦 Bank</text><text class="t-src-sub" x="1268" y="742">firm account · Plaid</text>
 
           <!-- practice zone -->
-          <text class="t-zone" x="420" y="552">DCB Practice — the AI-native firm</text>
+          <text class="t-zone" x="420" y="552">DCB Practice, the AI-native firm</text>
           <text class="t-zone-sub" x="420" y="571">the firm, delivered as software · owns its own data</text>
-          <text class="t-whyb" x="420" y="595" font-size="12" fill="var(--green-s)">💡 Why we build it — tax work is competitive &amp; commoditised, and a firm's roles</text>
+          <text class="t-whyb" x="420" y="595" font-size="12" fill="var(--green-s)">💡 Why we build it, tax work is competitive &amp; commoditised, and a firm's roles</text>
           <text class="t-whyb" x="420" y="612" font-size="12" fill="var(--green-s)">split cleanly into agents, so we deliver the service itself, not another tool</text>
           <!-- agents -->
           <text class="t-node" x="470" y="680">Agents</text>
@@ -308,7 +308,7 @@
           <text class="t-nodesub" x="470" y="855">review &amp; approve</text>
           <!-- firm KB -->
           <text class="t-node" x="724" y="674" font-size="16">📚 Firm knowledge base</text>
-          <text class="t-nodesub" x="724" y="697">How a task should be performed —</text>
+          <text class="t-nodesub" x="724" y="697">How a task should be performed, </text>
           <text class="t-nodesub" x="724" y="713">procedural, grounded, and</text>
           <text class="t-nodesub" x="724" y="729">continuously learned.</text>
           <text class="t-db" x="826" y="824" text-anchor="middle">vector KB</text>
@@ -329,7 +329,7 @@
           <g transform="translate(712,848)"><rect class="pill" x="-70" y="-11" width="140" height="21" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--green-s)">↻ learn (continuous)</text></g>
           <g transform="translate(550,770)"><rect class="pill" x="-48" y="-10" width="96" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">proposed work</text></g>
           <g transform="translate(908,770)"><rect class="pill" x="-32" y="-10" width="64" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">recorded</text></g>
-          <g transform="translate(912,494)"><rect class="pill" x="-100" y="-16" width="200" height="34" rx="9"/><text class="t-arrow" x="0" y="-2" text-anchor="middle">entitlement / comp codes</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)">outbound only — no shared DB</text></g>
+          <g transform="translate(912,494)"><rect class="pill" x="-100" y="-16" width="200" height="34" rx="9"/><text class="t-arrow" x="0" y="-2" text-anchor="middle">entitlement / comp codes</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)">outbound only, no shared DB</text></g>
           <g transform="translate(210,652)"><rect class="pill" x="-24" y="-11" width="48" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">reads</text></g>
           <g transform="translate(978,120)"><rect class="pill" x="-30" y="-10" width="60" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--muted)">comped</text></g>
           <g transform="translate(1180,684)"><rect class="pill" x="-66" y="-11" width="132" height="30" rx="9"/><text class="t-arrow" x="0" y="-1" text-anchor="middle">match to invoices</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)">you confirm</text></g>

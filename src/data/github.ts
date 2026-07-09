@@ -3,7 +3,7 @@
    Projects carry their repo URL in `links`; here we parse the
    owner/name out of that URL and fetch public repo stats from
    the GitHub REST API *at build time*. No client JS, no token
-   needed for public data, fully static output — deterministic
+   needed for public data, fully static output, deterministic
    by design. A scheduled rebuild keeps the figures current.
 
    Every failure path degrades to "no stats" so a card always
@@ -44,7 +44,7 @@ export async function fetchRepoStats(slugs: string[]): Promise<Record<string, Re
     'User-Agent': 'dingtianding-portfolio-build',
   };
   // Optional: bumps the rate limit from 60→5000/hr inside CI. Never
-  // shipped to the client — this file only runs at build time. Read
+  // shipped to the client, this file only runs at build time. Read
   // from both Astro's env and process.env so the Actions-provided
   // token is picked up regardless of how it is injected.
   const token =
@@ -65,7 +65,7 @@ export async function fetchRepoStats(slugs: string[]): Promise<Record<string, Re
           htmlUrl: d.html_url ?? '',
         };
       } catch {
-        /* offline / rate-limited — skip; the card renders without stats */
+        /* offline / rate-limited, skip; the card renders without stats */
       }
     }),
   );

@@ -13,54 +13,54 @@ const examples = [
       'Yes. Once you sell at a loss you can claim the capital loss on your taxes, then buy back in whenever you like.',
     ungroundedMark: 'buy back in whenever you like',
     grounded:
-      'No — the wash-sale rule disallows the loss if you buy the same or a substantially identical security within 30 days before or after the sale. The disallowed loss is added to the cost basis of the replacement shares instead.',
-    source: { name: 'IRS Publication 550 — Wash Sales', url: 'https://www.irs.gov/publications/p550', host: 'irs.gov' },
+      'No, the wash-sale rule disallows the loss if you buy the same or a substantially identical security within 30 days before or after the sale. The disallowed loss is added to the cost basis of the replacement shares instead.',
+    source: { name: 'IRS Publication 550, Wash Sales', url: 'https://www.irs.gov/publications/p550', host: 'irs.gov' },
   },
   {
     id: 'ltcg-holding',
     q: 'How long do I have to hold a stock for the long-term capital gains rate?',
     keywords: 'long term short term capital gains holding period one year 12 months rate',
-    ungrounded: 'Usually about six months — after that your gains qualify for the lower long-term rate.',
+    ungrounded: 'Usually about six months, after that your gains qualify for the lower long-term rate.',
     ungroundedMark: 'about six months',
     grounded:
       'More than one year. Hold a capital asset one year or less and the gain is short-term (taxed as ordinary income); hold it more than one year and it is long-term.',
-    source: { name: 'IRS Topic No. 409 — Capital Gains and Losses', url: 'https://www.irs.gov/taxtopics/tc409', host: 'irs.gov' },
+    source: { name: 'IRS Topic No. 409, Capital Gains and Losses', url: 'https://www.irs.gov/taxtopics/tc409', host: 'irs.gov' },
   },
   {
     id: 'capital-loss-cap',
-    q: 'My investments lost money — how much can I write off against my salary?',
+    q: 'My investments lost money, how much can I write off against my salary?',
     keywords: 'capital loss deduction 3000 write off salary ordinary income carryforward limit',
     ungrounded: 'You can deduct your full net capital loss against your ordinary income in the same year.',
     ungroundedMark: 'your full net capital loss',
     grounded:
       'Up to $3,000 of net capital loss per year ($1,500 if married filing separately) against ordinary income. Anything beyond that carries forward to future tax years.',
-    source: { name: 'IRS Topic No. 409 — Capital Gains and Losses', url: 'https://www.irs.gov/taxtopics/tc409', host: 'irs.gov' },
+    source: { name: 'IRS Topic No. 409, Capital Gains and Losses', url: 'https://www.irs.gov/taxtopics/tc409', host: 'irs.gov' },
   },
   {
     id: 'roth-deduction',
     q: 'Are Roth IRA contributions tax-deductible?',
     keywords: 'roth ira deductible contribution after tax deduction retirement',
-    ungrounded: 'Yes — like a traditional IRA, contributing to a Roth lowers your taxable income for the year.',
+    ungrounded: 'Yes, like a traditional IRA, contributing to a Roth lowers your taxable income for the year.',
     ungroundedMark: 'lowers your taxable income',
     grounded:
-      'No. Roth IRA contributions are made with after-tax dollars and are not deductible. The trade-off: qualified withdrawals — including the earnings — come out tax-free.',
-    source: { name: 'IRS — Roth IRAs', url: 'https://www.irs.gov/retirement-plans/roth-iras', host: 'irs.gov' },
+      'No. Roth IRA contributions are made with after-tax dollars and are not deductible. The trade-off: qualified withdrawals, including the earnings, come out tax-free.',
+    source: { name: 'IRS, Roth IRAs', url: 'https://www.irs.gov/retirement-plans/roth-iras', host: 'irs.gov' },
   },
   {
     id: 'stock-split',
     q: 'Do I owe tax when a stock I own does a 2-for-1 split?',
     keywords: 'stock split taxable dividend cost basis shares 2 for 1',
-    ungrounded: 'Yes — the extra shares count as a dividend and are taxed in the year of the split.',
+    ungrounded: 'Yes, the extra shares count as a dividend and are taxed in the year of the split.',
     ungroundedMark: 'count as a dividend and are taxed',
     grounded:
-      'Generally no. A stock split is not a taxable event — you spread your original cost basis across the new share count. Tax applies only when you eventually sell.',
-    source: { name: 'IRS Publication 550 — Stock splits', url: 'https://www.irs.gov/publications/p550', host: 'irs.gov' },
+      'Generally no. A stock split is not a taxable event, you spread your original cost basis across the new share count. Tax applies only when you eventually sell.',
+    source: { name: 'IRS Publication 550, Stock splits', url: 'https://www.irs.gov/publications/p550', host: 'irs.gov' },
   },
 ];
 ---
 
 <Base
-  title="Ask — a grounded-answer demo — Dean Ding"
+  title="Ask, a grounded-answer demo, Dean Ding"
   description="A live demo of DCB Public's grounded-answer approach: ask a money question and see an ungrounded AI answer next to one grounded in the authoritative IRS source, with a citation."
 >
   <header class="topbar">
@@ -78,7 +78,7 @@ const examples = [
       <span class="eyebrow">DCB Public · live demo</span>
       <h1 class="ask__title">Grounded, not guessed.</h1>
       <p class="ask__lede">
-        Ask a tax or investing question. A generic chatbot answers from memory — and sometimes
+        Ask a tax or investing question. A generic chatbot answers from memory, and sometimes
         <strong>confidently wrong</strong>. DCB Public answers only from the <strong>authoritative
         source</strong> and shows you the citation. Try one:
       </p>
@@ -107,7 +107,7 @@ const examples = [
 
       <p class="ask__note">
         Illustrative demo of DCB Public's grounded-answer approach. Answers are simplified and cite the
-        authoritative source — <strong>educational, not tax advice</strong>. Always verify with the linked source.
+        authoritative source, <strong>educational, not tax advice</strong>. Always verify with the linked source.
       </p>
     </section>
   </main>
@@ -180,7 +180,7 @@ const examples = [
           typed.textContent = e.grounded;
           return;
         }
-        // Type the grounded answer in, word by word — the "streaming" beat.
+        // Type the grounded answer in, word by word, the "streaming" beat.
         const words = e.grounded.split(' ');
         let i = 0;
         const step = () => {
@@ -216,7 +216,7 @@ const examples = [
       } else {
         stage.innerHTML = `
           <div class="ans ans--empty">
-            <p>This is a curated demo — I only have vetted, cited answers for a handful of questions so far.
+            <p>This is a curated demo, I only have vetted, cited answers for a handful of questions so far.
             Pick one of the questions above to see how grounding works.</p>
           </div>`;
       }

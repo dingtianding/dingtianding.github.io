@@ -1,5 +1,5 @@
 /* ============================================================
-   Dean Ding — portfolio
+   Dean Ding, portfolio
    Aesthetic: dark / technical "ledger & diff" theme.
    The site reads like a version-controlled diff of a career:
    removed (red) = the accountant, added (green) = the engineer.
@@ -18,19 +18,19 @@
   --line: rgba(255, 255, 255, 0.09);
   --line-strong: rgba(255, 255, 255, 0.16);
 
-  /* ink — contrast-tuned on the #0a0a0c ground, warm-biased neutrals.
-     text ~16:1 · dim ~9:1 · faint ~5.8:1 — all clear the WCAG AA floor
+  /* ink, contrast-tuned on the #0a0a0c ground, warm-biased neutrals.
+     text ~16:1 · dim ~9:1 · faint ~5.8:1, all clear the WCAG AA floor
      (the old --text-faint was ~2.9:1, the main "hard to read"). */
   --text: #f1f0ec;
   --text-dim: #b2b1aa;
   --text-faint: #8c8c85;
-  --text-mute: #6b6b65; /* decorative only (dot-leaders, disabled) — not for reading */
+  --text-mute: #6b6b65; /* decorative only (dot-leaders, disabled), not for reading */
 
   /* accents */
-  --signal: #e8b25a;      /* warm gold — primary accent */
+  --signal: #e8b25a;      /* warm gold, primary accent */
   --signal-deep: #c9914a;
-  --add: #46c05a;         /* diff green — the engineer */
-  --del: #f06458;         /* diff red — the accountant */
+  --add: #46c05a;         /* diff green, the engineer */
+  --del: #f06458;         /* diff red, the accountant */
 
   /* type */
   --font-display: 'Clash Display', 'Times New Roman', serif;
@@ -61,7 +61,7 @@
   --lh-normal: 1.62;
 
   /* ---- Breakpoints (reference; @media can't read custom properties) ----
-     sm 560px · md 760px · lg 1024px · xl 1280px — the queries below use these. */
+     sm 560px · md 760px · lg 1024px · xl 1280px, the queries below use these. */
 }
 
 *,

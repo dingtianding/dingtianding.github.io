@@ -1,7 +1,7 @@
 ---
-// ⌘K command palette — the "chart of accounts".
+// ⌘K command palette, the "chart of accounts".
 // Operator-grade navigation: fuzzy-filter to jump to any section
-// or run an action. Progressive enhancement — if JS is off, the
+// or run an action. Progressive enhancement, if JS is off, the
 // normal nav links still work and this never appears.
 ---
 
@@ -58,12 +58,12 @@
     const go = (href: string) => () => { window.location.href = href; };
 
     const commands: Cmd[] = [
-      { id: 'about', label: 'About — opening balance', hint: 'section 01', group: 'Jump to', tag: '01', run: jump('#about') },
-      { id: 'building', label: 'Building — work in progress', hint: 'section 02', group: 'Jump to', tag: '02', run: jump('#building') },
-      { id: 'work', label: 'Work — posted, verified', hint: 'section 03', group: 'Jump to', tag: '03', run: jump('#work') },
-      { id: 'stack', label: 'Stack — assets on the books', hint: 'section 04', group: 'Jump to', tag: '04', run: jump('#stack') },
-      { id: 'offclock', label: 'Off the clock — non-billable', hint: 'off-book', group: 'Jump to', tag: '∅', run: jump('#offclock') },
-      { id: 'contact', label: 'Contact — close the books', hint: 'section 05', group: 'Jump to', tag: '05', run: jump('#contact') },
+      { id: 'about', label: 'About: opening balance', hint: 'section 01', group: 'Jump to', tag: '01', run: jump('#about') },
+      { id: 'building', label: 'Building: work in progress', hint: 'section 02', group: 'Jump to', tag: '02', run: jump('#building') },
+      { id: 'work', label: 'Work: posted, verified', hint: 'section 03', group: 'Jump to', tag: '03', run: jump('#work') },
+      { id: 'stack', label: 'Stack: assets on the books', hint: 'section 04', group: 'Jump to', tag: '04', run: jump('#stack') },
+      { id: 'offclock', label: 'Off the clock: non-billable', hint: 'off-book', group: 'Jump to', tag: '∅', run: jump('#offclock') },
+      { id: 'contact', label: 'Contact: close the books', hint: 'section 05', group: 'Jump to', tag: '05', run: jump('#contact') },
       { id: 'top', label: 'Back to top', hint: 'hero', group: 'Jump to', tag: '↑', run: jump('#top') },
 
       { id: 'ask', label: 'Try the grounded-answer demo', hint: '/ask', group: 'Actions', tag: '◎', run: go('/ask') },

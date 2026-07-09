@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DCB Research — System Design</title>
+<title>DCB Research: System Design</title>
 </head>
 <body>
 <style>
@@ -72,10 +72,10 @@
 
 <div class="wrap">
   <header>
-    <h1>DCB Research — system design</h1>
+    <h1>DCB Research: system design</h1>
     <p class="sub">
       The grounded <b>source of truth</b> for the suite. It ingests SEC filings + tax sources, normalizes them into
-      Postgres, and answers questions with <b>hybrid retrieval</b> and <b>cited</b> generation — with an
+      Postgres, and answers questions with <b>hybrid retrieval</b> and <b>cited</b> generation, with an
       <b>eval harness</b> that measures both, so quality is proven, not assumed.
     </p>
     <div class="legend">
@@ -185,7 +185,7 @@
           <!-- grounded answer -->
           <text class="t-title" x="788" y="424" fill="var(--yellow-s)">Grounded answer</text>
           <text class="t-desc" x="788" y="447">Cites the exact filing sections</text>
-          <text class="t-desc" x="788" y="464">it used — checkable, not</text>
+          <text class="t-desc" x="788" y="464">it used, checkable, not</text>
           <text class="t-desc" x="788" y="481">confidently wrong.</text>
 
           <!-- analytics -->
@@ -196,8 +196,8 @@
 
           <!-- eval harness -->
           <text class="t-title" x="620" y="592" fill="var(--yellow-s)">🎯 Eval harness</text>
-          <text class="t-desc" x="620" y="616">retrieval — hit@k on a gold set (offline)</text>
-          <text class="t-desc" x="620" y="634">generation — groundedness (LLM judge)</text>
+          <text class="t-desc" x="620" y="616">retrieval, hit@k on a gold set (offline)</text>
+          <text class="t-desc" x="620" y="634">generation, groundedness (LLM judge)</text>
           <text class="t-desc" x="620" y="652">writes a scorecard · runs in CI</text>
           <text class="t-note" x="620" y="682">quality is proven, not assumed</text>
 
@@ -206,10 +206,10 @@
           <text class="t-db" x="1114" y="264">distilled cited entries</text>
           <text class="t-db" x="1114" y="280">the consumer KB</text>
           <text class="t-title" x="1114" y="398" font-size="15" fill="var(--green-s)">DCB Practice</text>
-          <text class="t-db" x="1114" y="418">firm KB — how a task</text>
+          <text class="t-db" x="1114" y="418">firm KB, how a task</text>
           <text class="t-db" x="1114" y="434">should be performed</text>
           <text class="t-title" x="1114" y="608" font-size="15" fill="var(--grey-s)">🤖 Anthropic</text>
-          <text class="t-db" x="1114" y="628">Claude — generate + judge</text>
+          <text class="t-db" x="1114" y="628">Claude, generate + judge</text>
           <text class="t-db" x="1114" y="644">bring-your-own-key</text>
 
           <!-- arrow labels -->
@@ -228,8 +228,8 @@
     <b>The pipeline:</b> SEC submissions and XBRL company facts (plus federal/state tax sources) are ingested to object
     storage and <b>normalized into a Postgres corpus</b> of filings, facts, and sections. That corpus drives two things: an
     <b>analytics dashboard</b> (revenue, margin, debt, liquidity, risk-text changes, filing diffs) and a
-    <b>hybrid-retrieval</b> layer — semantic embeddings (a dependency-free hashing embedder, no API key) plus BM25 keyword,
-    fused with <b>reciprocal-rank fusion</b> — that feeds a <b>grounded answer</b> citing the exact sections it used. An
+    <b>hybrid-retrieval</b> layer, semantic embeddings (a dependency-free hashing embedder, no API key) plus BM25 keyword,
+    fused with <b>reciprocal-rank fusion</b>, that feeds a <b>grounded answer</b> citing the exact sections it used. An
     <b>eval harness</b> scores retrieval (hit@k, offline) and generation (groundedness via an LLM judge) and runs in CI, so
     regressions are caught, not shipped. Distilled cited entries flow to <b>DCB Public</b>, and procedural how-to feeds
     <b>DCB Practice</b>'s firm knowledge base.
