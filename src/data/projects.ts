@@ -139,6 +139,7 @@ export const projects: Project[] = [
     detail: {
       oneLiner: 'A research backbone over SEC filings + tax sources: normalized analytics plus hybrid retrieval and grounded, cited answers — the corpus DCB Public distills from.',
       status: 'Building',
+      systemUrl: '/dcb-research-system.html',
       problem:
         "Public companies' numbers live in SEC filings, but they are buried in EDGAR and XBRL. Comparing companies, spotting what actually changed between two filings — in the financials or the risk text — or getting a grounded answer you can trust is slow, manual work.",
       architecture: [
