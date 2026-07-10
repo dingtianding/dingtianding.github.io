@@ -94,6 +94,17 @@ const n = (key: string) => String(sections.indexOf(key) + 1).padStart(2, '0');
               </figcaption>
             </figure>
           )}
+          {d.workflowUrl && (
+            <figure class="case__sys" data-reveal>
+              <p class="case__syslead">And one workflow moving through that platform, a tax return from source documents to filed, showing where the agent does the prep, where the PII gate sits, and where a human owns the approval:</p>
+              <div class="case__sysframe">
+                <iframe src={d.workflowUrl} title={`${project.name} workflow, made reviewable`} loading="lazy"></iframe>
+              </div>
+              <figcaption class="case__syscap">
+                <a href={d.workflowUrl} target="_blank" rel="noopener">Open the workflow diagram ↗</a>
+              </figcaption>
+            </figure>
+          )}
         </div>
       </div>
     </section>
@@ -354,6 +365,7 @@ const n = (key: string) => String(sections.indexOf(key) + 1).padStart(2, '0');
     box-shadow: 0 24px 60px -40px rgba(0, 0, 0, 0.7);
   }
   .case__sysframe iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .case__syslead { color: var(--text-dim); font-size: var(--fs-sm); line-height: 1.55; margin-bottom: 0.9rem; max-width: 68ch; }
   .case__syscap { margin-top: 0.8rem; font-family: var(--font-mono); font-size: var(--fs-xs); }
   .case__syscap a { color: var(--text); border-bottom: 1px solid var(--signal); padding-bottom: 2px; transition: color 0.2s ease; }
   .case__syscap a:hover { color: var(--signal); }

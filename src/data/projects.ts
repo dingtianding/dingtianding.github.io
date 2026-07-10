@@ -19,6 +19,7 @@ export interface ProjectDetail {
   architecture: string[]; // one entry per paragraph
   diagram?: string; // /images/<slug>-architecture.(png|svg)
   systemUrl?: string; // path to a self-contained HTML system-design diagram (embedded as an iframe)
+  workflowUrl?: string; // path to a self-contained HTML workflow diagram (embedded as an iframe)
   stack: StackGroup[];
   challenges: Challenge[];
   screenshots?: string[]; // /images/<slug>-1.png, ...
@@ -100,6 +101,7 @@ export const projects: Project[] = [
       oneLiner: 'Not software a firm uses, the firm itself, delivered as software: agents do the work, humans approve.',
       status: 'Private · building',
       systemUrl: '/dcb-practice-system.html',
+      workflowUrl: '/dcb-practice-workflow.html',
       problem:
         'The spend on professional services dwarfs the spend on software, and accounting, tax, and audit are among the most outsourced of all, which makes them the strongest candidates to be replaced, not just improved. Inside a firm the hours disappear into the same repetitive work every season: tax prep, bookkeeping, document chasing, cleanup, reconciliations, review, and close. The opportunity is not another tool that helps a CPA work faster; it is to deliver that work itself. But you cannot let agents touch real client work without a system of record, an audit trail, and a hard guarantee that sensitive data is handled correctly.',
       architecture: [
