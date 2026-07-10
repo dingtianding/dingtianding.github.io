@@ -251,6 +251,16 @@ export const projects: Project[] = [
     },
   },
 
+  {
+    name: 'Tape',
+    blurb:
+      'A live-markets dashboard built to explore Angular 19 and RxJS: real-time price streams, signal-driven state, sparkline trends, and a Reactive-Forms order ticket with conditional validation. Fully client-side, no backend.',
+    tech: ['Angular 19', 'RxJS', 'TypeScript', 'Reactive Forms'],
+    award: 'Angular',
+    demo: '/tape/',
+    links: [{ label: 'Repository', href: 'https://github.com/dingtianding/tape' }],
+  },
+
   // ---- Earlier builds ----
   {
     name: 'Xelsius',
