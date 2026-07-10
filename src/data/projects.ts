@@ -91,7 +91,7 @@ export const projects: Project[] = [
     name: 'DCB Practice',
     slug: 'dcb-practice',
     blurb:
-      'An AI-native accounting firm: agents run the repetitive tax and accounting work end to end while humans review and approve, built on a practice-management platform that is the system of record, with a PII-gated ingest pipeline.',
+      'An AI-native accounting firm: agents run the repetitive firm workflows, tax prep, bookkeeping, document collection, cleanup, review, and close, while humans review and approve. Built on a practice-management platform that is the system of record, with a PII-gated ingest, so every action an agent takes is auditable.',
     tech: ['Agentic AI', 'FastAPI', 'PostgreSQL', 'Next.js'],
     award: 'Private · building',
     isPrivate: true,
@@ -101,20 +101,20 @@ export const projects: Project[] = [
       status: 'Private · building',
       systemUrl: '/dcb-practice-system.html',
       problem:
-        'The spend on professional services dwarfs the spend on software, and accounting, tax, and audit are among the most outsourced of all, which makes them the strongest candidates to be replaced, not just improved. The opportunity is not another tool that helps a CPA work faster; it is to deliver the service itself. But you cannot let agents touch real client work without a system of record, an audit trail, and a hard guarantee that sensitive data is handled correctly.',
+        'The spend on professional services dwarfs the spend on software, and accounting, tax, and audit are among the most outsourced of all, which makes them the strongest candidates to be replaced, not just improved. Inside a firm the hours disappear into the same repetitive work every season: tax prep, bookkeeping, document chasing, cleanup, reconciliations, review, and close. The opportunity is not another tool that helps a CPA work faster; it is to deliver that work itself. But you cannot let agents touch real client work without a system of record, an audit trail, and a hard guarantee that sensitive data is handled correctly.',
       architecture: [
         "The substrate is a FastAPI + SQLAlchemy + PostgreSQL platform that is the firm's single source of truth: JWT auth, and clients, engagements, tasks, documents, and communications, with a dashboard summary. This is what makes agent work reviewable, every action lands against a real record a human can audit and approve.",
-        'On top of it, an agentic layer does the repetitive accounting work and feeds results back through a work-session ingest endpoint that rejects unredacted PII (SSN/EIN) with a 422 before anything is written, so automation can never persist sensitive data. A Next.js (App Router) front-end is the human review surface; Docker Compose runs local Postgres; pytest runs in CI.',
+        'On top of it, an agentic layer runs the repetitive firm workflows, tax prep, bookkeeping, document collection, cleanup, review, and close, and feeds every result back through a work-session ingest endpoint that rejects unredacted PII (SSN/EIN) with a 422 before anything is written, so automation can never persist sensitive data. Nothing an agent produces is final until a human approves it in the Next.js (App Router) review surface, and every step lands as an auditable record. Docker Compose runs local Postgres; pytest runs in CI.',
       ],
       stack: [
         { group: 'Backend', items: ['Python', 'FastAPI', 'SQLAlchemy', 'PostgreSQL', 'Pydantic', 'JWT'] },
-        { group: 'AI', items: ['LLM agents', 'tool use', 'human-in-the-loop review'] },
+        { group: 'AI', items: ['LLM agents', 'tool use', 'human-in-the-loop review', 'audit trail'] },
         { group: 'Frontend / infra', items: ['Next.js (App Router)', 'React', 'TypeScript', 'Docker', 'pytest', 'GitHub Actions'] },
       ],
       challenges: [
         {
           title: 'Agents that touch real work, safely',
-          body: 'Letting agents run accounting tasks end to end requires every action to be reviewable and reversible, landed against a system of record a human approves, not a black box that just emits an answer.',
+          body: 'Letting agents run tax prep, bookkeeping, and close end to end requires every action to be reviewable and reversible, landed against a system of record a human approves, not a black box that just emits an answer.',
         },
         {
           title: 'PII-gated ingest',
