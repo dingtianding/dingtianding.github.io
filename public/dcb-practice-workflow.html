@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DCB Practice: a workflow, made reviewable</title>
+</head>
+<body>
+<style>
+  :root {
+    --canvas: #fbfbf8; --panel: #ffffff; --ink: #1b1b1f; --muted: #6b6b73;
+    --grid: rgba(20,20,30,.06); --edge: rgba(20,20,30,.14);
+    --green-s: #2f9e44; --green-f: #d6f9dd; --green-zone: rgba(47,158,68,.06);
+    --grey-s: #5a6069; --grey-f: #eef0f2; --pink-s: #d83a3a; --pink-f: #ffe3e3;
+    --gold-s: #d98207; --gold-f: #fff3bf;
+    --hand: "Comic Sans MS","Chalkboard SE","Bradley Hand","Segoe Print",ui-rounded,cursive;
+    --sans: ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --canvas: #14151a; --panel: #1a1c22; --ink: #e7e7ec; --muted: #9a9aa6;
+      --grid: rgba(255,255,255,.06); --edge: rgba(255,255,255,.16);
+      --green-s: #69db7c; --green-f: rgba(105,219,124,.15); --green-zone: rgba(105,219,124,.05);
+      --grey-s: #aeb4bd; --grey-f: rgba(174,180,189,.10); --pink-s: #ff8787; --pink-f: rgba(255,135,135,.15);
+      --gold-s: #ffd43b; --gold-f: rgba(255,212,59,.14);
+    }
+  }
+  :root[data-theme="light"] {
+    --canvas: #fbfbf8; --panel: #ffffff; --ink: #1b1b1f; --muted: #6b6b73;
+    --grid: rgba(20,20,30,.06); --edge: rgba(20,20,30,.14);
+    --green-s: #2f9e44; --green-f: #d6f9dd; --green-zone: rgba(47,158,68,.06);
+    --grey-s: #5a6069; --grey-f: #eef0f2; --pink-s: #d83a3a; --pink-f: #ffe3e3;
+    --gold-s: #d98207; --gold-f: #fff3bf;
+  }
+  :root[data-theme="dark"] {
+    --canvas: #14151a; --panel: #1a1c22; --ink: #e7e7ec; --muted: #9a9aa6;
+    --grid: rgba(255,255,255,.06); --edge: rgba(255,255,255,.16);
+    --green-s: #69db7c; --green-f: rgba(105,219,124,.15); --green-zone: rgba(105,219,124,.05);
+    --grey-s: #aeb4bd; --grey-f: rgba(174,180,189,.10); --pink-s: #ff8787; --pink-f: rgba(255,135,135,.15);
+    --gold-s: #ffd43b; --gold-f: rgba(255,212,59,.14);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1520px; margin: 0 auto; padding: 28px clamp(16px,4vw,40px) 56px; }
+  h1 { font-family: var(--hand); font-weight: 700; font-size: clamp(1.6rem,1.2rem+2vw,2.4rem); margin: 0; letter-spacing: -.01em; }
+  .sub { color: var(--muted); font-size: .98rem; margin-top: 6px; max-width: 82ch; line-height: 1.5; }
+  .sub b { color: var(--ink); font-weight: 600; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; font-size: .82rem; color: var(--muted); align-items: center; }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .lg-h { color: var(--ink); font-weight: 700; font-size: .78rem; margin-right: 2px; }
+  .sw { width: 15px; height: 13px; border-radius: 3px; border: 2px solid; flex: none; }
+  .stage-scroll { overflow-x: auto; margin-top: 20px; padding-bottom: 6px; }
+  .stage { min-width: 1200px; background: radial-gradient(var(--grid) 1.4px, transparent 1.4px); background-size: 26px 26px; background-position: -1px -1px; border: 2px solid var(--edge); border-radius: 16px; padding: 8px; }
+  svg.diagram { width: 100%; height: auto; display: block; }
+
+  .t-title { font-family: var(--hand); font-weight: 700; font-size: 15px; }
+  .t-desc { font-family: var(--sans); font-size: 11px; fill: var(--ink); }
+  .t-note { font-family: var(--hand); font-size: 11.5px; fill: var(--muted); }
+  .t-arrow { font-family: var(--sans); font-size: 10.5px; fill: var(--ink); }
+  .t-band { font-family: var(--hand); font-weight: 700; font-size: 14px; fill: var(--gold-s); }
+  .t-bandsub { font-family: var(--sans); font-size: 11px; fill: var(--muted); }
+  .pill { fill: var(--panel); stroke: var(--edge); stroke-width: 1.4; }
+  .stage { opacity: 0; transform: translateY(10px); animation: rise .5s ease-out .05s forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .stage { animation: none; opacity: 1; transform: none; } }
+  footer { margin-top: 20px; color: var(--muted); font-size: .82rem; line-height: 1.6; max-width: 104ch; }
+  footer b { color: var(--ink); font-weight: 600; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>A workflow, made reviewable</h1>
+    <p class="sub">
+      One concrete firm workflow, a tax return from source documents to filed, modeled the way DCB Practice
+      handles every workflow: <b>agents do the prep, a human owns the judgment</b>, a PII gate protects sensitive data,
+      and <b>every step is an auditable, reversible record</b>. Nothing an agent produces is final until it is approved.
+    </p>
+    <div class="legend">
+      <b class="lg-h">Legend</b>
+      <span><i class="sw" style="border-color:var(--green-s);background:var(--green-f)"></i>Agent step</span>
+      <span><i class="sw" style="border-color:var(--pink-s);background:var(--pink-f)"></i>👤 Human checkpoint</span>
+      <span><i class="sw" style="border-color:var(--green-s);background:var(--green-f)"></i>🔒 Gate</span>
+      <span><i class="sw" style="border-color:var(--grey-s);background:var(--grey-f)"></i>Source</span>
+      <span><i class="sw" style="border-color:var(--gold-s);background:var(--gold-f)"></i>🧾 Audit trail</span>
+      <span><i style="display:inline-block;width:24px;border-top:2.5px solid var(--edge)"></i>proceed</span>
+      <span><i style="display:inline-block;width:24px;border-top:2.5px dashed var(--edge)"></i>send back · logs</span>
+    </div>
+  </header>
+
+  <div class="stage-scroll">
+    <div class="stage">
+      <svg class="diagram" viewBox="0 168 1520 372" role="img"
+        aria-label="A tax-return workflow in DCB Practice: source documents are extracted and organized by an agent, pass a PII gate, are drafted by an agent, then reviewed by a CPA who approves or sends the work back for revision; approved returns are filed and recorded to the system of record, and every stage writes to an audit trail that is logged, timestamped, and reversible.">
+        <defs>
+          <filter id="rough" x="-3%" y="-3%" width="106%" height="106%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.012 0.014" numOctaves="2" seed="3" result="n"/>
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+          <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--ink)"/></marker>
+          <marker id="arG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--green-s)"/></marker>
+          <marker id="arP" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--pink-s)"/></marker>
+          <marker id="arM" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/></marker>
+        </defs>
+
+        <!-- ===== roughened shapes ===== -->
+        <g filter="url(#rough)" fill="none">
+          <!-- stages -->
+          <rect x="36" y="204" width="208" height="124" rx="14" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.4"/>
+          <rect x="288" y="204" width="204" height="124" rx="14" fill="var(--green-f)" stroke="var(--green-s)" stroke-width="2.6"/>
+          <rect x="536" y="216" width="150" height="100" rx="13" fill="var(--green-f)" stroke="var(--green-s)" stroke-width="2.6"/>
+          <rect x="730" y="204" width="204" height="124" rx="14" fill="var(--green-f)" stroke="var(--green-s)" stroke-width="2.6"/>
+          <rect x="978" y="190" width="228" height="152" rx="16" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="3.2"/>
+          <rect x="1252" y="204" width="232" height="124" rx="14" fill="var(--green-f)" stroke="var(--green-s)" stroke-width="2.6"/>
+
+          <!-- audit trail band -->
+          <rect x="36" y="440" width="1448" height="66" rx="14" fill="var(--gold-f)" stroke="var(--gold-s)" stroke-width="2.4" stroke-dasharray="2 7"/>
+
+          <!-- proceed arrows -->
+          <path d="M244 266 C 258 266 270 266 284 266" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#ar)"/>
+          <path d="M492 266 C 506 266 518 266 532 266" stroke="var(--green-s)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arG)"/>
+          <path d="M686 266 C 700 266 712 266 726 266" stroke="var(--green-s)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arG)"/>
+          <path d="M934 266 C 948 266 960 266 974 266" stroke="var(--green-s)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arG)"/>
+          <!-- review -> file (approve) -->
+          <path d="M1206 258 C 1224 258 1236 260 1250 262" stroke="var(--green-s)" stroke-width="2.6" stroke-linecap="round" marker-end="url(#arG)"/>
+          <!-- review -> draft (send back) -->
+          <path d="M1010 342 C 968 402 880 402 834 330" stroke="var(--pink-s)" stroke-width="2.4" stroke-dasharray="7 7" stroke-linecap="round" marker-end="url(#arP)"/>
+
+          <!-- each stage writes to the audit trail -->
+          <path d="M140 328 C 140 380 140 400 140 438" stroke="var(--muted)" stroke-width="1.8" stroke-dasharray="4 6" stroke-linecap="round"/>
+          <path d="M390 328 C 390 380 390 400 390 438" stroke="var(--muted)" stroke-width="1.8" stroke-dasharray="4 6" stroke-linecap="round"/>
+          <path d="M611 316 C 611 380 611 400 611 438" stroke="var(--muted)" stroke-width="1.8" stroke-dasharray="4 6" stroke-linecap="round"/>
+          <path d="M832 328 C 832 380 832 400 832 438" stroke="var(--muted)" stroke-width="1.8" stroke-dasharray="4 6" stroke-linecap="round"/>
+          <path d="M1092 342 C 1092 380 1092 402 1092 438" stroke="var(--muted)" stroke-width="1.8" stroke-dasharray="4 6" stroke-linecap="round"/>
+          <path d="M1368 328 C 1368 380 1368 400 1368 438" stroke="var(--muted)" stroke-width="1.8" stroke-dasharray="4 6" stroke-linecap="round"/>
+        </g>
+
+        <!-- ===== crisp text ===== -->
+        <g>
+          <!-- 1 source -->
+          <text class="t-title" x="54" y="234" fill="var(--grey-s)">📄 Source docs</text>
+          <text class="t-desc" x="54" y="258">W-2s · 1099s · receipts ·</text>
+          <text class="t-desc" x="54" y="275">prior-year return.</text>
+          <text class="t-note" x="54" y="302">intake chases what's missing</text>
+
+          <!-- 2 extract -->
+          <text class="t-title" x="306" y="234" fill="var(--green-s)">🤖 Extract &amp; organize</text>
+          <text class="t-desc" x="306" y="258">Agent reads the docs, maps</text>
+          <text class="t-desc" x="306" y="275">figures, builds the workpaper.</text>
+
+          <!-- 3 PII gate -->
+          <text class="t-title" x="551" y="252" font-size="13.5" fill="var(--green-s)">🔒 PII gate</text>
+          <text class="t-desc" x="551" y="274">redact SSN/EIN</text>
+          <text class="t-desc" x="551" y="290">before it persists</text>
+
+          <!-- 4 draft -->
+          <text class="t-title" x="748" y="234" fill="var(--green-s)">🤖 Prepare draft</text>
+          <text class="t-desc" x="748" y="258">Draft the return, compute,</text>
+          <text class="t-desc" x="748" y="275">flag open questions.</text>
+
+          <!-- 5 review (pivot) -->
+          <text class="t-title" x="996" y="222" fill="var(--pink-s)">👤 CPA review</text>
+          <text class="t-desc" x="996" y="246">Review the draft and the</text>
+          <text class="t-desc" x="996" y="263">agent's reasoning, edit, and</text>
+          <text class="t-desc" x="996" y="280">approve, or send it back.</text>
+          <text class="t-note" x="996" y="308">the human owns the judgment</text>
+
+          <!-- 6 file -->
+          <text class="t-title" x="1270" y="234" fill="var(--green-s)">✓ File &amp; record</text>
+          <text class="t-desc" x="1270" y="258">File the approved return;</text>
+          <text class="t-desc" x="1270" y="275">record it to the system of</text>
+          <text class="t-desc" x="1270" y="292">record.</text>
+
+          <!-- audit band -->
+          <text class="t-band" x="54" y="470">🧾 Audit trail</text>
+          <text class="t-bandsub" x="182" y="470">every state change, every agent action, every human approval, logged, timestamped, and reversible.</text>
+
+          <!-- arrow labels -->
+          <g transform="translate(1228,282)"><rect class="pill" x="-34" y="-10" width="68" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--green-s)">approve ✓</text></g>
+          <g transform="translate(922,392)"><rect class="pill" x="-62" y="-10" width="124" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--pink-s)">send back → revise</text></g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <footer>
+    <b>The shape of it:</b> source documents are extracted and organized by an agent, pass a <b>PII gate</b> that strips
+    SSN/EIN before anything persists, and are drafted into a return. A <b>CPA reviews</b> the draft and the agent's
+    reasoning, then <b>approves or sends it back</b> for revision, the human owns the judgment call, the agent does the
+    repetitive prep. Approved returns are filed and recorded to the <b>system of record</b>. And every stage writes to an
+    <b>audit trail</b>: every state change, agent action, and approval is logged, timestamped, and reversible, so
+    automation touches real client work without ever becoming a black box.
+  </footer>
+</div>
+</body>
+</html>
