@@ -34,7 +34,7 @@ const rows = items.map((p) => ({ p, st: repoByName.get(p.name) ? stats[repoByNam
   .work__grid {
     display: grid;
     /* min() guards against overflow when the viewport is narrower than 320px */
-    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(360px, 100%), 1fr));
     gap: 1.4rem;
   }
 </style>
