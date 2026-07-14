@@ -102,7 +102,7 @@
     <h1>How the DCB suite fits together</h1>
     <p class="sub">
       One thesis, four products, <b>AI-native services for accounting &amp; finance</b>: agents do the work, humans approve.
-      Each product owns its own database; integration is API + entitlement, never a shared DB.
+      Each product owns its own schema; one Postgres, isolated by role and entitlement, extractable per product when scale earns it.
     </p>
     <div class="why">
       <div>
@@ -329,7 +329,7 @@
           <g transform="translate(712,848)"><rect class="pill" x="-70" y="-11" width="140" height="21" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--green-s)">↻ learn (continuous)</text></g>
           <g transform="translate(550,770)"><rect class="pill" x="-48" y="-10" width="96" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">proposed work</text></g>
           <g transform="translate(908,770)"><rect class="pill" x="-32" y="-10" width="64" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">recorded</text></g>
-          <g transform="translate(912,494)"><rect class="pill" x="-100" y="-16" width="200" height="34" rx="9"/><text class="t-arrow" x="0" y="-2" text-anchor="middle">entitlement / comp codes</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)">outbound only, no shared DB</text></g>
+          <g transform="translate(912,494)"><rect class="pill" x="-100" y="-16" width="200" height="34" rx="9"/><text class="t-arrow" x="0" y="-2" text-anchor="middle">entitlement / comp codes</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)">outbound only · role-isolated</text></g>
           <g transform="translate(210,652)"><rect class="pill" x="-24" y="-11" width="48" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">reads</text></g>
           <g transform="translate(978,120)"><rect class="pill" x="-30" y="-10" width="60" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--muted)">comped</text></g>
           <g transform="translate(1180,684)"><rect class="pill" x="-66" y="-11" width="132" height="30" rx="9"/><text class="t-arrow" x="0" y="-1" text-anchor="middle">match to invoices</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)">you confirm</text></g>
