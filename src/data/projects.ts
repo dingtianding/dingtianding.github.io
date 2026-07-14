@@ -136,7 +136,8 @@ export const projects: Project[] = [
     blurb:
       'A research platform over SEC filings, XBRL company facts, and federal/state tax sources: ingest, normalize into Postgres, then search, diff filings, and compare companies on revenue, margin, debt, liquidity, and risk-text changes. The source-data backbone DCB Public distills from.',
     tech: ['Python', 'FastAPI', 'XBRL', 'PostgreSQL', 'React'],
-    award: 'Building',
+    award: 'Private · building',
+    isPrivate: true,
     links: [],
     detail: {
       oneLiner: 'A research backbone over SEC filings + tax sources: normalized analytics plus hybrid retrieval and grounded, cited answers, the corpus DCB Public distills from.',

@@ -66,7 +66,7 @@ export function initLedger(): void {
   const BAND = 150; // reconciliation influence radius
 
   // Parallax: the ledger drifts with the page at this fraction of scroll speed,
-  // wrapping seamlessly at fieldH — depth, not a fixed overlay pinned behind text.
+  // wrapping seamlessly at fieldH, depth, not a fixed overlay pinned behind text.
   const PARALLAX = 0.28;
   let fieldH = 0;
 
