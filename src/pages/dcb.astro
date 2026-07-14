@@ -1,0 +1,341 @@
+---
+import Base from '../layouts/Base.astro';
+import { projects } from '../data/projects';
+
+const suite = projects.filter((p) => p.name.startsWith('DCB '));
+
+// Present the suite in product order, newest-thesis-first.
+const order = ['DCB Practice', 'DCB Copilot', 'DCB Research', 'DCB Public'];
+const products = order
+  .map((n) => suite.find((p) => p.name === n))
+  .filter(Boolean)
+  .map((p) => ({
+    name: p!.name.replace('DCB ', ''),
+    slug: p!.slug,
+    line: p!.detail?.oneLiner ?? p!.blurb,
+    status: p!.detail?.status ?? '',
+    systemUrl: p!.detail?.systemUrl,
+    demo: p!.demo,
+  }));
+---
+
+<Base
+  title="DCB, an AI-native service company · Dean Ding"
+  description="DCB delivers the accounting service itself as software: agents run the repetitive firm work under human approval, on a reviewable, auditable system of record. Four products, one firm."
+>
+  <header class="topbar">
+    <div class="shell topbar__inner">
+      <a class="topbar__brand" href="/">
+        <span class="topbar__mark">DD</span>
+        <span class="topbar__path">dean_ding</span>
+      </a>
+      <nav class="topbar__nav">
+        <a href="/ask">Live demo</a>
+        <a href="/dcb-system">System</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="dcb">
+    <!-- Masthead -->
+    <section class="shell masthead">
+      <span class="eyebrow">DCB · an AI-native service company</span>
+      <h1 class="masthead__title">The firm, delivered as software.</h1>
+      <p class="masthead__lede">
+        The spend on professional services dwarfs the spend on software. So the prize isn't a better
+        tool for accountants, it's delivering the accounting itself. <strong>DCB is an AI-native
+        accounting firm</strong>: agents run the repetitive work end to end, a human approves, and
+        every step is reviewable and auditable.
+      </p>
+
+      <div class="diff" aria-hidden="true">
+        <div class="diff__bar"><span class="diff__dots"><i></i><i></i><i></i></span><span class="diff__name">the_model.diff</span></div>
+        <pre class="diff__body"><code><span class="d-line d-del">- sell software that helps accountants work faster</span>
+<span class="d-line d-add">+ deliver the accounting work itself, agents do it</span>
+<span class="d-line d-add">+ a human reviews and approves every change</span>
+<span class="d-line d-sig">  ▸ services ≫ software · <span class="d-approve">reviewable</span></span></code></pre>
+      </div>
+
+      <div class="masthead__cta">
+        <a class="btn btn--go" href="/ask">Try the live demo →</a>
+        <a class="btn" href="/dcb-system">See how the suite fits together ↗</a>
+      </div>
+    </section>
+
+    <!-- The suite as one system -->
+    <section class="shell block">
+      <span class="block__num">01 / the suite</span>
+      <h2 class="block__h">Four products, one firm.</h2>
+      <p class="block__lede">
+        Each product owns its own data and integrates by API and entitlement. <strong>Research</strong>
+        grounds the knowledge in authoritative sources, <strong>Public</strong> is the citation-backed
+        front door, <strong>Practice</strong> runs the work with agents under human review, and
+        <strong>Copilot</strong> is the practitioner's cockpit.
+      </p>
+    </section>
+
+    <div class="sysframe">
+      <iframe src="/dcb-system.html" title="DCB system-design diagram" loading="lazy"></iframe>
+    </div>
+    <div class="shell sysframe__foot">
+      <a class="open" href="/dcb-system.html" target="_blank" rel="noopener">Open the full system diagram ↗</a>
+    </div>
+
+    <section class="shell block">
+      <div class="products">
+        {products.map((p) => (
+          <article class="product">
+            <header class="product__top">
+              <h3 class="product__name">{p.name}</h3>
+              <span class={`pill ${p.demo ? 'pill--live' : ''}`}>{p.demo ? 'live demo' : p.status}</span>
+            </header>
+            <p class="product__line">{p.line}</p>
+            <div class="product__links">
+              {p.demo && <a href={p.demo}>Live demo →</a>}
+              <a href={`/work/${p.slug}`}>Case study →</a>
+              {p.systemUrl && <a href={p.systemUrl} target="_blank" rel="noopener">System design ↗</a>}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- The moat -->
+    <section class="shell block">
+      <span class="block__num">02 / the moat</span>
+      <h2 class="block__h">The work compounds.</h2>
+      <p class="block__lede">
+        Agents propose, humans approve, and every approved outcome feeds <strong>Firm Memory</strong>,
+        a learning layer that turns each finished job into reusable, grounded know-how the firm keeps.
+        The more the firm runs, the more it knows, and the less a human has to re-decide. That loop,
+        not any single feature, is what a tool can't copy.
+      </p>
+    </section>
+
+    <!-- Proof -->
+    <section class="shell block">
+      <span class="block__num">03 / it's working</span>
+      <h2 class="block__h">Real software, not slides.</h2>
+      <div class="proof">
+        <div class="proof__item">
+          <span class="proof__k">Live now</span>
+          <p>
+            <a href="/ask" class="proof__link">/ask</a> answers money questions only from the
+            authoritative source and shows the citation, so you can check the work, not just trust it.
+            Grounded, cited, verifiable.
+          </p>
+        </div>
+        <div class="proof__item">
+          <span class="proof__k">Running</span>
+          <p>
+            DCB Practice runs a <strong>supervised agent-job worker</strong>: five jobs execute
+            unattended (missing-document detection, capacity-aware assignment, Firm Memory learning,
+            client follow-ups, an operations morning briefing), each surfacing a proposal a human
+            approves or declines with full trace and replay.
+          </p>
+        </div>
+        <div class="proof__item">
+          <span class="proof__k">Built out</span>
+          <p>
+            On a full practice-management platform, the system of record: client organizers, recurring
+            engagements, statutory deadlines, analytics, IRS-notice resolution, and a business-formation
+            assistant. The <a href="/work/dcb-practice" class="proof__link">case study</a> shows the
+            architecture and the workflow, made reviewable.
+          </p>
+        </div>
+      </div>
+      <p class="proof__note">DCB Practice and Copilot are private. Diagrams and case studies are public; a full walkthrough is available on request.</p>
+    </section>
+
+    <!-- Momentum -->
+    <section class="shell block">
+      <span class="block__num">04 / momentum</span>
+      <h2 class="block__h">Built in the open, every week.</h2>
+      <p class="block__lede">
+        DCB ships on a weekly cadence, posted as a standup on my GitHub profile: what shipped, what's
+        next, what's blocked. It's a company being built one reviewable change at a time.
+      </p>
+      <a class="open" href="https://github.com/dingtianding" target="_blank" rel="noopener">Read this week's standup ↗</a>
+    </section>
+
+    <!-- CTA -->
+    <section class="shell cta">
+      <h2 class="cta__h">Building DCB in the open.</h2>
+      <p class="cta__p">
+        If you're working on (or hiring for) AI in finance and accounting, I'd like to talk.
+      </p>
+      <div class="cta__links">
+        <a href="mailto:dingtian.ding@gmail.com">dingtian.ding@gmail.com</a>
+        <a href="https://github.com/dingtianding" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="/">Portfolio ↗</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="dcbfoot">
+    <div class="shell dcbfoot__inner">
+      <span>© 2026 Dean Ding · DCB</span>
+      <a href="/">← Back to portfolio</a>
+    </div>
+  </footer>
+</Base>
+
+<style>
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(10px);
+    background: linear-gradient(to bottom, rgba(10, 10, 12, 0.85), rgba(10, 10, 12, 0.4));
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar__inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .topbar__brand { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-size: var(--fs-xs); }
+  .topbar__mark {
+    display: grid; place-items: center; width: 28px; height: 28px;
+    border: 1px solid var(--line-strong); border-radius: 7px;
+    font-weight: 700; color: var(--signal); letter-spacing: 0.05em;
+  }
+  .topbar__path { color: var(--text-dim); }
+  .topbar__nav { display: flex; gap: clamp(0.9rem, 3vw, 1.8rem); font-family: var(--font-mono); font-size: var(--fs-xs); }
+  .topbar__nav a { color: var(--text-dim); transition: color 0.2s ease; }
+  .topbar__nav a:hover { color: var(--signal); }
+
+  .dcb { padding-bottom: 2rem; }
+
+  /* Masthead */
+  .masthead { padding-block: clamp(2.6rem, 7vh, 5rem) 1rem; }
+  .masthead__title {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: var(--fs-3xl); line-height: var(--lh-tight);
+    letter-spacing: -0.02em; margin-top: 1.1rem; max-width: 16ch;
+  }
+  .masthead__lede {
+    margin-top: 1.3rem; max-width: 60ch; color: var(--text-dim);
+    font-size: var(--fs-lg); line-height: var(--lh-snug);
+  }
+  .masthead__lede strong, .block__lede strong { color: var(--text); font-weight: 600; }
+
+  .diff {
+    margin-top: 1.8rem; max-width: 640px;
+    border: 1px solid var(--line-strong); border-radius: 10px; overflow: hidden;
+    background: var(--bg-card); box-shadow: 0 24px 60px -44px rgba(0, 0, 0, 0.8);
+    font-family: var(--font-mono);
+  }
+  .diff__bar {
+    display: flex; align-items: center; gap: 0.7rem;
+    padding: 0.5rem 0.9rem; border-bottom: 1px solid var(--line);
+    background: var(--bg-elev); font-size: var(--fs-2xs); color: var(--text-faint);
+  }
+  .diff__dots { display: inline-flex; gap: 0.3rem; }
+  .diff__dots i { width: 9px; height: 9px; border-radius: 999px; background: var(--line-strong); }
+  .diff__body { margin: 0; padding: 0.9rem 1.1rem; font-size: var(--fs-xs); line-height: 1.85; overflow-x: auto; }
+  .d-line { display: block; white-space: pre; }
+  .d-del { color: var(--del); }
+  .d-add { color: var(--add); }
+  .d-sig { color: var(--text-faint); }
+  .d-approve { color: var(--signal); }
+
+  .masthead__cta { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1.8rem; }
+  .btn {
+    font-family: var(--font-mono); font-size: var(--fs-sm);
+    padding: 0.6rem 1.05rem; border-radius: 999px;
+    border: 1px solid var(--line-strong); color: var(--text);
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+  .btn:hover { border-color: var(--signal); color: var(--signal); }
+  .btn--go { background: var(--signal); color: #12100a; border-color: var(--signal); font-weight: 600; }
+  .btn--go:hover { background: var(--signal-deep); border-color: var(--signal-deep); color: #12100a; }
+
+  /* Blocks */
+  .block { padding-block: clamp(2.2rem, 5vh, 3.4rem) 0; }
+  .block__num {
+    font-family: var(--font-mono); font-size: var(--fs-xs);
+    letter-spacing: 0.1em; color: var(--signal); opacity: 0.85; text-transform: uppercase;
+  }
+  .block__h {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: var(--fs-2xl); line-height: var(--lh-tight);
+    letter-spacing: -0.015em; margin-top: 0.7rem;
+  }
+  .block__lede {
+    margin-top: 1rem; max-width: 66ch; color: var(--text-dim);
+    font-size: var(--fs-md); line-height: 1.62;
+  }
+
+  /* Suite diagram */
+  .sysframe {
+    margin: 1.8rem auto 0; width: min(1340px, 96vw); height: 74vh; min-height: 520px;
+    border: 1px solid var(--line-strong); border-radius: var(--radius); overflow: hidden;
+    background: #14151a; box-shadow: 0 30px 80px -44px rgba(0, 0, 0, 0.8);
+  }
+  .sysframe iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .sysframe__foot { margin-top: 1.2rem; }
+  .open {
+    font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text);
+    border-bottom: 1px solid var(--signal); padding-bottom: 2px; transition: color 0.2s ease;
+  }
+  .open:hover { color: var(--signal); }
+
+  /* Product grid */
+  .products {
+    display: grid; gap: 1rem;
+    grid-template-columns: 1fr;
+    margin-top: 1.6rem;
+  }
+  @media (min-width: 680px) { .products { grid-template-columns: 1fr 1fr; } }
+  .product {
+    border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--bg-card); padding: 1.3rem 1.4rem;
+    display: flex; flex-direction: column; gap: 0.7rem;
+    transition: border-color 0.2s ease;
+  }
+  .product:hover { border-color: var(--line-strong); }
+  .product__top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem 1rem; }
+  .product__name { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-lg); white-space: nowrap; }
+  .pill {
+    font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: 0.03em;
+    color: var(--text-faint); border: 1px solid var(--line-strong);
+    border-radius: 999px; padding: 0.22em 0.6em; white-space: nowrap; margin-left: auto;
+  }
+  .pill--live { color: var(--add); border-color: rgba(70, 192, 90, 0.4); background: rgba(70, 192, 90, 0.07); }
+  .product__line { color: var(--text-dim); font-size: var(--fs-sm); line-height: 1.55; flex: 1; }
+  .product__links { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; font-family: var(--font-mono); font-size: var(--fs-xs); }
+  .product__links a { color: var(--text-dim); transition: color 0.2s ease; }
+  .product__links a:hover { color: var(--signal); }
+
+  /* Proof */
+  .proof { display: grid; gap: 1.1rem; margin-top: 1.6rem; grid-template-columns: 1fr; }
+  @media (min-width: 720px) { .proof { grid-template-columns: repeat(3, 1fr); } }
+  .proof__item {
+    border-left: 2px solid var(--line-strong); padding-left: 1.1rem;
+  }
+  .proof__k {
+    font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--signal);
+  }
+  .proof__item p { margin-top: 0.5rem; color: var(--text-dim); font-size: var(--fs-sm); line-height: 1.6; }
+  .proof__item strong { color: var(--text); font-weight: 600; }
+  .proof__link { color: var(--text); border-bottom: 1px solid var(--signal); padding-bottom: 1px; }
+  .proof__link:hover { color: var(--signal); }
+  .proof__note { margin-top: 1.4rem; color: var(--text-faint); font-family: var(--font-mono); font-size: var(--fs-2xs); }
+
+  /* CTA */
+  .cta { padding-block: clamp(3rem, 7vh, 4.6rem) 2rem; }
+  .cta__h {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: var(--fs-2xl); letter-spacing: -0.015em; line-height: var(--lh-tight);
+  }
+  .cta__p { margin-top: 0.9rem; color: var(--text-dim); font-size: var(--fs-md); max-width: 52ch; }
+  .cta__links { display: flex; flex-wrap: wrap; gap: 0.7rem 1.6rem; margin-top: 1.4rem; font-family: var(--font-mono); font-size: var(--fs-sm); }
+  .cta__links a { color: var(--text); border-bottom: 1px solid var(--signal); padding-bottom: 2px; transition: color 0.2s ease; }
+  .cta__links a:hover { color: var(--signal); }
+
+  /* Footer */
+  .dcbfoot { border-top: 1px solid var(--line); margin-top: 1rem; }
+  .dcbfoot__inner {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.6rem;
+    padding-block: 1.6rem; font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-faint);
+  }
+  .dcbfoot__inner a { color: var(--text-dim); transition: color 0.2s ease; }
+  .dcbfoot__inner a:hover { color: var(--signal); }
+</style>
