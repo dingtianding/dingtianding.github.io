@@ -213,48 +213,6 @@ export const projects: Project[] = [
   },
 
   {
-    name: 'Open Claw Life Coach',
-    slug: 'open-claw-life-coach',
-    blurb:
-      'A personal operating system: an agent that continuously accumulates context across goals, career, projects, health, finance, and journal, with layered memory, a decision log, and an automatic weekly review, so it understands not just what you did, but why.',
-    tech: ['LLM agents', 'Memory', 'Markdown', 'Personal infra'],
-    award: 'Personal · building',
-    isPrivate: true,
-    links: [],
-    detail: {
-      oneLiner: 'A personal operating system, an agent that accumulates the context of your life and reasons over it.',
-      status: 'Personal · building',
-      problem:
-        "Chatbots forget. A genuinely useful personal agent needs durable, structured context, goals, career, health, finances, projects, and the reasoning behind decisions, collected automatically rather than re-typed every session. The hard part isn't the model; it's the context system around it.",
-      architecture: [
-        'Context is organized as a Life OS, version-controlled Markdown across Goals, Career, Projects, Health, Finance, Relationships, Journal, Knowledge, and Preferences. Plain files keep the user in control and make the system easy to evolve without locking into a particular database or note app.',
-        "Memory works in three layers: short-term (today's tasks, the current sprint, live conversations), medium-term (this week's goals, active projects, recruiters in flight), and long-term (career history, résumé, coding style, health trends, interview stories). A weekly review rolls short-term context into long-term, updates goals, and archives completed work.",
-        'A decision log records every important decision with its reasoning, the alternatives considered, and a review date, so over a year the agent understands why choices were made, not just what happened. Context collection is automated through a prioritized set of integrations (GitHub activity, Calendar, Gmail, a job-application tracker, fitness data, daily journal) layered in over time.',
-      ],
-      stack: [
-        { group: 'Core', items: ['LLM agent', 'tool use', 'version-controlled Markdown'] },
-        { group: 'Memory', items: ['short / medium / long-term tiers', 'decision log', 'weekly review'] },
-        { group: 'Integrations (roadmap)', items: ['GitHub', 'Google Calendar', 'Gmail', 'fitness data', 'job tracker'] },
-      ],
-      challenges: [
-        {
-          title: 'Automating context collection',
-          body: 'The value is proportional to how little you have to type. Pulling context from GitHub, calendar, email, workouts, and notes, while keeping the user in control of it, is the core engineering problem.',
-        },
-        {
-          title: 'Layered memory that stays useful',
-          body: "Promoting the right short-term context into long-term memory (and archiving the rest) on a weekly cadence, so the agent's working set stays relevant instead of bloating.",
-        },
-        {
-          title: 'A decision log with reasoning',
-          body: 'Recording not just what was decided but why, with alternatives and a review date, so the system can reflect on past reasoning, not just past events.',
-        },
-      ],
-      role: 'Sole designer and engineer, the Life OS schema, the memory tiers, the decision log, and the integration pipeline.',
-    },
-  },
-
-  {
     name: 'Tape',
     blurb:
       'A live-markets dashboard built to explore Angular 19 and RxJS: real-time price streams, signal-driven state, sparkline trends, and a Reactive-Forms order ticket with conditional validation. Fully client-side, no backend.',
