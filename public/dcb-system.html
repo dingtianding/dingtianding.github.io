@@ -137,7 +137,6 @@
       <span><i class="swatch" style="border-color:var(--blue-s); background:var(--blue-f)"></i>Public</span>
       <span><i class="swatch" style="border-color:var(--green-s); background:var(--green-f)"></i>Practice</span>
       <span><i class="swatch" style="border-color:var(--violet-s); background:var(--violet-f)"></i>Copilot</span>
-      <span><b class="lg-h" style="margin-left:6px">💡</b>why we build it</span>
     </div>
     <div class="legend">
       <b class="lg-h">Flows</b>
@@ -182,6 +181,8 @@
           <rect x="1210" y="316" width="310" height="60" rx="12" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.4"/>
           <!-- bank (external data source) -->
           <rect x="1250" y="690" width="240" height="74" rx="12" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.4"/>
+          <!-- tax software (e-file target) -->
+          <rect x="700" y="948" width="248" height="64" rx="12" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.4"/>
 
           <!-- practice inner nodes -->
           <rect x="452" y="648" width="196" height="88" rx="13" fill="var(--green-f)" stroke="var(--green-s)" stroke-width="2.4"/>
@@ -229,6 +230,8 @@
           <path d="M366 1000 C 418 958 452 916 470 880" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
           <!-- bank -> practice (payments reconciliation) -->
           <path d="M1250 724 C 1200 728 1150 728 1110 726" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+          <!-- practice (approved) -> tax software (e-file) -->
+          <path d="M556 880 C 620 918 710 938 792 948" stroke="var(--green-s)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
         </g>
 
         <!-- ===== CRISP TEXT ===== -->
@@ -244,10 +247,6 @@
           <text class="t-desc" x="282" y="237">Ingests SEC filings + federal &amp; state</text>
           <text class="t-desc" x="282" y="254">tax sources and grounds every claim</text>
           <text class="t-desc" x="282" y="271">in a citation to the authority.</text>
-          <text class="t-stack" x="282" y="296">FastAPI · Postgres · Claude (BYOK)</text>
-          <text class="t-why" x="282" y="326" fill="var(--yellow-s)">💡 Why we build it</text>
-          <text class="t-whyb" x="282" y="344" fill="var(--yellow-s)">· one grounded source of truth</text>
-          <text class="t-whyb" x="282" y="360" fill="var(--yellow-s)">· funnels correct info to all three</text>
           <text class="badge" x="521" y="177" text-anchor="middle">🤖 Claude</text>
 
           <!-- public -->
@@ -256,11 +255,6 @@
           <text class="t-desc" x="762" y="237">Vetted, cited money &amp; investing KB</text>
           <text class="t-desc" x="762" y="254">plus a grounded AI advisor.</text>
           <text class="t-desc" x="762" y="271">Educational, not advice.</text>
-          <text class="t-stack" x="762" y="296">Next.js · FastAPI · Postgres · Claude · Stripe</text>
-          <text class="t-why" x="762" y="322" fill="var(--blue-s)">💡 Why we build it</text>
-          <text class="t-whyb" x="762" y="340" fill="var(--blue-s)">· general AI is confidently wrong on tax</text>
-          <text class="t-whyb" x="762" y="356" fill="var(--blue-s)">· the real answer is on IRS / state sites</text>
-          <text class="t-whyb" x="762" y="372" fill="var(--blue-s)">· so Public cites the actual source</text>
           <text class="badge" x="999" y="177" text-anchor="middle">🤖 Claude</text>
 
           <!-- copilot -->
@@ -268,12 +262,7 @@
           <text class="t-eyebrow" x="86" y="722" fill="var(--muted)">the screen assistant</text>
           <text class="t-desc" x="86" y="746">Watches the work being performed, </text>
           <text class="t-desc" x="86" y="763">reads on-screen tax sw / Excel / PDFs.</text>
-          <text class="t-stack" x="86" y="787">Rust · Tauri · React · Claude vision</text>
           <text class="t-note" x="86" y="809">on-device · BYOK · no server DB</text>
-          <text class="t-why" x="86" y="836" fill="var(--violet-s)">💡 Why we build it</text>
-          <text class="t-whyb" x="86" y="854" fill="var(--violet-s)">· no Cursor sidebar fits every legacy app</text>
-          <text class="t-whyb" x="86" y="870" fill="var(--violet-s)">· one screen-aware copilot spans them all</text>
-          <text class="t-whyb" x="86" y="886" fill="var(--violet-s)">· fast answers + to-dos, mid-work</text>
           <text class="badge" x="255" y="691" text-anchor="middle">🤖 Claude</text>
 
           <!-- shared services -->
@@ -282,12 +271,11 @@
           <text class="t-src-sub" x="1230" y="256">used by Research · Public · Copilot</text>
           <text class="t-src-title" x="1230" y="346" font-size="15">Stripe</text><text class="t-src-sub" x="1230" y="364">subscriptions (Public)</text>
           <text class="t-src-title" x="1268" y="722" font-size="14">🏦 Bank</text><text class="t-src-sub" x="1268" y="742">firm account · Plaid</text>
+          <text class="t-src-title" x="718" y="974" font-size="14">🖨 Tax software</text><text class="t-src-sub" x="718" y="994">e-file returns</text>
 
           <!-- practice zone -->
           <text class="t-zone" x="420" y="552">DCB Practice, the AI-native firm</text>
-          <text class="t-zone-sub" x="420" y="571">the firm, delivered as software · owns its own data</text>
-          <text class="t-whyb" x="420" y="595" font-size="12" fill="var(--green-s)">💡 Why we build it, tax work is competitive &amp; commoditised, and a firm's roles</text>
-          <text class="t-whyb" x="420" y="612" font-size="12" fill="var(--green-s)">split cleanly into agents, so we deliver the service itself, not another tool</text>
+          <text class="t-zone-sub" x="420" y="571">the firm, delivered as software</text>
           <!-- agents -->
           <text class="t-node" x="470" y="680">Agents</text>
           <text class="t-nodesub" x="470" y="700">run the repetitive</text>
