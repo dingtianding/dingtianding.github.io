@@ -72,9 +72,9 @@
   .stage { min-width: 1240px; background: radial-gradient(var(--grid) 1.4px, transparent 1.4px); background-size: 26px 26px; background-position: -1px -1px; border: 2px solid var(--edge); border-radius: 16px; padding: 8px; }
   svg.diagram { width: 100%; height: auto; display: block; }
 
-  .t-title { font-family: var(--hand); font-weight: 700; font-size: 20px; }
-  .t-eyebrow { font-family: var(--hand); font-size: 13px; }
-  .t-desc { font-family: var(--sans); font-size: 12px; fill: var(--ink); }
+  .t-title { font-family: var(--hand); font-weight: 700; font-size: 24px; }
+  .t-eyebrow { font-family: var(--hand); font-size: 15px; }
+  .t-desc { font-family: var(--sans); font-size: 14px; fill: var(--ink); }
   .t-stack { font-family: var(--sans); font-size: 10.5px; fill: var(--muted); }
   .t-why { font-family: var(--hand); font-size: 12.5px; }
   .t-whyb { font-family: var(--sans); font-size: 11px; fill: var(--ink); }
@@ -171,10 +171,10 @@
           <rect x="64" y="596" width="196" height="52" rx="12" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.4"/>
 
           <!-- research + public -->
-          <rect x="260" y="150" width="330" height="320" rx="16" fill="var(--yellow-f)" stroke="var(--yellow-s)" stroke-width="2.8"/>
-          <rect x="740" y="150" width="340" height="320" rx="16" fill="var(--blue-f)" stroke="var(--blue-s)" stroke-width="2.8"/>
+          <rect x="260" y="150" width="330" height="178" rx="16" fill="var(--yellow-f)" stroke="var(--yellow-s)" stroke-width="2.8"/>
+          <rect x="740" y="150" width="340" height="178" rx="16" fill="var(--blue-f)" stroke="var(--blue-s)" stroke-width="2.8"/>
           <!-- copilot -->
-          <rect x="64" y="664" width="300" height="290" rx="16" fill="var(--violet-f)" stroke="var(--violet-s)" stroke-width="2.8"/>
+          <rect x="64" y="664" width="300" height="180" rx="16" fill="var(--violet-f)" stroke="var(--violet-s)" stroke-width="2.8"/>
 
           <!-- shared services -->
           <rect x="1210" y="178" width="310" height="100" rx="14" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="2.4"/>
@@ -206,11 +206,11 @@
           <!-- research -> public (distilled, planned) -->
           <path d="M590 250 C 640 250 700 250 736 250" stroke="var(--ink)" stroke-width="2.4" stroke-dasharray="7 7" stroke-linecap="round" marker-end="url(#arrow)"/>
           <!-- research -> firm KB (how a task should be performed) -->
-          <path d="M548 472 C 548 486 548 500 548 514" stroke="var(--yellow-s)" stroke-width="2.8" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
+          <path d="M548 330 C 548 392 548 452 548 514" stroke="var(--yellow-s)" stroke-width="2.8" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
           <!-- public -> stripe -->
           <path d="M1080 330 C 1130 338 1170 342 1208 344" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
           <!-- practice -> public (entitlement) -->
-          <path d="M912 516 C 912 500 912 486 912 472" stroke="var(--muted)" stroke-width="2.4" stroke-dasharray="7 7" stroke-linecap="round" marker-end="url(#arrowMuted)"/>
+          <path d="M912 516 C 912 452 912 392 912 330" stroke="var(--muted)" stroke-width="2.4" stroke-dasharray="7 7" stroke-linecap="round" marker-end="url(#arrowMuted)"/>
           <!-- screen -> copilot -->
           <path d="M160 648 C 162 654 162 658 162 662" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
           <!-- copilot -> agents (work context) -->
@@ -226,7 +226,7 @@
           <!-- firm clients -> public (comped) -->
           <path d="M1004 90 C 972 116 942 134 920 150" stroke="var(--muted)" stroke-width="2.2" stroke-dasharray="6 7" stroke-linecap="round" marker-end="url(#arrowMuted)"/>
           <!-- CPAs -> copilot & practice -->
-          <path d="M240 1000 C 220 984 210 970 206 956" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
+          <path d="M240 1000 C 218 936 210 888 206 848" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
           <path d="M366 1000 C 418 958 452 916 470 880" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
           <!-- bank -> practice (payments reconciliation) -->
           <path d="M1250 724 C 1200 728 1150 728 1110 726" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
@@ -243,18 +243,18 @@
 
           <!-- research -->
           <text class="t-title" x="282" y="192" fill="var(--yellow-s)">DCB Research</text>
-          <text class="t-eyebrow" x="282" y="211" fill="var(--muted)">data backbone · source of truth</text>
-          <text class="t-desc" x="282" y="237">Ingests SEC filings + federal &amp; state</text>
-          <text class="t-desc" x="282" y="254">tax sources and grounds every claim</text>
-          <text class="t-desc" x="282" y="271">in a citation to the authority.</text>
+          <text class="t-eyebrow" x="282" y="218" fill="var(--muted)">data backbone · source of truth</text>
+          <text class="t-desc" x="282" y="248">Ingests SEC filings + federal &amp; state</text>
+          <text class="t-desc" x="282" y="270">tax sources and grounds every claim</text>
+          <text class="t-desc" x="282" y="292">in a citation to the authority.</text>
           <text class="badge" x="521" y="177" text-anchor="middle">🤖 Claude</text>
 
           <!-- public -->
           <text class="t-title" x="762" y="192" fill="var(--blue-s)">DCB Public</text>
-          <text class="t-eyebrow" x="762" y="211" fill="var(--muted)">consumer front door</text>
-          <text class="t-desc" x="762" y="237">Vetted, cited money &amp; investing KB</text>
-          <text class="t-desc" x="762" y="254">plus a grounded AI advisor.</text>
-          <text class="t-desc" x="762" y="271">Educational, not advice.</text>
+          <text class="t-eyebrow" x="762" y="218" fill="var(--muted)">consumer front door</text>
+          <text class="t-desc" x="762" y="248">Vetted, cited money &amp; investing KB</text>
+          <text class="t-desc" x="762" y="270">plus a grounded AI advisor.</text>
+          <text class="t-desc" x="762" y="292">Educational, not advice.</text>
           <text class="badge" x="999" y="177" text-anchor="middle">🤖 Claude</text>
 
           <!-- copilot -->
@@ -296,12 +296,12 @@
 
           <!-- arrow labels -->
           <g transform="translate(663,224)"><rect class="pill" x="-74" y="-16" width="148" height="34" rx="9"/><text class="t-arrow" x="0" y="-2" text-anchor="middle">distilled cited entries</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)">publish API · planned</text></g>
-          <g transform="translate(548,494)"><rect class="pill" x="-118" y="-17" width="236" height="34" rx="9"/><text class="t-arrow" x="0" y="-3" text-anchor="middle">how a task should be performed</text><text class="t-arrow" x="0" y="10" text-anchor="middle" fill="var(--muted)">grounded in SEC + tax</text></g>
+          <g transform="translate(548,424)"><rect class="pill" x="-118" y="-17" width="236" height="34" rx="9"/><text class="t-arrow" x="0" y="-3" text-anchor="middle">how a task should be performed</text><text class="t-arrow" x="0" y="10" text-anchor="middle" fill="var(--muted)">grounded in SEC + tax</text></g>
           <g transform="translate(470,634)"><rect class="pill" x="-72" y="-16" width="144" height="33" rx="9"/><text class="t-arrow" x="0" y="-2" text-anchor="middle">work context</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)" font-size="9.5">redacted events · via API</text></g>
           <g transform="translate(676,632)"><rect class="pill" x="-52" y="-11" width="104" height="21" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">retrieve how-to</text></g>
           <g transform="translate(712,848)"><rect class="pill" x="-70" y="-11" width="140" height="21" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--green-s)">↻ learn (continuous)</text></g>
           <g transform="translate(550,770)"><rect class="pill" x="-48" y="-10" width="96" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">proposed work</text></g>
-          <g transform="translate(912,494)"><rect class="pill" x="-100" y="-16" width="200" height="34" rx="9"/><text class="t-arrow" x="0" y="-2" text-anchor="middle">entitlement / comp codes</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)">outbound only · role-isolated</text></g>
+          <g transform="translate(912,424)"><rect class="pill" x="-100" y="-16" width="200" height="34" rx="9"/><text class="t-arrow" x="0" y="-2" text-anchor="middle">entitlement / comp codes</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)">outbound only · role-isolated</text></g>
           <g transform="translate(210,652)"><rect class="pill" x="-24" y="-11" width="48" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">reads</text></g>
           <g transform="translate(978,120)"><rect class="pill" x="-30" y="-10" width="60" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--muted)">comped</text></g>
           <g transform="translate(1180,684)"><rect class="pill" x="-66" y="-11" width="132" height="30" rx="9"/><text class="t-arrow" x="0" y="-1" text-anchor="middle">match to invoices</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)">you confirm</text></g>
