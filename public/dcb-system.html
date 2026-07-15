@@ -129,7 +129,6 @@
       <b class="lg-h">Node types</b>
       <span><svg class="ic" viewBox="0 0 24 16"><rect x="1.5" y="1.5" width="21" height="13" rx="4" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.6"/></svg>App / service</span>
       <span><svg class="ic" viewBox="0 0 28 16"><rect x="1.5" y="1.5" width="25" height="13" rx="6.5" fill="var(--pink-f)" stroke="var(--pink-s)" stroke-width="1.6"/></svg>👤 User</span>
-      <span><svg class="ic" viewBox="0 0 22 18"><ellipse cx="11" cy="4.5" rx="8.5" ry="3" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.5"/><path d="M2.5 4.5 v9 a8.5 3 0 0 0 17 0 v-9" fill="none" stroke="var(--ink)" stroke-width="1.5"/></svg>Database</span>
       <span><svg class="ic" viewBox="0 0 24 16"><rect x="1.5" y="1.5" width="21" height="13" rx="4" fill="var(--grey-f)" stroke="var(--grey-s)" stroke-width="1.6"/></svg>External source / service</span>
     </div>
     <div class="legend">
@@ -199,12 +198,6 @@
           <rect x="958" y="160" width="82" height="25" rx="9" fill="var(--panel)" stroke="var(--blue-s)" stroke-width="1.7"/>
           <rect x="214" y="674" width="82" height="25" rx="9" fill="var(--panel)" stroke="var(--violet-s)" stroke-width="1.7"/>
 
-          <!-- DB cylinders -->
-          <g fill="var(--yellow-f)" stroke="var(--yellow-s)" stroke-width="2.2"><ellipse cx="430" cy="424" rx="48" ry="8.5"/><path d="M382 424 v20 a48 8.5 0 0 0 96 0 v-20"/></g>
-          <g fill="var(--blue-f)" stroke="var(--blue-s)" stroke-width="2.2"><ellipse cx="908" cy="424" rx="54" ry="8.5"/><path d="M854 424 v20 a54 8.5 0 0 0 108 0 v-20"/></g>
-          <g fill="var(--green-f)" stroke="var(--green-s)" stroke-width="2.4"><ellipse cx="826" cy="788" rx="46" ry="8"/><path d="M780 788 v22 a46 8 0 0 0 92 0 v-22"/></g>
-          <g fill="var(--green-f)" stroke="var(--green-s)" stroke-width="2.2"><ellipse cx="1052" cy="716" rx="54" ry="8.5"/><path d="M998 716 v22 a54 8.5 0 0 0 108 0 v-22"/></g>
-
           <!-- ===== connectors ===== -->
           <!-- sources -> research -->
           <path d="M222 251 C 240 250 246 244 258 242" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrow)"/>
@@ -212,7 +205,7 @@
           <!-- research -> public (distilled, planned) -->
           <path d="M590 250 C 640 250 700 250 736 250" stroke="var(--ink)" stroke-width="2.4" stroke-dasharray="7 7" stroke-linecap="round" marker-end="url(#arrow)"/>
           <!-- research -> firm KB (how a task should be performed) -->
-          <path d="M446 470 C 500 556 604 606 700 644" stroke="var(--yellow-s)" stroke-width="2.8" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
+          <path d="M548 472 C 548 486 548 500 548 514" stroke="var(--yellow-s)" stroke-width="2.8" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
           <!-- public -> stripe -->
           <path d="M1080 330 C 1130 338 1170 342 1208 344" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
           <!-- practice -> public (entitlement) -->
@@ -225,8 +218,6 @@
           <path d="M704 700 C 686 700 668 700 650 700" stroke="var(--green-s)" stroke-width="2.4" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
           <!-- agents -> human review -->
           <path d="M550 736 C 550 762 550 782 550 802" stroke="var(--green-s)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
-          <!-- human review -> system of record -->
-          <path d="M648 838 C 790 830 946 782 1000 744" stroke="var(--green-s)" stroke-width="2.2" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
           <!-- outcomes -> firm KB (continuous learning loop) -->
           <path d="M622 826 C 700 830 754 812 792 796" stroke="var(--green-s)" stroke-width="2.4" stroke-dasharray="6 6" stroke-linecap="round" marker-end="url(#arrowGreen)"/>
           <!-- general public -> public -->
@@ -258,7 +249,6 @@
           <text class="t-whyb" x="282" y="344" fill="var(--yellow-s)">· one grounded source of truth</text>
           <text class="t-whyb" x="282" y="360" fill="var(--yellow-s)">· funnels correct info to all three</text>
           <text class="badge" x="521" y="177" text-anchor="middle">🤖 Claude</text>
-          <text class="t-db" x="430" y="464" text-anchor="middle">raw corpus</text>
 
           <!-- public -->
           <text class="t-title" x="762" y="192" fill="var(--blue-s)">DCB Public</text>
@@ -272,7 +262,6 @@
           <text class="t-whyb" x="762" y="356" fill="var(--blue-s)">· the real answer is on IRS / state sites</text>
           <text class="t-whyb" x="762" y="372" fill="var(--blue-s)">· so Public cites the actual source</text>
           <text class="badge" x="999" y="177" text-anchor="middle">🤖 Claude</text>
-          <text class="t-db" x="908" y="464" text-anchor="middle">published KB · cited</text>
 
           <!-- copilot -->
           <text class="t-title" x="86" y="704" fill="var(--violet-s)">DCB Copilot</text>
@@ -311,10 +300,6 @@
           <text class="t-nodesub" x="724" y="697">How a task should be performed, </text>
           <text class="t-nodesub" x="724" y="713">procedural, grounded, and</text>
           <text class="t-nodesub" x="724" y="729">continuously learned.</text>
-          <text class="t-db" x="826" y="824" text-anchor="middle">vector KB</text>
-          <!-- system of record -->
-          <text class="t-db" x="1052" y="760" text-anchor="middle">Postgres · system of record</text>
-          <text class="t-db" x="1052" y="774" text-anchor="middle" font-size="9">clients · engagements · tasks</text>
 
           <!-- users -->
           <text class="t-user" x="748" y="70" text-anchor="middle">👥 general public</text>
@@ -328,7 +313,6 @@
           <g transform="translate(676,632)"><rect class="pill" x="-52" y="-11" width="104" height="21" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">retrieve how-to</text></g>
           <g transform="translate(712,848)"><rect class="pill" x="-70" y="-11" width="140" height="21" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--green-s)">↻ learn (continuous)</text></g>
           <g transform="translate(550,770)"><rect class="pill" x="-48" y="-10" width="96" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">proposed work</text></g>
-          <g transform="translate(908,770)"><rect class="pill" x="-32" y="-10" width="64" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">recorded</text></g>
           <g transform="translate(912,494)"><rect class="pill" x="-100" y="-16" width="200" height="34" rx="9"/><text class="t-arrow" x="0" y="-2" text-anchor="middle">entitlement / comp codes</text><text class="t-arrow" x="0" y="11" text-anchor="middle" fill="var(--muted)">outbound only · role-isolated</text></g>
           <g transform="translate(210,652)"><rect class="pill" x="-24" y="-11" width="48" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle">reads</text></g>
           <g transform="translate(978,120)"><rect class="pill" x="-30" y="-10" width="60" height="20" rx="8"/><text class="t-arrow" x="0" y="3" text-anchor="middle" fill="var(--muted)">comped</text></g>
