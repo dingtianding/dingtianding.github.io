@@ -214,12 +214,44 @@ export const projects: Project[] = [
 
   {
     name: 'DD-KB',
+    slug: 'dd-kb',
     blurb:
       'A purpose-organized Obsidian knowledge base (career, DCB, durable engineering notes) plus a dependency-free local RAG engine over it: BM25 retrieval, heading-aware chunks with citations, grounded cited answers, a browser UI, and an Obsidian sidebar plugin. Pure Python standard library, re-indexes on change, and runs entirely on localhost.',
     tech: ['Python (stdlib)', 'RAG', 'BM25', 'Obsidian plugin'],
     award: 'Local RAG',
     handCoded: true,
     links: [{ label: 'Repository', href: 'https://github.com/dingtianding/DD-KB-App' }],
+    detail: {
+      oneLiner: 'A personal knowledge base with a dependency-free local RAG engine: retrieve by meaning, get cited answers, never leave your machine.',
+      status: 'Open-source engine · private vault',
+      problem:
+        'Useful knowledge scatters across chat histories, bookmarks, PDFs, and note apps, and an AI assistant re-derives its context from scratch every session. The goal is a durable, curated knowledge layer that both a human and an assistant can retrieve from, with grounded, cited answers, without shipping private career and product notes to a third-party service. The hard part is not the model; it is retrieval that stays fast and honest, capture that stays low-friction, and a system that never leaves the machine.',
+      architecture: [
+        'The corpus is an Obsidian vault, purpose-organized (voice, career, DCB, durable engineering knowledge, personal references) with explicit rules about what to keep and what to exclude: an Inbox and Templates are held out of retrieval until curated, and no secrets or PII are stored. Plain Markdown keeps the owner in control and the vault portable.',
+        'The engine is a dependency-free Python service (standard library only) that indexes Markdown into heading-aware chunks carrying their source path and line numbers, and retrieves with in-memory BM25. The index re-builds automatically when a note changes, so nothing needs restarting, and it binds to 127.0.0.1 so the vault is never exposed over the network.',
+        'Retrieval works with no API key. An optional grounded-answer path synthesizes a cited response from the retrieved excerpts through the OpenAI Responses API, keyed only through the environment. Two surfaces read the same index: a browser UI and an Obsidian right-sidebar plugin.',
+      ],
+      stack: [
+        { group: 'Engine', items: ['Python (standard library only)', 'BM25 retrieval', 'in-memory index', 'http.server'] },
+        { group: 'Corpus', items: ['Obsidian', 'Markdown', 'heading-aware chunking'] },
+        { group: 'Answers / UI', items: ['OpenAI Responses API (optional)', 'browser UI', 'Obsidian sidebar plugin'] },
+      ],
+      challenges: [
+        {
+          title: 'Zero dependencies, on purpose',
+          body: 'BM25 retrieval, an HTTP server, and change-detection built on nothing but the Python standard library, so the tool installs and runs anywhere python3 exists, with no packages to manage.',
+        },
+        {
+          title: 'Grounded, not guessed',
+          body: 'Every chunk carries its source path and line numbers, so an answer cites exactly where it came from. Retrieval runs with no key; generation is opt-in, so the default path never calls out.',
+        },
+        {
+          title: 'Private by construction',
+          body: 'Binds to localhost only, never exposes the vault over the network, and holds the uncurated Inbox, Templates, and any secrets out of the index.',
+        },
+      ],
+      role: 'Sole author and engineer: the vault organization and rules, the BM25 retrieval and chunking, the auto-refreshing index, the browser UI, and the Obsidian plugin.',
+    },
   },
 
   {
