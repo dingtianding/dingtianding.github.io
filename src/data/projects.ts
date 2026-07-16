@@ -213,6 +213,16 @@ export const projects: Project[] = [
   },
 
   {
+    name: 'DD-KB',
+    blurb:
+      'A purpose-organized Obsidian knowledge base (career, DCB, durable engineering notes) plus a dependency-free local RAG engine over it: BM25 retrieval, heading-aware chunks with citations, grounded cited answers, a browser UI, and an Obsidian sidebar plugin. Pure Python standard library, re-indexes on change, and runs entirely on localhost.',
+    tech: ['Python (stdlib)', 'RAG', 'BM25', 'Obsidian plugin'],
+    award: 'Local RAG',
+    handCoded: true,
+    links: [{ label: 'Repository', href: 'https://github.com/dingtianding/DD-KB-App' }],
+  },
+
+  {
     name: 'Tape',
     blurb:
       'A live-markets dashboard built to explore Angular 19 and RxJS: real-time price streams, signal-driven state, sparkline trends, and a Reactive-Forms order ticket with conditional validation. Fully client-side, no backend.',
