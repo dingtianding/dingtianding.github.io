@@ -215,6 +215,7 @@ export const projects: Project[] = [
   {
     name: 'DD-KB',
     slug: 'dd-kb',
+    image: '/images/DD-KB.png',
     blurb:
       'A purpose-organized Obsidian knowledge base (career, DCB, durable engineering notes) plus a dependency-free local RAG engine over it: BM25 retrieval, heading-aware chunks with citations, grounded cited answers, a browser UI, and an Obsidian sidebar plugin. Pure Python standard library, re-indexes on change, and runs entirely on localhost.',
     tech: ['Python (stdlib)', 'RAG', 'BM25', 'Obsidian plugin'],
