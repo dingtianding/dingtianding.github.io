@@ -252,6 +252,7 @@ export const projects: Project[] = [
         },
       ],
       role: 'Sole author and engineer: the vault organization and rules, the BM25 retrieval and chunking, the auto-refreshing index, the browser UI, and the Obsidian plugin.',
+      screenshots: ['/images/dd-kb-1.png'],
     },
   },
 
