@@ -257,13 +257,44 @@ export const projects: Project[] = [
   },
 
   {
-    name: 'Tape',
+    name: 'orchestra',
+    slug: 'orchestra',
     blurb:
-      'A live-markets dashboard built to explore Angular 19 and RxJS: real-time price streams, signal-driven state, sparkline trends, and a Reactive-Forms order ticket with conditional validation. Fully client-side, no backend.',
-    tech: ['Angular 19', 'RxJS', 'TypeScript', 'Reactive Forms'],
-    award: 'Angular',
-    demo: '/tape/',
-    links: [{ label: 'Repository', href: 'https://github.com/dingtianding/tape' }],
+      'A multi-agent orchestrator that pairs Claude Code and Codex CLI, in either role, through a structured JSON protocol: one proposes and the other independently reviews, or both hand off a task back and forth, until the work is genuinely done.',
+    tech: ['Python (stdlib)', 'Claude Code CLI', 'Codex CLI', 'Multi-agent orchestration'],
+    award: 'Multi-agent',
+    links: [{ label: 'Repository', href: 'https://github.com/dingtianding/orchestra' }],
+    detail: {
+      oneLiner: 'Two independent coding agents check each other’s work: propose, review, revise, or hand off, until it is actually done.',
+      status: 'Open-source · unit-tested',
+      problem:
+        'A single AI coding agent is bad at catching its own mistakes: asking it to review its own output is correlated with the same blind spots that produced it in the first place. The manual fix, run one CLI, copy its output into another, read the verdict, paste it back, works but does not scale and has no reliable stopping condition. The goal is to automate an independent second opinion between two different models, with a stop condition the loop can trust rather than one it has to guess at from free text.',
+      architecture: [
+        'Every backend is the real, installed `claude` or `codex` CLI, run headless in a subprocess, not a hand-rolled API client. Both already do everything this needs: real file/shell tool access in a target repo, and a native flag (`--json-schema` for Claude, `--output-schema` for Codex) that validates the model’s final response against a JSON Schema before returning it. The orchestrator never parses free text to decide what happened; it only ever reads a small structured turn (status, approved, blocking_issues).',
+        'Two interaction modes share the same result/transcript/cost shape. Review mode: a proposer writes in the repo, a reviewer with no write access independently re-inspects it, and the loop repeats until the reviewer approves. Handoff mode: two or more agents, all with write access, alternate turns on the same task, each one either finishing it or passing notes to whoever goes next, no gatekeeper.',
+        'Role is expressed purely through CLI flags, not a second code path per model: a read-only turn is `--tools ""` (Claude) or `--sandbox read-only` (Codex); a writing turn is `--allowedTools Read,Write,Edit,Bash` or `--sandbox workspace-write`. That is the whole reason it ships with zero third-party Python dependencies.',
+      ],
+      stack: [
+        { group: 'Runtime', items: ['Python (standard library only)', 'subprocess'] },
+        { group: 'Backends', items: ['Claude Code CLI', 'Codex CLI'] },
+        { group: 'Protocol', items: ['JSON Schema-enforced structured output', 'review mode', 'handoff mode'] },
+      ],
+      challenges: [
+        {
+          title: 'Verified the CLIs, did not trust a summary of them',
+          body: 'An early research pass on Claude Code’s headless flags got a detail wrong (a `--cwd` flag that does not exist). Every flag this ships with was checked against the real installed `claude --help` / `codex exec --help` output and a live test call before being built against.',
+        },
+        {
+          title: 'Codex needed a stricter schema than Claude',
+          body: 'OpenAI’s structured-output mode rejects any schema missing `additionalProperties: false` on every object node; Claude does not need this. Handled in the Codex backend specifically, so the shared protocol schema stays backend-agnostic.',
+        },
+        {
+          title: 'One protocol, two different meanings',
+          body: 'Review mode and handoff mode reuse the exact same four fields (status, approved, blocking_issues, non_blocking_issues) rather than each inventing their own shape. What a field means, a reviewer’s finding versus a handoff note, is conveyed by the turn’s prompt, not duplicated into the schema.',
+        },
+      ],
+      role: 'Sole engineer: the protocol design, both CLI backends, the review and handoff orchestration loop, and the test suite.',
+    },
   },
 
   // ---- Earlier builds ----
